@@ -1,0 +1,42 @@
+Travaux essentiels : 
+
+- Débugger la méthode de save/load pour les IA.
+
+- Méthode pour faire des tests.
+
+- Rajouter robot ouvrier
+
+- Empêcher que unités puissent escalader les murs.
+
+- Documentation à faire
+
+- Ajouter algorithme de Djakhata récursif pour l'IA max (essentiel pour avoir une figure récursive!).
+
+- Interface graphique :
+
+	* Afficher les zones de déplacement et de combat des unités dont on clique dessus ; ces zones doivent être visibles
+  pour chaque joueur, dès qu’il clique sur l’unité.
+	*Mettre en place une interface graphique, comptant :  #le nombre de tours avant la fin (via une barre).
+								# les ressources du joueur (Timer avant nouvelles unités disponibles pour le joueur humain attaquant, 
+                métal et énergie pour le joueur humain défenseur.)
+                
+								# boutons de production d’unités (Activer certains / en désactiver d’autres selon le joueur : pas 
+                de production d’unité d’attaque si défenseur, etc …).
+
+								# boutons de production de bâtiments.
+
+								# affichage de la map sur une fenêtre.
+
+TOUT DOIT ETRE TERMINE POUR LE 5 MAI.
+
+Travaux secondaires : 
+
+- Ajout de 2 niveaux d’IA :
+
+#Niveau 1 : zone d’apparition au hasard, déplacement vers le centre, déploie des unités par « cycle » 
+(petit / moyen / gros, +1 unité à la fin du cycle).
+
+#Niveau 2 : zone d’apparition sur le côté où il y a le moins d’unités en défense, déplacement vers les 
+bâtiments ennemis les plus proches, déploiement par vagues aléatoires ( petit / moyen / gros au hasard, +1 à chaque déploiement).
+
+- Ajout d’autres unités, ...
