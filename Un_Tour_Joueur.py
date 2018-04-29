@@ -1,14 +1,12 @@
 from Batiments import Foreuse,Panneau_solaire
 from Constantes import Constante
-from Unites_Hn_Defenseur import Robot_combat
+from Unites_Hn_Defenseur import Robot_combat, Robot_Ouvrier
 from Unites_Hn_Attaquant import Scorpion
 from numpy.random import randint
 from unites_IA_facile import Scorpion0
 
 import numpy as np
 
-from PyQt5 import QtGui, QtCore, QtWidgets
-from Minima import Ui_Minima_Accueil
 
 class Un_Tour_Du_Joueur():
 
@@ -31,52 +29,31 @@ class Un_Tour_Du_Joueur():
         self.unite_IA=[]
         self.unite_IA_in_wave=[]
         
-        self.ui = Ui_Minima_Accueil
+        
          
-    def placer_une_foreuse(self)   :
+    def placer_une_foreuse(self,X,Y)   :
         """
         Permet au joueur s'il le souhaite et s'il en a le droit de construire le batiment Foreuse
         Mets également à jour la quantité de ressource à sa disposition
         """
         if (self.L_joueur[0].metal_tot>=Constante.cout_M_F and self.L_joueur[0].energie_tot>=Constante.cout_E_F):
-            self.ui.Button_Foreuse.setEnable(True)
-            choix2=input("placer Foreuse ? (YES/NO)")
-             #if choix2 == 'YES':
-            if self.ui.Button_Foreuse.isClicked():
-                x_inf_b = (self.__xmax - self.L - 1)//2 +1
-                x_sup_b = (self.__xmax + self.L - 1)//2 -1
-                y_inf_b =  (self.__ymax - self.H - 1)//2 +1
-                y_sup_b = (self.__ymax + self.H - 1)//2 -1
 
-                L_pos = self.placement_pos_bat(x_inf_b,x_sup_b,y_inf_b,y_sup_b,' ')
+            x_inf_b = (self.__xmax - self.L - 1)//2 +1
+            x_sup_b = (self.__xmax + self.L - 1)//2 -1
+            y_inf_b =  (self.__ymax - self.H - 1)//2 +1
+            y_sup_b = (self.__ymax + self.H - 1)//2 -1
+
+            L_pos = self.placement_pos_bat(x_inf_b,x_sup_b,y_inf_b,y_sup_b,' ')
+            if (X,Y) in L_pos:
+                   
+                U = Foreuse(X,Y,self._carte)
+                self.L_joueur[0]._liste_bat[2].append(U)
+                self.L_joueur[0].metal_tot=self.L_joueur[0].metal_tot-Constante.cout_M_F
+                self.L_joueur[0].energie_tot=self.L_joueur[0].energie_tot-Constante.cout_E_F
+                print("Energie restante :", self.L_joueur[0].energie_tot, "\n")
+                print("Métal restant :", self.L_joueur[0].energie_tot, "\n")
                 
-                if len(L_pos) == 0:
-                    print('Aucune position disponible, étape suivante. \n')
-                else:    
-                    print('Positions possibles :', L_pos)
-                    L = input('Envoyez la nouvelle position en x et en y (format x,y). \n')
-                    k = L.find(',')
-                    while k == -1:
-                        print("Erreur de synthaxe. Recommencez svp")
-                        L = input('Envoyez la nouvelle position en x et en y (format x,y). \n')
-                        k = L.find(',')
-                    X = int(L[0:k])
-                    Y = int(L[k+1:])
-                    while (X,Y) not in L_pos:
-                        print("Position hors du rayon d'action de l'unité. \n")
-                        L = input('Envoyez la nouvelle position en x et en y (format x,y). \n')
-                        k = L.find(',')
-                        X,Y = int(L[0:k]) , int(L[k+1:])
-                    U = Foreuse(X,Y,self._carte)
-                    self.L_joueur[0]._liste_bat[2].append(U)
-                    self.L_joueur[0].metal_tot=self.L_joueur[0].metal_tot-Constante.cout_M_F
-                    self.L_joueur[0].energie_tot=self.L_joueur[0].energie_tot-Constante.cout_E_F
-                    print("Energie restante :", self.L_joueur[0].energie_tot, "\n")
-                    print("Métal restant :", self.L_joueur[0].energie_tot, "\n")
-                    
-                    print(self._carte.ss_carte[X][Y])
-            else:
-                self.ui.Button_Foreuse.setEnable(False)
+                print(self._carte.ss_carte[X][Y])
 
 
     def placer_un_Panneau_solaire(self):
@@ -88,10 +65,11 @@ class Un_Tour_Du_Joueur():
         if (self.L_joueur[0].metal_tot>=Constante.cout_M_P and self.L_joueur[0].energie_tot>=Constante.cout_E_P):
             choix2=input("placer Panneau solaire ? (YES/NO)")
             if choix2 == 'YES':
-                x_inf_b = (self.__xmax - self.L - 1)//2 +1
-                x_sup_b = (self.__xmax + self.L - 1)//2 -1
-                y_inf_b =  (self.__ymax - self.H - 1)//2 +1
-                y_sup_b = (self.__ymax + self.H - 1)//2 -1
+                x_inf_b = (self.__xmax - self.L )//2 +1
+                x_sup_b = (self.__xmax + self.L )//2 
+                y_inf_b =  (self.__ymax - self.H )//2 +1
+                y_sup_b = (self.__ymax + self.H)//2 
+                #Noter que x_inf et x_sup doivent être +1 par rapport à leur valeur réelle (pour bien tout sélectionner dans la matrice)
 
                 L_pos = self.placement_pos_bat(x_inf_b,x_sup_b,y_inf_b,y_sup_b,' ')
                 if len(L_pos) == 0:
@@ -153,8 +131,7 @@ class Un_Tour_Du_Joueur():
         Permet au joueur s'il le souhaite de placer un batiment
         """
         choix=input("placer un batiment ? (YES/NO)")
-#        if choix=='YES':
-        if self.ui.Button_Foreuse.isClicked():
+        if choix=='YES':
             self.placer_une_foreuse()
             self.placer_un_Panneau_solaire()
         elif choix=='NO':
@@ -166,12 +143,19 @@ class Un_Tour_Du_Joueur():
         elif role[0] == 'A':
             self.production_unite_attaque(role,k)
 
-#RAJOUTER UNITE ATTAQUE / DEFENSE
-    
     def production_unite_defense(self):
+        if (self.L_joueur[0].metal_tot>=Constante.cout_M_RO and self.L_joueur[0].energie_tot>=Constante.cout_E_RO):
+            choix_DH = input("Construire un robot? (YES/NO)")
+            if choix_DH == 'YES':
+                self.production_unite_defense_combat()
+                self.production_unite_defense_production()
+
+    
+    def production_unite_defense_combat(self):
         if (self.L_joueur[0].metal_tot>=Constante.cout_M_RC and self.L_joueur[0].energie_tot>=Constante.cout_E_RC):
-            choix_DH=input("construire un robot de combat ? (YES/NO)")
+            choix_DH=input("construire un robot de combat?  (YES/NO)")
             if choix_DH=='YES':
+                
                 x_inf = (self.__xmax )//2 -1
                 x_sup = (self.__xmax)//2 +2
                 y_inf =  (self.__ymax)//2 - 1
@@ -197,6 +181,45 @@ class Un_Tour_Du_Joueur():
                         k = L.find(',')
                         X,Y = int(L[0:k]) , int(L[k+1:])
                 U=Robot_combat(self.L_joueur[0]._role,self._carte,X,Y)
+                self.L_joueur[0]._liste_unite.append(U)
+                self.L_joueur[0].metal_tot=self.L_joueur[0].metal_tot-Constante.cout_M_P
+                self.L_joueur[0].energie_tot=self.L_joueur[0].energie_tot-Constante.cout_E_P
+                print("Energie restante :", self.L_joueur[0].energie_tot, "\n")
+                print("Métal restant :", self.L_joueur[0].energie_tot, "\n")
+                                                                    
+            elif choix_DH=='NO':
+                pass
+            
+    def production_unite_defense_production(self):
+        if (self.L_joueur[0].metal_tot>=Constante.cout_M_RO and self.L_joueur[0].energie_tot>=Constante.cout_E_RO):
+            choix_DH=input("Construire un robot ouvrier?  (YES/NO)")
+            if choix_DH=='YES':
+                
+                x_inf = (self.__xmax )//2 -1
+                x_sup = (self.__xmax)//2 +2
+                y_inf =  (self.__ymax)//2 - 1
+                y_sup = (self.__ymax)//2 +2
+                #A VERIF
+
+                L_pos = self.placement_pos(x_inf,x_sup,y_inf,y_sup,' ')
+                if len(L_pos) == 0:
+                    print('Aucune position disponible, étape suivante. \n')
+                else:
+                    print('Positions possibles :', L_pos)
+                    L = input('Envoyez la nouvelle position en x et en y (format x,y). \n')
+                    k = L.find(',')
+                    while k == -1:
+                        print("Erreur de synthaxe. Recommencez svp")
+                        L = input('Envoyez la nouvelle position en x et en y (format x,y). \n')
+                        k = L.find(',')
+                    X = int(L[0:k])
+                    Y = int(L[k+1:])
+                    while (X,Y) not in L_pos:
+                        print("Position hors du rayon d'action de l'unité. \n")
+                        L = input('Envoyez la nouvelle position en x et en y (format x,y). \n')
+                        k = L.find(',')
+                        X,Y = int(L[0:k]) , int(L[k+1:])
+                U=Robot_Ouvrier(self.L_joueur[0]._role,self._carte,X,Y)
                 self.L_joueur[0]._liste_unite.append(U)
                 self.L_joueur[0].metal_tot=self.L_joueur[0].metal_tot-Constante.cout_M_P
                 self.L_joueur[0].energie_tot=self.L_joueur[0].energie_tot-Constante.cout_E_P
@@ -327,19 +350,7 @@ class Un_Tour_Du_Joueur():
                         print("Aucune zone d'apparition d'unité disponible, étape suivante. \n")
                         break
 
-    def placement_pos_unite(L,C):
-            l = len(L)
-            c = len(C)
-            L_pos_disp = []
-            for i in range(l):
-                for j in range(c):
-                    Obj = Un_Tour_Du_Joueur._carte.ss_carte[i][j]
-                    if Obj == ' ' :
-                        L_pos_disp .append((i,j))                   
-            if L_pos_disp==[]:
-                print("Aucun emplacement dispo")
-            return(L_pos_disp )
-                
+
 
 
     def Zone_Nord(self):
@@ -415,7 +426,7 @@ class Un_Tour_Du_Joueur():
                         c.bouger()
                 else : 
                     c.bouger()
-                c.combat()
+                c.action()
 
         self.unite_disp_par_tour += Constante.nbe_unite_ajoute
         if self.unite_disp_par_tour > min(self.L,self.H):

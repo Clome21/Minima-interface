@@ -2,12 +2,12 @@ from numpy.random import randint,choice
 from Constantes import Constante
 import numpy as np
 import math
-from PyQt5 import QtGui, QtCore, QtWidgets
-
-from abc import ABC, abstractmethod
 
 
-class Unite_IA_Facile(ABC):
+
+
+
+class Unite_IA_Facile():
     """
     Classe décrivant les comportement par défaut de l'IA niv facile. Peut-être 
     utilisée en l'état ou sous classée pour définir des comportements de
@@ -131,10 +131,6 @@ class Unite_IA_Facile(ABC):
         if value <= 0:  # <= car certaines cases enlèvent plus de 1 en santé
             value = 0   # ce qui gèrera les décès plus tard
 
-    @abstractmethod
-    def dessin(self,QPainter):
-        ...
-    
     def affichage(self):
         print(str(self))
               
@@ -154,9 +150,9 @@ class Unite_IA_Facile(ABC):
             Ennemi.sante = Ennemi.sante - self.capcbt
             if Ennemi.sante <= 0:
                 role = Ennemi.T_car()
-                if role[-3:-1] == 'QG':
-                    self._carte.V_atta = 1
                 Ennemi.disparition()
+                if role[-2] + role[-1] == 'QG':
+                    self._carte.V_atta = 1
         else :
             print("%r n'a blessé personne"%(self.T_car()) )
     
@@ -311,9 +307,8 @@ class Unite_IA_Facile(ABC):
         self._carte.ss_carte[x][y] = ' '
         k = self.num_joueur
         self._carte.L_joueur[k]._liste_unite.remove(self)
-       
         
-
+        
 class Scorpion0(Unite_IA_Facile):
 
     
@@ -353,13 +348,12 @@ class Scorpion0(Unite_IA_Facile):
             self.coords = (X,Y)
             self._carte.ss_carte[xi][yi], self._carte.ss_carte[X][Y] = self._carte.ss_carte[X][Y], self._carte.ss_carte[xi][yi]
         return(self.coords)
+    
+    def action(self):
+        self.combat()
+        return(None)
         
         
-        
-    def dessin(self,QPainter):        
-        QPainter.setPen(QtCore.Qt.red)
-        x,y = self.coords
-        QPainter.drawEllipse(x,y, 10, 10)
 
 
 

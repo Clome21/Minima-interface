@@ -46,7 +46,7 @@ class Unites_Humain_Defenseur():
     def __str__(self):
         """
         Affiche l'état courant de l'unité.
-        
+7        
         Paramètres
         ----------
         Aucun
@@ -82,7 +82,7 @@ class Unites_Humain_Defenseur():
         print(str(self))
 
 
-    def bouger(self):
+    def bouger(self,X,Y):
         """
         Mouvement de l'unité, choisie par l'utilisateur. Elle a lieu dans un rayon correspondant 
         à la capacité de mouvement autour de la position courante. Utilise l'accesseur coords.
@@ -90,22 +90,22 @@ class Unites_Humain_Defenseur():
 
         L_vide = self.mvt_poss()
         xi, yi = self.coords
-        if len(L_vide) == 0:
-            print("Aucun mouvement possible pour l'unité, étape suivante")
-            return(None)
-        print("Mouvements possibles :", L_vide)
-        L = input('Envoyez la nouvelle position en x et en y (format x,y). \n')
-        k = L.find(',')
-        X = int(L[0:k])
-        Y = int(L[k+1:])
-        while (X,Y) not in L_vide:
-            print("Position hors du rayon d'action de l'unité. \n")
-            L = input('Envoyez la nouvelle position en x et en y (format x,y). \n')
-            k = L.find(',')
-            X,Y = int(L[0:k]) , int(L[k+1:])
-        self.coords = (X, Y)
-        self._carte.ss_carte[xi][yi], self._carte.ss_carte[X][Y] = self._carte.ss_carte[X][Y], self._carte.ss_carte[xi][yi]
-        return(self.coords)  
+#        if len(L_vide) == 0:
+#            print("Aucun mouvement possible pour l'unité, étape suivante")
+#            return(None)
+#        print("Mouvements possibles :", L_vide)
+#        L = input('Envoyez la nouvelle position en x et en y (format x,y). \n')
+#        k = L.find(',')
+#        X = int(L[0:k])
+#        Y = int(L[k+1:])
+        if (X,Y) in L_vide:
+#            print("Position hors du rayon d'action de l'unité. \n")
+#            L = input('Envoyez la nouvelle position en x et en y (format x,y). \n')
+#            k = L.find(',')
+#            X,Y = int(L[0:k]) , int(L[k+1:])
+            self.coords = (X, Y)
+            self._carte.ss_carte[xi][yi], self._carte.ss_carte[X][Y] = self._carte.ss_carte[X][Y], self._carte.ss_carte[xi][yi]
+            return(self.coords)  
     
     def mvt_poss2(self):
         x,y = self.coords
@@ -252,8 +252,6 @@ class Unites_Humain_Defenseur():
 
         self.__coords = (x, y)
 
-
-
     @property
     def sante(self):
         """
@@ -326,7 +324,7 @@ class Unites_Humain_Defenseur():
                 Obj = self._carte.ss_carte[i][j]
                 if Obj != ' ' and Obj !='/' and Obj.T_car()[0] == 'A':
                     R_Obj = math.sqrt((x-i)**2 + (y-j)**2)
-                    print(R_Obj,Obj)
+
 
                     if  R_Obj < R_plus_petit_unit:
                         R_plus_petit_unit = R_Obj
@@ -340,13 +338,41 @@ class Unites_Humain_Defenseur():
         self._carte.remove(self)
         self._carte.ss_carte[x][y] = ' '
         self._carte.L_joueur[0]._liste_unite.remove(self)
-        
-        
-    def dessin(self,QPainter):
-        
-        QPainter.setPen(QtCore.Qt.red)
+    
+    def chx_ressources(self):
         x,y = self.coords
-        QPainter.drawEllipse(x,y, 10, 10)
+        x_inf = max(0, int(-self.zonecap) + x)
+        x_sup = min(self._carte.dims[0]-1, int(self.zonecap + x))
+        y_inf = max(0,int(-self.zonecap) + y)
+        y_sup = min(self._carte.dims[1]-1, int(self.zonecap + y))
+        
+        Ress = None
+        R_plus_petit = self.zonecap +1
+        
+        for i in range(x_inf,x_sup+1):
+            for j in range(y_inf,y_sup+1):
+                Obj = self._carte.ss_carte[i][j]
+                if Obj != ' ' and Obj !='/' and Obj.T_car()[-1] == 'M':
+                    R_Obj = math.sqrt((x-i)**2 + (y-j)**2)
+                    if  R_Obj < R_plus_petit:
+                        R_plus_petit = R_Obj
+                        Ress = Obj
+                    
+        return(Ress)
+    
+    def capture_ressources(self):
+        Ress = self.chx_ressources()
+        if Ress != None:
+            print("%s a trouvé du métal! Sa valeur est de %r."%(self.T_car(),Ress.valeur))
+            self._carte.L_joueur[0].metal_tot += Ress.valeur
+            Ress.disparition()
+
+                    
+        
+        
+        
+
+        
     
     
 class Robot_combat(Unites_Humain_Defenseur):
@@ -393,3 +419,50 @@ class Robot_combat(Unites_Humain_Defenseur):
     def T_car(self):
         """ Renvoie l'ensemble des caractéristiques de l'objet étudié """
         return "D_U_RC%i"%( self.id )
+    
+    def action(self):
+        self.combat()
+        return(None)
+    
+class Robot_Ouvrier(Unites_Humain_Defenseur):
+    Id = 0
+    def __init__(self, role, carte,x,y, L_ennemi = []):
+        """Permet d'initialiser l'unité.
+            
+    Paramètres
+    ----------
+    
+    role : str
+    Le rôle du joueur possèdant l'unité
+            
+    carte : classe Map
+    La carte sur laquelle évolue l'unité.
+
+    x, y : int
+    Les coordonnées de l'unité en abscisse et en ordonnée
+
+    L_ennemis : liste
+    Contient l'ensemble des joueurs ennemis de l'unité.
+    
+        """
+        self.__sante = 10
+        super().__init__(x,y,carte,role,self.__sante)
+        self.id = Robot_Ouvrier.Id
+        Robot_Ouvrier.Id += 1
+        self.L_ennemi = L_ennemi
+        self.num_joueur = 0
+
+        self.capmvt = Constante.capmvt_RO
+        self.zonecap = math.sqrt(2)
+    
+    
+    def car(self):
+        return "RO"
+    
+    def T_car(self):
+        """ Renvoie l'ensemble des caractéristiques de l'objet étudié """
+        return "D_U_RO%i"%( self.id )
+        
+    def action(self):
+        self.capture_ressources()
+        return(None)

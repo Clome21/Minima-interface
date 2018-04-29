@@ -10,19 +10,19 @@ from Constantes import Constante
 class Joueur(object):
     def __init__(self, role):
         """ 
-        Crée la liste des bâtiments, des unités, ainsi que des joueurs ennemis 
-        et des autres joueurs en jeu pour chaque joueur.
+        Crée la liste des bâtiments et des unités pour chaque joueur.
+        Fixe également l'ensemble des variables qu'un joueur peut posséder.
+        (sachant que selon le rôle du joueur, certaines ne seront jamais 
+        modifiées).
     
     Paramètres
     ----------
         role: str
             Le rôle du joueur dans la partie.
         """
-        self.L_autres_joueurs = []
         self._role = role
         self._liste_unite = []
         self._liste_bat = [[],[],[]]
-        self.L_ennemi = []
         self.metal_tot = 0
         self.energie_tot = 0
         self.nbe_unite_restantes = 0
