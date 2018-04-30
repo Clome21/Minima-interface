@@ -11,7 +11,8 @@ class Un_Tour_Joueur_Hn():
 
 
     
-    def __init__(self,carte):
+    def __init__(self,carte,IHM):
+        self.IHM = IHM            
         self._carte = carte
         self.L_joueur = self._carte.L_joueur
         self.unite_disp_par_tour = 0
@@ -332,6 +333,10 @@ class Un_Tour_Joueur_Hn():
         """
         # rnd.shuffle(self)    Utile si gestion des collisions
 
+    #Pour print : créer une fonction IHM.fenetre(chaine de carac), qui affiche dans une fenêtre la chaîne de caractère.
+    
+    # Faire les modifications IHM ici!
+        
         n = len(self.L_joueur)
         for k in range(n):
             if self._carte.V_atta == 1:
