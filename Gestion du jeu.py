@@ -25,7 +25,7 @@ class MonAppli(QtWidgets.QMainWindow):
         self.setMouseTracking(True)
 
         # Configuration de l'interface utilisateur.
-        self.partie = Partie(1,1)  
+        self.partie = Partie(1,1,self)  
         self.carte=self.partie.carte
         self.ui = Ui_Minima_Accueil()
         self.ui.setupUi(self,self.carte)
@@ -390,7 +390,6 @@ class MonAppli(QtWidgets.QMainWindow):
         u = QtCore.QRectF(QG.x*36,QG.y*36, 36, 36)
         QPainter.fillRect(u,QtGui.QColor(135,206,235))
 
-                
     def dessin_Foreuse(self,QPainter,Foreuse):
         u = QtCore.QRectF(Foreuse.x*36,Foreuse.y*36,36,36)
         QPainter.fillRect(u,QtGui.QColor(255,140,0))
@@ -407,32 +406,32 @@ class MonAppli(QtWidgets.QMainWindow):
         qp.drawRect(u)
     
     def simuler(self):
-        
+        self.partie.carte.simuler()
        
-            t= self.tr_actuel 
-            print("### Tour %i ###"%(t))
-                                    
-            if t%5==0:
-                self.carte.apparition_ressource()
-            self.maj_compteur_ressources()
-            
+#            t= self.tr_actuel 
+ #           print("### Tour %i ###"%(t))
+  #                                  
+   #         if t%5==0:
+    #            self.carte.apparition_ressource()
+     #       self.maj_compteur_ressources()
+      #      
 
-            self.unTourHn()
-            self.unTourIA()
+#            self.unTourHn()
+ #           self.unTourIA()
             
-            print(self)
-            time.sleep(0.2)
+  #          print(self)
+   #         time.sleep(0.2)
             
-            if self.partie.carte.V_atta==1:
-                print("Les attaquants gagnent!")
+    #        if self.partie.carte.V_atta==1:
+     #           print("Les attaquants gagnent!")
                 
             
-            if t==self.nbtour:
-                print("Fin de partie")
-                if len(self.partie.L_joueur[0]._liste_bat[0]) !=0:
-                    print("Le défenseur gagne!")
-                else:
-                    print("Les attaquants gagnent!")
+      #      if t==self.nbtour:
+       #         print("Fin de partie")
+        #        if len(self.partie.L_joueur[0]._liste_bat[0]) !=0:
+         #           print("Le défenseur gagne!")
+          #      else:
+           #         print("Les attaquants gagnent!")
     def unTourIA(self):
         #n = len(self.L_joueur)
         
