@@ -20,7 +20,7 @@ class Partie():
     le jeu.
     """
 
-    def __init__(self, nb_ia , nb_hn = 1,IHM):
+    def __init__(self, nb_ia , nb_hn = 1,IHM = 0):
         
         """
         Permet de créer la partie, à partir du nombre de joueurs (humains et IA)
