@@ -17,7 +17,7 @@ class Map(list):
     Classe gérant le placement de toutes les unités sur le plateau de jeu, ainsi
     que le déroulement du jeu.
     """
-    def __init__(self,L_joueur,l =0):
+    def __init__(self,L_joueur,l =0, IHM):
         """
         Permet la création d'un objet carte.
         Cette initialisation a deux comportements différents, selon la variable 
@@ -50,7 +50,8 @@ class Map(list):
         --------
         Rien
         """
-        
+        if typ(IHM) != int:
+            self.IHM = IHM
         if l == 0 :
             
             self.__xmax = Constante.xmax
@@ -91,8 +92,8 @@ class Map(list):
             
         self.spawn_ress=Constante.spawn_ress
 
-        self.TrHn = Un_Tour_Joueur_Hn(self)
-        self.TrIA = Un_Tour_Joueur_IA(self)
+        self.TrHn = Un_Tour_Joueur_Hn(self,IHM)
+        self.TrIA = Un_Tour_Joueur_IA(self,IHM)
 
         self.V_atta = 0
 
@@ -154,55 +155,58 @@ class Map(list):
             La chaîne de caractères correspondant à une représentation du plateau
             de jeu.
         """
+        if typ(IHM) != int:
+            IHM.l = 1
+            IHM.paintEvent(2)
+        else:            
+            pos={}
+            s=""
 
-        pos={}
-        s=""
-         
-        for obj in self:
-            pos[obj.coords]=obj.car()
-        for i in range(self.__xmax):
-            for j in range(self.__ymax): 
-                
-                if self.ss_carte[i][j] == '/':
-                    s += "/" #Mur de protection
-                
-                #Dessin des lignes des murs du haut ou des murs du bas.
-                
-                elif i == (self.__xmax - self.L )//2 or i == (self.__xmax + self.L )//2-1:
-                    if j<= self.Epp or j >=self.__ymax - self.Epp :
-                        s += '!'
-                    else:
-                        s += '.'                        
-                
-                #Dessin des lignes correspondants à la zone de construction.
-                
-                elif i >= (self.__xmax - self.L )//2+1 and i < (self.__xmax + self.L )//2-1 :
-                    if j >= (self.__ymax -self.H)//2 +1 and j< (self.__ymax + self.H )//2-1:
-                        s += "#" #zone constructible
-                    elif j<= self.Epp or j >=self.__ymax - self.Epp :
-                        s += "!"
+            for obj in self:
+                pos[obj.coords]=obj.car()
+            for i in range(self.__xmax):
+                for j in range(self.__ymax): 
+
+                    if self.ss_carte[i][j] == '/':
+                        s += "/" #Mur de protection
+
+                    #Dessin des lignes des murs du haut ou des murs du bas.
+
+                    elif i == (self.__xmax - self.L )//2 or i == (self.__xmax + self.L )//2-1:
+                        if j<= self.Epp or j >=self.__ymax - self.Epp :
+                            s += '!'
+                        else:
+                            s += '.'                        
+
+                    #Dessin des lignes correspondants à la zone de construction.
+
+                    elif i >= (self.__xmax - self.L )//2+1 and i < (self.__xmax + self.L )//2-1 :
+                        if j >= (self.__ymax -self.H)//2 +1 and j< (self.__ymax + self.H )//2-1:
+                            s += "#" #zone constructible
+                        elif j<= self.Epp or j >=self.__ymax - self.Epp :
+                            s += "!"
+                        else:
+                            s += "."
+
+                    #Dessin des lignes correspondant aux zones d'apparition du haut et du bas.
+
+                    elif i<= self.Epp or i >= self.__xmax - 1 - self.Epp :
+                        if j >= (self.__ymax -self.H)//2  and j< (self.__ymax + self.H )//2+1:
+                            s += "!"
+                        else:
+                            s+= "."
+
                     else:
                         s += "."
-                
-                #Dessin des lignes correspondant aux zones d'apparition du haut et du bas.
-                
-                elif i<= self.Epp or i >= self.__xmax - 1 - self.Epp :
-                    if j >= (self.__ymax -self.H)//2  and j< (self.__ymax + self.H )//2+1:
-                        s += "!"
+                    if (i, j) in pos:
+                        s += pos[(i,j)]
                     else:
-                        s+= "."
-                
-                else:
-                    s += "."
-                if (i, j) in pos:
-                    s += pos[(i,j)]
-                else:
-                    s += "  "
-            if i >= (self.__xmax - self.L )//2 and i < (self.__xmax + self.L )//2:
-                s += "! \n"
-            else: 
-                s += ". \n"
-        return s
+                        s += "  "
+                if i >= (self.__xmax - self.L )//2 and i < (self.__xmax + self.L )//2:
+                    s += "! \n"
+                else: 
+                    s += ". \n"
+            return s
         
     def apparition_ressource(self):
         """
@@ -259,9 +263,11 @@ class Map(list):
         L_bat = self.L_joueur[0]._liste_bat
         self.L_joueur[0].energie_tot += len(L_bat[1])*Constante.prod_E_P + Constante.prod_E_QG
         self.L_joueur[0].metal_tot += len(L_bat[2])*Constante.prod_M_F + Constante.prod_M_QG
-
-        print('energie total = ' + str(self.L_joueur[0].energie_tot))
-        print('metal total = ' + str(self.L_joueur[0].metal_tot))                
+        if typ(IHM) =! int:
+            self.IHM.maj_compteur_ressources()
+        else:
+            print('energie total = ' + str(self.L_joueur[0].energie_tot))
+            print('metal total = ' + str(self.L_joueur[0].metal_tot))                
         
 
 
@@ -293,21 +299,21 @@ class Map(list):
             self.tr_actuel = t
             print("### Tour %i ###"%(t))
                   
-            Chx = input("Sauvegarder/Charger? (S pour sauvegarder, C pour charger, rien sinon) \n")
-            if Chx == "S":
-                name = input("Entrez le nom de la sauvegarde \n")
-                name = name + ".txt"
-                self.Save = sl.Save(name,self)
-            elif Chx == "C":
-                name = input("Entrez le nom de votre sauvegarde \n")
-                name = name + ".txt"    
-                self.Load = sl.Load(name)
-                if self.Load.Nme == 'Q':
-                    print("### Tour %i ###"%(t))
-                else:
-                    Chx = ' '
-                    self.Load.Lcarte.simuler()
-                    break
+#            Chx = input("Sauvegarder/Charger? (S pour sauvegarder, C pour charger, rien sinon) \n")
+ #           if Chx == "S":
+  #              name = input("Entrez le nom de la sauvegarde \n")
+   #             name = name + ".txt"
+     #           self.Save = sl.Save(name,self)
+    #        elif Chx == "C":
+      #          name = input("Entrez le nom de votre sauvegarde \n")
+       #         name = name + ".txt"    
+        #        self.Load = sl.Load(name)
+         #       if self.Load.Nme == 'Q':
+          #          print("### Tour %i ###"%(t))
+           #     else:
+            #        Chx = ' '
+             #       self.Load.Lcarte.simuler()
+              #      break
 
                   
                   
@@ -317,8 +323,8 @@ class Map(list):
                     
             self.ressource_tot()
 
-            self.TrHn.unTourHn()
-            self.TrIA.unTourIA()
+            self.TrHn.unTourHn(self)
+            self.TrIA.unTourIA(self)
             
                         
             for obj in self:
