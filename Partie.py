@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 """
 Éditeur de Spyder
-
-Ceci est un script temporaire.
 """
 import Map
 
@@ -16,19 +14,18 @@ from Constantes import Constante
 from Unites_Hn_Attaquant import Scorpion
 from Unites_Hn_Defenseur import Robot_combat
 
-# from dprint import dprint
-
 class Partie():
     """
     Classe mère, contenant l'ensemble des propriétés des objets intervenant dans
     le jeu.
     """
 
-    def __init__(self, nb_ia , nb_hn = 1):
+    def __init__(self, nb_ia , nb_hn = 1,IHM):
         
         """
-        Permet de débuter la partie. 
-            
+        Permet de créer la partie, à partir du nombre de joueurs (humains et IA)
+        mis en entrée.
+        
     Paramètres
     ----------
         nb_ia: int
@@ -37,7 +34,7 @@ class Partie():
         nb_hn : int
             Le nombre de joueurs humains.
         """
-        
+        self.IHM = IHM
         self.L_joueur = [Joueur('DH')]
         self.nb_hn = nb_hn - 1
         Posdisp = [ str(k) for k in range(self.nb_hn+nb_ia)]
@@ -64,23 +61,14 @@ class Partie():
             nb_ia_2 -= 1
             
         self.mise_en_place()
-        self.carte = Map.Map(self.L_joueur)
+        self.carte = Map.Map(self.L_joueur,0,self.IHM)
     
     def mise_en_place(self):
         """
         Méthode exécutant les ajustements de base pour débuter la partie, sur chaque
         joueur.
-#        """
+        """
 
-#        n = len( self.L_joueur )
-#        for k in range(n):
-#            J_vu = self.L_joueur[k]
-#            role = J_vu._role
-#            if role[0:1] == 'A':
-#                J_vu.L_ennemi = [self.L_joueur[0] ]
-#            else : 
-#                J_vu.L_ennemi = self.L_joueur[1:n] 
-#            J_vu.L_autres_joueurs = self.L_joueur[0:k] + self.L_joueur[k+1:n]
         self.L_joueur[0].metal_tot, self.L_joueur[0].energie_tot = Constante.metal_tot, Constante.energie_tot
     
     def choix_niveau(self,nb_ia):
@@ -89,15 +77,15 @@ class Partie():
         
         Paramètres
         ----------
-        Entrée :
         
         nb_ia: int
             Le nombre de joueurs IA.
         
-        Sortie : 
+        Renvoie 
+        ---------
             
-        nb_ia_i (i entre 0 et 2) : le nombre d'IA de niveau i, choisies par le 
-        joueur humain.         
+        nb_ia_i (i entre 0 et 2) : int
+            Le nombre d'IA de niveau i, choisies par le joueur humain.         
         
     
                 """
@@ -129,13 +117,5 @@ class Partie():
 
 
 if __name__ == "__main__":
-    Game = Partie(0,2)
-#    Game.L_joueur[1]._liste_unite.append( Scorpion('AH0',Game.carte,0,1, Game.L_joueur[1].L_ennemi, Game.L_joueur[1].L_autres_joueurs ) )
- #   Game.L_joueur[0]._liste_unite.append( Robot_combat('DH',Game.carte,1,1, Game.L_joueur[0].L_ennemi) )
-  #  Game.L_joueur[0]._liste_unite.append( Robot_combat('DH', Game.carte,1,0, Game.L_joueur[0].L_ennemi) )
+    Game = Partie(4,)
     Game.carte.simuler()
-
-    
-    
-
-
