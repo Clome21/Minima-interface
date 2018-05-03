@@ -134,14 +134,27 @@ class Unite_IA_Facile():
     def affichage(self):
         print(str(self))
               
-            
     def combat(self):
         """
         Méthode permettant à l'unité de combattre, si un objet ennemi se trouve 
         dans sa zone d'attaque.
         L'unité recherche les ennemis dans sa zone de combat et sélectionne 
         l'objet le plus proche grâce à la méthode chx_ennemi.
-        Si il y a bien un objet, celui-ci perd de la vie.
+        Si il n'y a pas d'objet à attaquer, la méthode le signale.
+        Si il y a bien un objet, la méthode signale quel est l'objet blessé par l'unité.
+        Cet objet perd alors de la vie, et est supprimé si sa santé devient nulle 
+        ou négative.
+        Si cet objet détruit est le QG, la variable V_atta, désignant la victoire ou non
+        des attaquants, passe à 1. Les attaquants gagnent alors.
+        
+        Paramètres : 
+        ------------
+        Aucun.
+        
+        Renvoie :
+        ----------
+        Rien.
+        
         """
 
         Ennemi = self.chx_ennemi()
@@ -153,22 +166,32 @@ class Unite_IA_Facile():
                 Ennemi.disparition()
                 if role[-2] + role[-1] == 'QG':
                     self._carte.V_atta = 1
+                    self._carte.fin_de_partie()
+
         else :
-            print("%r n'a blessé personne"%(self.T_car()) )
+            print("%s n'a blessé personne"%(self.T_car()) )
+ 
     
     def chx_ennemi(self):
         """
-        Méthode sélectionnant l'objet le plus proche de l'unité.
-        Elle parcourt pour chaque joueur ennemi l'ensemble des unités qu'elle
-        possède, et sélectionne le plus proche.
-        Elle vérifie ensuite si il n'y a pas un bâtiment plus proche.
+        Méthode sélectionnant l'objet ennemi le plus proche de l'unité.
+        Elle parcourt les cases dans le rayon d'attaque de l'unité, et sélectionne
+        les objets ennemis dans ce rayon.
+        Elle sélectionne en priorité les unités ennemis les plus proches; mais si
+        un batiment ennemi est plus proche de l'unité que les autres unités ennemis, 
+        l'unité en train de combattre attaquera alors le batiment.
         
         Paramètres
         ----------
-        L_ennemis : liste
-        Contient l'ensemble des joueurs ennemis de l'unité.
-
+        Aucun
+        
+        Renvoie :
+        ----------
+        Ennemi : Objet (Unité ou Batiment)
+            L'ennemi le plus proche de l'unité en train de combattre.
+        
         """
+
         x,y = self.coords
         x_inf = max(0,int(-self.zonecbt + x))
         x_sup = min(self._carte.dims[0]-1, int(self.zonecbt + x))
@@ -200,6 +223,152 @@ class Unite_IA_Facile():
                         Ennemi = Obj
         
         return(Ennemi)
+    
+    def chx_ennemi_rec(self,A,x,y):
+        """
+        Méthode sélectionnant l'objet ennemi le plus proche de l'unité, de façon
+        récursive.
+        Cette méthode se base sur la technique de "Diviser pour régner". Elle sélectionne
+        la sous-carte contenant les cases dans le rayon de combat de l'unité.
+        Elle coupe ensuite cette sous-carte en quatres carrés plus petits, jusqu'à
+        ce que ce carré soit de taille (1,1).
+        Elle détermine alors si l'unité sur cette case est un batiment, ou une unité,
+        et renvoie alors sa distance par rapport à l'unité combattante.
+        
+        Elle compare ensuite les distances des unités (et des batiments) par rapport
+        à l'unité combattante, et renvoie l'unité ennemie la plus proche, sa distance
+        par rapport à l'unité combattante, le batiment ennemi le plus proche, et sa
+        distance par rapport à l'unité combattante.
+
+        
+        Paramètres
+        ----------
+        A : array
+            Sous-carte contenant une partie (la totalité au départ) des cases 
+            dans le rayon de combat de l'unité combattante.
+            
+        x,y : int
+            Abscisse et ordonnée de l'unité combattante.
+        
+        Renvoie :
+        ----------
+        umin : Objet Unité 
+            L'unité ennemie la plus proche de l'unité combattante.
+            
+        r_min_u : float
+            La distance entre l'unité ennemie la plus proche de l'unité
+            combattante et l'unité combattante.
+        
+        bmin : Objet Batiment
+            Le batiment ennemi le plus proche de l'unité combattante.
+        
+        r_min_b : float
+            La distance entre le batiment ennemi le plus proche de l'unité
+            combattante et l'unité combattante.
+        
+        """
+        if np.shape(A) == (1,1):
+            v = A[0,0]
+            if v == ' ' or v == '/':
+                return((None,self.zonecbt+1,None,self.zonecbt+1))
+            elif v.T_car()[0] == 'D':
+                i,j = v.coords
+                R = math.sqrt((x-i)**2+(y-j)**2)
+                if v.T_car()[2] == 'B':
+                    return((None,self.zonecbt+1,v,R))
+                elif v.T_car()[2] == 'U':
+                    return((v,R,None,self.zonecbt+1))
+            else:
+                return((None,self.zonecbt+1,None,self.zonecbt+1))
+
+        elif np.shape(A) == (0,0) or A.tolist() == [] or A.tolist()[0] == []:
+            print("OK")
+            return((None,self.zonecbt+1,None,self.zonecbt+1))
+
+        else : 
+            l,c = np.shape(A)
+            A1 = A[l//2:,c//2:]
+            A2 = A[l//2:,:c//2]
+            A3 = A[:l//2,c//2:]
+            A4 = A[:l//2,:c//2]
+
+#            print(A1,A2,A3,A4)
+#            print(np.shape(A1))
+#            print(np.shape(A2))
+#            print(np.shape(A3))
+#            print(np.shape(A4))
+            
+            U1,ru1,B1,rb1 = self.chx_ennemi_rec(A1,x,y)
+            U2,ru2,B2,rb2 = self.chx_ennemi_rec(A2,x,y)
+            U3,ru3,B3,rb3 = self.chx_ennemi_rec(A3,x,y)
+            U4,ru4,B4,rb4 = self.chx_ennemi_rec(A4,x,y)
+            
+            Lu = [ru1,ru2,ru3,ru4]
+            LU = [U1,U2,U3,U4]
+            Lb = [rb1,rb2,rb3,rb4]
+            LB = [B1,B2,B3,B4]
+            
+            r_min_u = min(Lu)
+            umin = LU[ Lu.index(r_min_u) ]
+            
+            r_min_b = min(Lb)
+            bmin = LB[ Lb.index(r_min_b) ]
+            
+            return(umin,r_min_u,bmin,r_min_b)
+            
+    def combat_rec(self):
+        """
+        
+        Méthode permettant à l'unité de combattre, si un objet ennemi se trouve 
+        dans sa zone d'attaque.
+        Elle sélectionne les cases de la sous-carte correspondant à la zone d'attaque
+        de l'unité combattante, et applique la méthode chx_ennemi_rec pour trouver
+        le batiment et l'unité ennemie les plus proches. Cette dernière méthode est
+        récursive.
+        Si il n'y a pas d'objet à attaquer, la méthode le signale.
+        Si il y a bien un objet, la méthode sélectionne lequel des deux est le plus
+        proche de l'unité combattante. Cet objet est alors blessé : il perd de la vie, 
+        et est supprimé si sa santé devient nulle ou négative.
+        Si cet objet détruit est le QG, la variable V_atta, désignant la victoire ou non
+        des attaquants, passe à 1. Les attaquants gagnent alors.
+        La méthode signale également quel est l'objet blessé par l'unité.
+        
+        Paramètres :
+        ------------
+        Aucun.
+        
+        Renvoie :
+        ---------
+        Rien.
+        
+        """
+        x,y = self.coords
+        x_inf = max(0,int(-self.zonecbt + x))
+        x_sup = min(self._carte.dims[0]-1, int(self.zonecbt + x))
+        y_inf = max(0,int(-self.zonecbt + y))
+        y_sup = min(self._carte.dims[1]-1, int(self.zonecbt + y))
+        
+        A = self._carte.ss_carte[x_inf:x_sup+1,y_inf:y_sup+1]
+        
+        U,r_min_u,B,r_min_b = self.chx_ennemi_rec(A,x,y)
+        
+        if U == None and B == None:
+            print("%s n'a blessé personne"%(self.T_car()) )
+        else:
+            if r_min_u > r_min_b:
+                Ennemi = B
+            else:
+                Ennemi = U
+            
+            print( "%s a blessé %s"%(self.T_car(), Ennemi.T_car() ) )
+            Ennemi.sante = Ennemi.sante - self.capcbt
+            if Ennemi.sante <= 0:
+                role = Ennemi.T_car()
+                Ennemi.disparition()
+                if role[-2] + role[-1] == 'QG':
+                    self._carte.V_atta = 1
+                    self._carte.fin_de_partie()
+    
         
     def mvt_poss2(self):
         x,y = self.coords
@@ -350,7 +519,7 @@ class Scorpion0(Unite_IA_Facile):
         return(self.coords)
     
     def action(self):
-        self.combat()
+        self.combat_rec()
         return(None)
         
         

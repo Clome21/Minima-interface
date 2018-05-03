@@ -17,7 +17,7 @@ class Map(list):
     Classe gérant le placement de toutes les unités sur le plateau de jeu, ainsi
     que le déroulement du jeu.
     """
-    def __init__(self,L_joueur,l =0, IHM):
+    def __init__(self,L_joueur,l =0, IHM = 0):
         """
         Permet la création d'un objet carte.
         Cette initialisation a deux comportements différents, selon la variable 
@@ -50,8 +50,8 @@ class Map(list):
         --------
         Rien
         """
-        if typ(IHM) != int:
-            self.IHM = IHM
+
+        self.IHM = IHM
         if l == 0 :
             
             self.__xmax = Constante.xmax
@@ -155,9 +155,8 @@ class Map(list):
             La chaîne de caractères correspondant à une représentation du plateau
             de jeu.
         """
-        if typ(IHM) != int:
-            IHM.l = 1
-            IHM.paintEvent(2)
+        if type(self.IHM) != int:
+            return("IHM")
         else:            
             pos={}
             s=""
@@ -263,8 +262,9 @@ class Map(list):
         L_bat = self.L_joueur[0]._liste_bat
         self.L_joueur[0].energie_tot += len(L_bat[1])*Constante.prod_E_P + Constante.prod_E_QG
         self.L_joueur[0].metal_tot += len(L_bat[2])*Constante.prod_M_F + Constante.prod_M_QG
-        if typ(IHM) =! int:
+        if type(self.IHM) != int:
             self.IHM.maj_compteur_ressources()
+            self.IHM.activation_boutons()
         else:
             print('energie total = ' + str(self.L_joueur[0].energie_tot))
             print('metal total = ' + str(self.L_joueur[0].metal_tot))                
@@ -295,8 +295,9 @@ class Map(list):
         Rien  
         """
                             
-        for t in range(self.Ltr_actuel, self.nbtour):
-            self.tr_actuel = t
+        if self.tr_actuel < self.nbtour:
+            t = self.tr_actuel 
+            self.IHM.tr_en_crs = 1
             print("### Tour %i ###"%(t))
                   
 #            Chx = input("Sauvegarder/Charger? (S pour sauvegarder, C pour charger, rien sinon) \n")
@@ -322,22 +323,18 @@ class Map(list):
 
                     
             self.ressource_tot()
+            self.TrHn.deb_unTourHn()
 
-            self.TrHn.unTourHn(self)
-            self.TrIA.unTourIA(self)
-            
-                        
-            for obj in self:
-                obj.affichage()
-            
-            print(self)
-            time.sleep(0.2)
-            if self.V_atta == 1:
-                break
+        else:
+            self.fin_de_partie()
+             
+    def fin_de_partie(self):
+        print("Fin de partie \n")
+        if len(self.L_joueur[0]._liste_bat[0]) !=0:
+            print("Le défenseur gagne!")
+        else:
+            print("Les attaquants gagnent!")
         
-        if Chx != "C":
-            print("Fin de partie \n")
-            if len(self.L_joueur[0]._liste_bat[0]) !=0:
-                print("Le défenseur gagne!")
-            else:
-                print("Les attaquants gagnent!")
+        self.IHM.ui.Attaquant.hide()
+        self.IHM.ui.Defenseur.hide()
+        self.IHM.ui.Bouton_Findetour.hide()

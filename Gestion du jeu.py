@@ -25,15 +25,19 @@ class MonAppli(QtWidgets.QMainWindow):
         self.setMouseTracking(True)
 
         # Configuration de l'interface utilisateur.
-        self.partie = Partie(1,1,self)  
+        self.partie = Partie(4,1,self)  
         self.carte=self.partie.carte
         self.ui = Ui_Minima_Accueil()
         self.ui.setupUi(self,self.carte)
         
-        self.tr_actuel=0
-        self.nbtour=Constante.Lnbt
+        self.tr_en_crs =0
+        self.tr_Hn_en_crs = 0
+        self.nbtour=Constante.nbt
         self.k=0
-        
+        self.Obj = None
+        self.L_pos = []
+        self.tr_actuel = 0
+
 #        self.ui.Bouton_Generer.clicked.connect(self.generer)
 
         self.l = "i"
@@ -57,6 +61,7 @@ class MonAppli(QtWidgets.QMainWindow):
         self.y_sup = (self.__ymax)//2 +2
         
 
+
 #        self.ui.Button_Jouer.clicked.connect(self.test)
 #        self.ui.Button_Jouer.clicked.connect(self.ui.Minima_Accueil.close)
         
@@ -69,62 +74,106 @@ class MonAppli(QtWidgets.QMainWindow):
 
         self.ui.Button_Ready.clicked.connect(self.jeu)
         self.ui.Button_Ready.clicked.connect( self.ui.Button_Ready.hide)
+        self.ui.Button_Ready.clicked.connect(self.simuler)
         
         
         self.ui.lcdNumber_Metal.display(self.partie.L_joueur[0].metal_tot)
         self.ui.lcdNumber_Energie.display(self.partie.L_joueur[0].energie_tot)
         
               
-        self.ui.Bouton_Findetour.clicked.connect(self.tr_suivant)
+ #       self.ui.Bouton_Findetour.clicked.connect(self.tr_suivant)
         self.ui.Bouton_Findetour.clicked.connect(self.simuler) 
         self.ui.Bouton_Findetour.clicked.connect(self.jeu)
 #-------------------place un batiment
 
+        self.ui.Button_Foreuse.clicked.connect(self.active_for)
         self.ui.Button_Foreuse.clicked.connect(self.plac_for)
         self.ui.Button_Foreuse.clicked.connect(self.L_pos_bat)
-
         
+        self.ui.Button_Panneau_Solaire.clicked.connect(self.active_PS)
         self.ui.Button_Panneau_Solaire.clicked.connect(self.plac_PS)
         self.ui.Button_Panneau_Solaire.clicked.connect(self.L_pos_bat)
         
         self.ui.Button_J_D_B_Fermer.clicked.connect(self.raz)
         
 #-------------------production unité
-        
+        self.ui.Button_Robot_Combat.clicked.connect(self.active_RC)        
         self.ui.Button_Robot_Combat.clicked.connect(self.plac_RC)
         self.ui.Button_Robot_Combat.clicked.connect(self.L_pos_u)
         
+        self.ui.Button_Robot_Ouvrier.clicked.connect(self.active_RO)
         self.ui.Button_Robot_Ouvrier.clicked.connect(self.plac_RO)
         self.ui.Button_Robot_Ouvrier.clicked.connect(self.L_pos_u)
         
-        self.ui.Bouton_Generer.clicked.connect(self.bouger_u)
+        self.ui.Bouton_Generer.clicked.connect(self.gestion_deplacement)
         
         self.ui.Button_J_D_U_Fermer.clicked.connect(self.raz)
 
         
-
-
-
+    def active_for(self):
+        self.l = "pbf"
+        self.pos_souris_x=int
+        self.pos_souris_y=int
         
-#    def test(self):
-#        self.ui2 = Ui_Minima_Jeu(self.carte)
-#        self.ui.Minima_Jeu.show()
+
+    def active_PS(self):
+        self.l = "pbp"
+        self.pos_souris_x=int
+        self.pos_souris_y=int
         
-    def tr_suivant(self):
-        self.k+=1
-        if self.k>=len(self.partie.L_joueur):
-            self.k=0
-            self.tr_actuel+=1
+        
+    def active_RO(self):
+        self.l = "puro"
+        self.pos_souris_x=int
+        self.pos_souris_y=int
+        
+    
+    def active_RC(self):
+        self.l = "purc"
+        self.pos_souris_x=int
+        self.pos_souris_y=int
+        
+        
+#    def tr_suivant(self):
+#        self.partie.carte.TrHn.unTourHn()
+#        
+#        self.k+=1
+#        if self.k>=len(self.partie.L_joueur):
+#            self.k=0
+#            self.tr_actuel+=1
+    
+    def active_Sc(self):
+        self.l = "pus"
+        self.pos_souris_x = int
+        self.pos_souris_y = int
 
         
     def mouseDoubleClickEvent(self, event):
         if event.button() == QtCore.Qt.LeftButton :
             self.pos_souris_x=int((event.x()/36))
             self.pos_souris_y=int((event.y()/36))
+            self.info_obj()
+            self.bouger_poss_u()
+            self.plac_PS()
+            self.plac_for()
+            self.plac_RC()
+            self.plac_RO()
+            self.plac_Sc()
+
+            print(self.pos_souris_x,self.pos_souris_y)
         if event.button() == QtCore.Qt.RightButton :
             self.pos_souris_x_bouger=int((event.x()/36))
             self.pos_souris_y_bouger=int((event.y()/36))
+            self.bouger_u()
                
+    
+    def info_obj(self):
+        if type(self.pos_souris_x) == int:
+            Obj = self.carte.ss_carte[self.pos_souris_x][self.pos_souris_y]
+            print(Obj)
+            if Obj != ' ' and Obj != '/' :
+                Obj.affichage()
+        
         
     def raz(self):
         self.l = 1
@@ -132,12 +181,49 @@ class MonAppli(QtWidgets.QMainWindow):
         self.ui.conteneur.update()
     
     def bouger_u(self):
-        for unite in self.partie.L_joueur[0]._liste_unite:
-            if (self.pos_souris_x==unite.x and self.pos_souris_y==unite.y):
-                unite.bouger(self.pos_souris_x_bouger,self.pos_souris_y_bouger)
-                self.l="bg"
-                self.paintEvent(2)
-                self.ui.conteneur.update()
+
+        if self.Obj.T_car()[2] == 'U' or self.Obj.T_car()[4] == 'U':
+                if type(self.pos_souris_x_bouger) == int:
+                    self.Obj.bouger(self.pos_souris_x_bouger,self.pos_souris_y_bouger)
+                    self.pos_souris_x_bouger = int
+                    self.pos_souris_y_bouger = int
+            
+                    self.raz()
+                
+                
+    def bouger_poss_u(self):
+        if type(self.pos_souris_x) == int:
+            Obj = self.carte.ss_carte[self.pos_souris_x][self.pos_souris_y]
+            print(Obj)
+            if Obj != ' ' and Obj != '/':
+                Jr_en_crs = self.carte.TrHn.Jr_en_crs
+                role =self.carte.L_joueur[ Jr_en_crs ]._role
+                role_unit = Obj.T_car()
+                if Obj.T_car()[2] == 'U' and role[0:2] == "DH":
+                    # déplacement des unités du défenseur humain autorisé
+                    self.Obj = Obj
+                    self.l="bg"
+                    self.paintEvent(2)
+                    self.ui.conteneur.update()
+                elif Obj.T_car()[4] == 'U' and role[0:3] == role_unit[0:3]:
+                    # déplacement des unités de l'attaquant humain autorisé
+                    self.Obj = Obj
+                    self.l="bg"
+                    self.paintEvent(2)
+                    self.ui.conteneur.update()
+                    
+
+            
+        
+    
+            
+    def gestion_deplacement(self):
+        
+        self.bouger_poss_u()
+        
+        return(None)
+
+        
     
     def activation_boutons(self):
         if (self.partie.L_joueur[0].metal_tot>=Constante.cout_M_P and self.partie.L_joueur[0].energie_tot>=Constante.cout_E_P):
@@ -151,11 +237,16 @@ class MonAppli(QtWidgets.QMainWindow):
             self.ui.Button_Foreuse.setEnabled(False)
         if (self.partie.L_joueur[0].metal_tot>=Constante.cout_M_RC and self.partie.L_joueur[0].energie_tot>=Constante.cout_E_RC):
              self.ui.Button_Robot_Combat.setEnabled(True)
-
         else:
             self.ui.Button_Robot_Combat.setEnabled(False)
-            
-                
+        if (self.partie.L_joueur[0].metal_tot>=Constante.cout_M_RO and self.partie.L_joueur[0].energie_tot>=Constante.cout_E_RO):
+            self.ui.Button_Robot_Ouvrier.setEnabled(True)
+        else:
+            self.ui.Button_Robot_Ouvrier.setEnabled(False)
+        
+        Jr_en_crs = self.carte.TrHn.Jr_en_crs
+        if self.carte.L_joueur[Jr_en_crs].nbe_unite_restantes > 1:
+            """Activer / désactiver le bouton de placement d'attaquants. """
                 
         
         
@@ -163,60 +254,61 @@ class MonAppli(QtWidgets.QMainWindow):
     def maj_compteur_ressources(self):
         self.ui.lcdNumber_Metal.display(self.partie.L_joueur[0].metal_tot)
         self.ui.lcdNumber_Energie.display(self.partie.L_joueur[0].energie_tot)
-        self.ui.lcdNumber_Tours_restant.display(self.nbtour-self.tr_actuel)
+        self.ui.lcdNumber_Tours_restant.display(self.nbtour-self.carte.tr_actuel)
 
 
     def plac_RC(self):
-        self.activation_boutons()
-        self.partie.carte.TrHn.production_unite_defense_combat(self.pos_souris_x,self.pos_souris_y)
-        self.maj_compteur_ressources()
-        self.l=1
-        self.paintEvent(2)
-        self.ui.conteneur.update()
+        if self.l == "purc" and self.pos_souris_x != int:
+            self.activation_boutons()
+            self.partie.carte.TrHn.production_unite_defense_combat(self.pos_souris_x,self.pos_souris_y)
+            self.maj_compteur_ressources()
+            self.paintEvent(2)
+            self.ui.conteneur.update()
         
     def plac_RO(self):
-        self.activation_boutons()
-        self.partie.carte.TrHn.production_unite_defense_production(self.pos_souris_x,self.pos_souris_y)
-        self.maj_compteur_ressources()
-        self.l=1
-        self.paintEvent(2)
-        self.ui.conteneur.update()
+        if self.l == "puro" and self.pos_souris_x != int:
+            self.activation_boutons()
+            self.partie.carte.TrHn.production_unite_defense_production(self.pos_souris_x,self.pos_souris_y)
+            self.maj_compteur_ressources()
+            self.paintEvent(2)
+            self.ui.conteneur.update()
         
     def plac_for(self):
-        self.activation_boutons()
-        self.partie.carte.TrHn.placer_une_foreuse(self.pos_souris_x,self.pos_souris_y) 
-        self.maj_compteur_ressources()
-        self.l=1
-        self.paintEvent(2)
-        self.ui.conteneur.update()
+        if self.l == "pbf" and self.pos_souris_x != int:
+            self.activation_boutons()
+            self.partie.carte.TrHn.placer_une_foreuse(self.pos_souris_x,self.pos_souris_y) 
+            self.maj_compteur_ressources()
+            self.paintEvent(2)
+            self.ui.conteneur.update()
 
     
     def plac_PS(self):
-        self.activation_boutons()
-        self.partie.carte.TrHn.placer_un_Panneau_solaire(self.pos_souris_x,self.pos_souris_y)
-        self.maj_compteur_ressources()
-        self.l=1
-        self.paintEvent(2)
-        self.ui.conteneur.update()
+        if self.l == "pbp" and self.pos_souris_x != int:
+            self.activation_boutons()
+            self.partie.carte.TrHn.placer_un_Panneau_solaire(self.pos_souris_x,self.pos_souris_y)
+            self.maj_compteur_ressources()
+            self.paintEvent(2)
+            self.ui.conteneur.update()
         
     def plac_Sc(self):
-        self.activation_boutons()
-        self.partie.carte.TrHn.production_unite_attaque_Hn(self.k,self.pos_souris_x,self.pos_souris_y)
-        self.maj_compteur_ressources()
-        self.l=1
-        self.paintEvent(2)
-        self.ui.conteneur.update()
+        if self.l == "pus" and self.pos_souris_x != int:
+            self.activation_boutons()
+            self.partie.carte.TrHn.production_unite_attaque_Hn(self.k,self.pos_souris_x,self.pos_souris_y)
+            self.maj_compteur_ressources()
+            self.l=1
+            self.paintEvent(2)
+            self.ui.conteneur.update()
 
     
 
 
     def jeu(self):
-        self.l=1
         self.paintEvent(2)
         self.ui.conteneur.update()
+        self.l=1
         
     def L_pos_a(self):
-        self.l="ps"
+        self.l="pus"
         self.paintEvent(2)
         self.ui.conteneur.update()
         
@@ -227,12 +319,10 @@ class MonAppli(QtWidgets.QMainWindow):
         
         
     def L_pos_u(self):
-        self.l = "pu"
         self.paintEvent(2)
         self.ui.conteneur.update()
         
     def L_pos_bat(self):
-        self.l = "pb"
         self.paintEvent(2)
         self.ui.conteneur.update()
         
@@ -241,17 +331,20 @@ class MonAppli(QtWidgets.QMainWindow):
     def paintEvent(self,e):
         qp = QtGui.QPainter()
         qp.begin(self)
+        print(self.l)
         if self.l!= "i":
             self.affiche_map(qp)
             self.affiche_jeu(qp)# une méthode à définir
-        if self.l== "pb":    
+        if type(self.l) != int and self.l[0:2]== "pb":    
             self.affiche_L_pos_bat(qp)
-        if self.l== "pu":    
-            self.affiche_L_pos_u(qp)
+        if type(self.l) != int and self.l[0:2] == "pu":   
+            if self.l == "pus":
+                self.affiche_L_pos_a(qp)
+            else:
+                self.affiche_L_pos_u(qp)
         if self.l=="bg":
             self.affiche_L_pos_bouger(qp)
-        if self.l=="ps":
-            self.affiche_L_pos_a(qp)
+
         qp.end()
         
     def affiche_L_pos_a(self,qp):
@@ -265,14 +358,15 @@ class MonAppli(QtWidgets.QMainWindow):
                 self.dessin_L_pos(qp,i[0],i[1])
         
     def affiche_L_pos_bouger(self,qp):
-        for unitee in self.partie.L_joueur[0]._liste_unite:
-            L_pos=unitee.mvt_poss()
-            for i in L_pos:
-                self.dessin_L_pos(qp,i[0],i[1])
+
+         self.L_pos=self.Obj.mvt_poss()
+         for i in self.L_pos:
+             print(i)
+             self.dessin_L_pos(qp,i[0],i[1])
         
     def affiche_L_pos_bat(self,qp):
-        L_pos = self.partie.carte.TrHn.placement_pos_bat(self.x_inf_b,self.x_sup_b,self.y_inf_b,self.y_sup_b,' ')
-        for i in L_pos:
+        self.L_pos = self.partie.carte.TrHn.placement_pos_bat(self.x_inf_b,self.x_sup_b,self.y_inf_b,self.y_sup_b,' ')
+        for i in self.L_pos:
             self.dessin_L_pos(qp,i[0],i[1])
             
     def affiche_L_pos_u(self,qp):
@@ -290,7 +384,7 @@ class MonAppli(QtWidgets.QMainWindow):
                 if self.partie.carte.ss_carte[i][j] == '/':
                     self.dessin_mur(qp,i,j)
                 elif i == (self.__xmax - self.L )//2 or i == (self.__xmax + self.L )//2-1:
-                    if j<= self.Epp or j >=self.__ymax - self.Epp :
+                    if j<= self.Epp or j >=self.__ymax - self.Epp-1 :
                         self.dessin_zone_ap(qp,i,j)
                     else:
                         self.dessin_case(qp,i,j)                       
@@ -299,7 +393,7 @@ class MonAppli(QtWidgets.QMainWindow):
                 elif i >= (self.__xmax - self.L )//2+1 and i < (self.__xmax + self.L )//2-1 :
                     if j >= (self.__ymax -self.H)//2 +1 and j< (self.__ymax + self.H )//2-1:
                         self.dessin_zone_c(qp,i,j)
-                    elif j<= self.Epp or j >=self.__ymax - self.Epp :
+                    elif j<= self.Epp or j >=self.__ymax - self.Epp-1 :
                         self.dessin_zone_ap(qp,i,j)
                     else:
                         self.dessin_case(qp,i,j)
@@ -313,45 +407,97 @@ class MonAppli(QtWidgets.QMainWindow):
                 else:
                     self.dessin_case(qp,i,j)
                 
-                
 
   
     def affiche_jeu(self,qp):
-        
-        for k in range (len(self.partie.L_joueur)):
-            if k==1:
-                for obj in self.partie.L_joueur[1]._liste_unite:
-                    if obj.car() == 's':
-                        self.dessin_Scorpion(qp,obj)
-            if k==2:
-                for obj in self.partie.L_joueur[2]._liste_unite:
-                    if obj.car() == 's':
-                        self.dessin_Scorpion(qp,obj)
+
+        for Obj in self.carte : 
+            if Obj.T_car()[-1]== 'M':
+                """Dessin d'un métal """
+            elif Obj.T_car()[0] == 'D':
+                if Obj.car() == 'RC':
+                    self.dessin_Robot_combat(qp,Obj)
+
+                elif Obj.car() == 'RO':
+                    self.dessin_Robot_ouvrier(qp,Obj)
+                
+                elif Obj.T_car()[-2:] == "QG":
+                    self.dessin_QG(qp,Obj)
+                
+                elif Obj.T_car()[-2:-1] == "P":
+                    self.dessin_Panneau_Solaire(qp,Obj) 
+
+                elif Obj.T_car()[-2:-1] == "F":
+                    self.dessin_Foreuse(qp,Obj)
+                
             
-            if k==3:
-                for obj in self.partie.L_joueur[3]._liste_unite:
-                    if obj.car() == 's':
-                        self.dessin_Scorpion(qp,obj)
-                        
-            if k==4:
-                for obj in self.partie.L_joueur[4]._liste_unite:
-                    if obj.car() == 's':
-                        self.dessin_Scorpion(qp,obj)
             
-        for obj in self.partie.L_joueur[0]._liste_unite:
-            if obj.car() == 'RC':
-                self.dessin_Robot_combat(qp,obj)
-            
-        for obj in self.partie.L_joueur[0]._liste_unite:
-            if obj.car() == 'RO':
-                self.dessin_Robot_ouvrier(qp,obj)
-            
-        for obj in self.partie.L_joueur[0]._liste_bat[0]:
-            self.dessin_QG(qp,obj)
-        for obj in self.partie.L_joueur[0]._liste_bat[1]:
-            self.dessin_Foreuse(qp,obj)
-        for obj in self.partie.L_joueur[0]._liste_bat[2]:
-            self.dessin_Panneau_Solaire(qp,obj) 
+            else : 
+                if Obj.T_car()[0:2] == "AH":
+                    if Obj.T_car()[2] == "0":
+                        """ il faudrait une couleur spécifique pour l'attaquant humain 0 """
+                        self.dessin_Scorpion(qp,Obj)
+                    if Obj.T_car()[2] == "1":
+                        """ il faudrait une couleur spécifique pour l'attaquant humain 1 """
+                        self.dessin_Scorpion(qp,Obj)                    
+                    if Obj.T_car()[2] == "2":
+                        """ il faudrait une couleur spécifique pour l'attaquant humain 2 """
+                        self.dessin_Scorpion(qp,Obj)                    
+                    if Obj.T_car()[2] == "3":
+                        """ il faudrait une couleur spécifique pour l'attaquant humain 3 """
+                        self.dessin_Scorpion(qp,Obj)
+
+                elif Obj.T_car()[0:2] == "AI":
+                    """ Idem pour les couleurs; je te laisse choisir si on met 
+                    les mêmes qu'en haut ou non."""
+                    if Obj.T_car()[5] == "0":
+                        self.dessin_Scorpion(qp,Obj)
+                    if Obj.T_car()[5] == "1":
+                        self.dessin_Scorpion(qp,Obj)                    
+                    if Obj.T_car()[5] == "2":
+                        self.dessin_Scorpion(qp,Obj)                    
+                    if Obj.T_car()[5] == "3":
+                       self.dessin_Scorpion(qp,Obj)
+
+                
+                
+                
+                
+#                
+#        for k in range (len(self.partie.L_joueur)):
+#            if k==1:
+#                for obj in self.partie.L_joueur[1]._liste_unite:
+#                    if obj.car() == 's ':
+#                        self.dessin_Scorpion(qp,obj)
+#            if k==2:
+#                for obj in self.partie.L_joueur[2]._liste_unite:
+#                    if obj.car() == 's ':
+#                        self.dessin_Scorpion(qp,obj)
+#            
+#            if k==3:
+#                for obj in self.partie.L_joueur[3]._liste_unite:
+#                    if obj.car() == 's ':
+#                        self.dessin_Scorpion(qp,obj)
+#                        
+#            if k==4:
+#                for obj in self.partie.L_joueur[4]._liste_unite:
+#                    if obj.car() == 's ':
+#                        self.dessin_Scorpion(qp,obj)
+#            
+#        for obj in self.partie.L_joueur[0]._liste_unite:
+#            if obj.car() == 'RC':
+#                self.dessin_Robot_combat(qp,obj)
+#            
+#        for obj in self.partie.L_joueur[0]._liste_unite:
+#            if obj.car() == 'RO':
+#                self.dessin_Robot_ouvrier(qp,obj)
+#            
+#        for obj in self.partie.L_joueur[0]._liste_bat[0]:
+#            self.dessin_QG(qp,obj)
+#        for obj in self.partie.L_joueur[0]._liste_bat[1]:
+#            self.dessin_Foreuse(qp,obj)
+#        for obj in self.partie.L_joueur[0]._liste_bat[2]:
+#            self.dessin_Panneau_Solaire(qp,obj) 
             
     def dessin_case(self,QPainter,i,j):
         QPainter.setPen(QtGui.QColor(0,100,0))
@@ -371,9 +517,8 @@ class MonAppli(QtWidgets.QMainWindow):
         QPainter.fillRect(u,QtCore.Qt.black)
     
     def dessin_Scorpion(self,QPainter,Scorpion):
-        print('S')
         u = QtCore.QRectF(Scorpion.x*36,Scorpion.y*36, 36, 36)
-        QPainter.fillRect(u,QtCore.Qt.black)
+        QPainter.fillRect(u,QtGui.QColor(0,50,0))
 
         
 
@@ -406,80 +551,15 @@ class MonAppli(QtWidgets.QMainWindow):
         qp.drawRect(u)
     
     def simuler(self):
-        self.partie.carte.simuler()
-       
-#            t= self.tr_actuel 
- #           print("### Tour %i ###"%(t))
-  #                                  
-   #         if t%5==0:
-    #            self.carte.apparition_ressource()
-     #       self.maj_compteur_ressources()
-      #      
+        
+        if self.tr_en_crs == 0:
+            self.partie.carte.simuler()
+        elif self.tr_Hn_en_crs == 0: 
+            self.partie.carte.TrHn.deb_unTourHn()
+        elif self.tr_Hn_en_crs == 1:
+            self.partie.carte.TrHn.fin_unTourHn()
+        return(None)
 
-#            self.unTourHn()
- #           self.unTourIA()
-            
-  #          print(self)
-   #         time.sleep(0.2)
-            
-    #        if self.partie.carte.V_atta==1:
-     #           print("Les attaquants gagnent!")
-                
-            
-      #      if t==self.nbtour:
-       #         print("Fin de partie")
-        #        if len(self.partie.L_joueur[0]._liste_bat[0]) !=0:
-         #           print("Le défenseur gagne!")
-          #      else:
-           #         print("Les attaquants gagnent!")
-    def unTourIA(self):
-        #n = len(self.L_joueur)
-        
-        role = self.partie.L_joueur[self.k]._role
-        if role[1] == 'I':
-            print("\\\ Tour du joueur %r ///"%(role))
-            self.partie.carte.TrIA.production_unite_attaque_IA_0(self.k)
-            
-            self.ui.Attaquant.hide()
-            self.ui.Defenseur.hide()
-    
-            L_unite = self.partie.L_joueur[self.k]._liste_unite
-            for c in L_unite:
-                print("Tour de %r \n"%(c.T_car()))
-                c.bouger()
-                c.action()
-    
-        self.partie.carte.TrIA.unite_disp_par_tour += Constante.nbe_unite_ajoute
-        if self.partie.carte.TrIA.unite_disp_par_tour> min(self.L,self.H):
-            self.partie.carte.TrIA.unite_disp_par_tour = min(self.L,self.H)
-            
-    def unTourHn(self):
-        #n = len(self.L_joueur)
-
-        role = self.partie.L_joueur[self.k]._role
-        if role[1] == 'H':
-            print("\\\ Tour du joueur %r ///"%(role))
-        if role[0] == 'D':
-            self.ui.Attaquant.hide()
-            self.ui.Defenseur.show()
-            #self.construction_bat()
-        #self.production_unite(role,k)
-        else:
-            self.ui.Attaquant.show()
-            self.ui.Defenseur.hide()
-
-        
-        self.partie.carte.TrHn.unite_disp_par_tour += Constante.nbe_unite_ajoute
-        if self.partie.carte.TrHn.unite_disp_par_tour > min(self.L,self.H):
-            self.partie.carte.TrHn.unite_disp_par_tour = min(self.L,self.H)
-    
-    def generer(self):
-#        self.partie = Partie(self.ui.Nb_IA_Choisi(),self.ui.Nb_Humain_Choisi())
-        self.partie = Partie(1,1) 
-        self.ui.conteneur.update()
-        print('generer')
-        
-        
         
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)

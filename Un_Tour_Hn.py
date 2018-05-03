@@ -9,10 +9,23 @@ import numpy as np
 
 class Un_Tour_Joueur_Hn():
 
-
+    """
+    Classe gérant l'ensemble des méthodes et des variables consacrées à l'exécution d'un tour de jeu, pour
+    un joueur humain.
+    """
     
     def __init__(self,carte,IHM):
-        self.IHM = IHM            
+        """
+        Initialise les variables utilisées pour le déroulement des tours de jeu, pour un joueur
+        humain.
+        
+        Paramètres :
+        ------------
+        carte : Objet Map
+            L'objet Map utilisé pour la partie.
+        
+        """
+        self.IHM = IHM
         self._carte = carte
         self.L_joueur = self._carte.L_joueur
         self.unite_disp_par_tour = 0
@@ -20,6 +33,7 @@ class Un_Tour_Joueur_Hn():
         self.__xmax = Constante.xmax
         self.__ymax = Constante.ymax  
         self.Epp = Constante.Ep_app
+        self.Jr_en_crs = 0
 
         self.H=Constante.H_Z_Constructible
         self.L=Constante.L_Z_Constructible
@@ -29,88 +43,96 @@ class Un_Tour_Joueur_Hn():
     def placer_une_foreuse(self,X,Y)   :
         """
         Permet au joueur s'il le souhaite et s'il en a le droit de construire le batiment Foreuse
-        Mets également à jour la quantité de ressource à sa disposition
+        Met également à jour la quantité de ressource à sa disposition.
+        
+        Paramètres : 
+        -------------
+        Aucun.
+        
+        Renvoie :
+        ----------
+        Rien.
+        
         """
         if (self.L_joueur[0].metal_tot>=Constante.cout_M_F and self.L_joueur[0].energie_tot>=Constante.cout_E_F):
-#            choix2=input("placer Foreuse ? (YES/NO)")
-#            if choix2 == 'YES':
+
             x_inf_b = (self.__xmax - self.L )//2 +1
             x_sup_b = (self.__xmax + self.L )//2 -1
             y_inf_b =  (self.__ymax - self.H )//2 +1
             y_sup_b = (self.__ymax + self.H)//2 -1
-
+    
             L_pos = self.placement_pos_bat(x_inf_b,x_sup_b,y_inf_b,y_sup_b,' ')
-#                if len(L_pos) == 0:
-#                    print('Aucune position disponible, étape suivante. \n')
-#                else:    
-#                    print('Positions possibles :', L_pos)
-#                    L = input('Envoyez la nouvelle position en x et en y (format x,y). \n')
-#                    k = L.find(',')
-#                    while k == -1:
-#                        print("Erreur de synthaxe. Recommencez svp")
-#                        L = input('Envoyez la nouvelle position en x et en y (format x,y). \n')
-#                        k = L.find(',')
-#                    X = int(L[0:k])
-#                    Y = int(L[k+1:])
+     
             if (X,Y) in L_pos:
-#                        print("Position hors du rayon d'action de l'unité. \n")
-#                        L = input('Envoyez la nouvelle position en x et en y (format x,y). \n')
-#                        k = L.find(',')
-#                        X,Y = int(L[0:k]) , int(L[k+1:])
                 U = Foreuse(X,Y,self._carte)
                 self.L_joueur[0]._liste_bat[2].append(U)
                 self.L_joueur[0].metal_tot=self.L_joueur[0].metal_tot-Constante.cout_M_F
                 self.L_joueur[0].energie_tot=self.L_joueur[0].energie_tot-Constante.cout_E_F
-                print("Energie restante :", self.L_joueur[0].energie_tot, "\n")
-                print("Métal restant :", self.L_joueur[0].energie_tot, "\n")
-                
-                #print(self._carte.ss_carte[X][Y])
-
+    
+    
 
     def placer_un_Panneau_solaire(self,X,Y):
         """
-        Permet au joueur s'il le souhaite et s'il en a le droit de construire le batiment Panneau solaire
-        Mets également à jour la quantité de ressource à sa disposition
+        Permet au joueur s'il le souhaite et s'il en a le droit de construire le batiment Foreuse
+        Met également à jour la quantité de ressource à sa disposition.
+        
+        Paramètres : 
+        -------------
+        Aucun.
+        
+        Renvoie :
+        ----------
+        Rien.
         """
 
         if (self.L_joueur[0].metal_tot>=Constante.cout_M_P and self.L_joueur[0].energie_tot>=Constante.cout_E_P):
-#            choix2=input("placer Panneau solaire ? (YES/NO)")
-#            if choix2 == 'YES':
-                x_inf_b = (self.__xmax - self.L )//2 +1
-                x_sup_b = (self.__xmax + self.L )//2 -1
-                y_inf_b =  (self.__ymax - self.H )//2 +1
-                y_sup_b = (self.__ymax + self.H)//2 -1
-                #Noter que x_inf et x_sup doivent être +1 par rapport à leur valeur réelle (pour bien tout sélectionner dans la matrice)
 
-                L_pos = self.placement_pos_bat(x_inf_b,x_sup_b,y_inf_b,y_sup_b,' ')
-#                if len(L_pos) == 0:
-#                    print('Aucune position disponible, étape suivante. \n')
-#                else:
-#                    print('Positions possibles :', L_pos)
-#                    L = input('Envoyez la nouvelle position en x et en y (format x,y). \n')
-#                    k = L.find(',')
-#                    while k == -1:
-#                        print("Erreur de synthaxe. Recommencez svp")
-#                        L = input('Envoyez la nouvelle position en x et en y (format x,y). \n')
-#                        k = L.find(',')                        
-#                    X = int(L[0:k])
-#                    Y = int(L[k+1:])
-                if (X,Y) in L_pos:
-#                        print("Position hors du rayon d'action de l'unité. \n")
-#                        L = input('Envoyez la nouvelle position en x et en y (format x,y). \n')
-#                        k = L.find(',')
-#                        X,Y = int(L[0:k]) , int(L[k+1:])
-                        
-                    U = Panneau_solaire(X,Y,self._carte)
-                    self.L_joueur[0]._liste_bat[1].append(U)
-                        
-                    self.L_joueur[0].metal_tot=self.L_joueur[0].metal_tot-Constante.cout_M_P
-                    self.L_joueur[0].energie_tot=self.L_joueur[0].energie_tot-Constante.cout_E_P
-                    print("Energie restante :", self.L_joueur[0].energie_tot, "\n")
-                    print("Métal restant :", self.L_joueur[0].energie_tot, "\n")
+            x_inf_b = (self.__xmax - self.L )//2 +1
+            x_sup_b = (self.__xmax + self.L )//2 -1
+            y_inf_b =  (self.__ymax - self.H )//2 +1
+            y_sup_b = (self.__ymax + self.H)//2 -1
+    
+            L_pos = self.placement_pos_bat(x_inf_b,x_sup_b,y_inf_b,y_sup_b,' ')
+    
+            if (X,Y) in L_pos:                
+                U = Panneau_solaire(X,Y,self._carte)
+                self.L_joueur[0]._liste_bat[1].append(U)
+                self.L_joueur[0].metal_tot=self.L_joueur[0].metal_tot-Constante.cout_M_P
+                self.L_joueur[0].energie_tot=self.L_joueur[0].energie_tot-Constante.cout_E_P
+
 
         
     def placement_pos(self,x_inf,x_sup,y_inf,y_sup,typ):
+        
+        """
+        Indique quelles sont les cases de la carte sur lesquelles l'objet typ est présent.
+        Attention : x_sup et y_sup doivent valoir la dernière ligne/ colonne que l'on souhaite contrôler + 1.
+        Ici, elle est régulièrement utilisée pour déterminer les positions où un placement d'unité / de batiment
+        est possible.
+        
+        Paramètres : 
+        ------------
+        x_inf : int
+            La 1e ligne de la partie de la carte dont on veut contrôler la présence de l'objet typ.
+        
+        x_sup : int
+            La ligne juste après la fin de la partie de la carte dont on veut contrôler la présence de l'objet typ.
+        
+        y_inf : int
+            La 1e colonne de la partie de la carte dont on veut contrôler la présence de l'objet typ.
+        
+        y_sup : int
+            La colonne juste après la fin de la partie de la carte dont on veut contrôler la présence de l'objet typ.
+        
+        typ : objet (souvent string ici)
+            L'objet dont on veut contrôler la présence sur une portion de la carte.
+        
+        Renvoie :
+        ----------
+        L_pos : list
+            L'ensemble des coordonnées sur lesquelles se trouve l'objet typ, dans la portion de carte étudiée.
+        """
+        
         A = self._carte.ss_carte[x_inf : x_sup , y_inf : y_sup]
         L_pos = []
 
@@ -121,9 +143,37 @@ class Un_Tour_Joueur_Hn():
         return(L_pos)
         
     def placement_pos_bat(self,x_inf_b,x_sup_b,y_inf_b,y_sup_b,typ):
+        """
+        Indique quelles sont les cases de la carte sur lesquelles l'objet typ est présent.
+        Cette méthode est utilisée pour déterminer les emplacements possibles pour un batiment.
+        Par rapport à placement_pos, elle supprime des cases sur lesquelles le placement d'un batiment est
+        impossible.
+        Attention : x_sup et y_sup doivent valoir la dernière ligne/ colonne que l'on souhaite contrôler + 1.
         
+        Paramètres : 
+        ------------
+        x_inf : int
+            La 1e ligne de la partie de la carte dont on veut contrôler la présence de l'objet typ.
+        
+        x_sup : int
+            La ligne juste après la fin de la partie de la carte dont on veut contrôler la présence de l'objet typ.
+        
+        y_inf : int
+            La 1e colonne de la partie de la carte dont on veut contrôler la présence de l'objet typ.
+        
+        y_sup : int
+            La colonne juste après la fin de la partie de la carte dont on veut contrôler la présence de l'objet typ.
+        
+        typ : objet (souvent string ici)
+            L'objet dont on veut contrôler la présence sur une portion de la carte.
+        
+        Renvoie :
+        ----------
+        L_pos : list
+            L'ensemble des coordonnées sur lesquelles se trouve l'objet typ, dans la portion de carte étudiée.
+        """
         L_pos = self.placement_pos(x_inf_b,x_sup_b,y_inf_b,y_sup_b,typ)
-        print(L_pos)
+    #    print(L_pos)
         x_inf = (self.__xmax )//2 -1
         x_sup = (self.__xmax)//2 +2
         y_inf =  (self.__ymax)//2 - 1
@@ -141,6 +191,15 @@ class Un_Tour_Joueur_Hn():
     def construction_bat(self):
         """
         Permet au joueur s'il le souhaite de placer un batiment
+        
+        Paramètres :
+        ------------
+        Aucun.
+        
+        Renvoie :
+        ----------
+        Rien.
+        
         """
         choix=input("placer un batiment ? (YES/NO)")
         if choix=='YES':
@@ -150,12 +209,42 @@ class Un_Tour_Joueur_Hn():
             pass
         
     def production_unite(self,role,k):
+        """
+        Sélectionne la méthode de production d'unité qui doit être sélectionnée,
+        selon le rôle du joueur dans la partie (attaquant ou défenseur).
+        
+        Paramètres :
+        ------------
+        role : str
+            Le rôle du joueur exécutant la méthode.
+        
+        k : int
+            La position du joueur dans la liste L_joueur.
+        
+        Renvoie :
+        ---------
+        Rien.
+        
+        """
+        
         if role[0] == 'D':
             self.production_unite_defense()
         elif role[0] == 'A':
-            self.production_unite_attaque(role,k)
-
+            self.production_unite_attaque_Hn(k)
+ 
     def production_unite_defense(self):
+        """
+        Enclenche la méthode de production d'unités pour le défenseur, selon ses ressources et avec son accord.
+        
+        Paramètres :
+        ------------
+        Aucun.
+        
+        Renvoie :
+        ----------
+        Rien.
+        
+        """
         if (self.L_joueur[0].metal_tot>=Constante.cout_M_RO and self.L_joueur[0].energie_tot>=Constante.cout_E_RO):
             choix_DH = input("Construire un robot? (YES/NO)")
             if choix_DH == 'YES':
@@ -164,96 +253,83 @@ class Un_Tour_Joueur_Hn():
 
     
     def production_unite_defense_combat(self,X,Y):
+        """
+        Produit une unité de combat pour le défenseur, si celui-ci a suffisamment de ressources et avec son accord.
+        Il doit également décider de la position de cette unité, parmi les positions possibles.
+        
+        Paramètres :
+        ------------
+        Aucun.
+        
+        Renvoie :
+        ----------
+        Rien.
+        
+        """
         if (self.L_joueur[0].metal_tot>=Constante.cout_M_RC and self.L_joueur[0].energie_tot>=Constante.cout_E_RC):
-#            choix_DH=input("construire un robot de combat?  (YES/NO)")
-#            if choix_DH=='YES':
-                
+    
             x_inf = (self.__xmax )//2 -1
             x_sup = (self.__xmax)//2 +2
             y_inf =  (self.__ymax)//2 - 1
             y_sup = (self.__ymax)//2 +2
-            #A VERIF
-
+                    #A VERIF
+    
             L_pos = self.placement_pos(x_inf,x_sup,y_inf,y_sup,' ')
-#                if len(L_pos) == 0:
-#                    print('Aucune position disponible, étape suivante. \n')
-#                else:
-#                    print('Positions possibles :', L_pos)
-#                    L = input('Envoyez la nouvelle position en x et en y (format x,y). \n')
-#                    k = L.find(',')
-#                    while k == -1:
-#                        print("Erreur de synthaxe. Recommencez svp")
-#                        L = input('Envoyez la nouvelle position en x et en y (format x,y). \n')
-#                        k = L.find(',')
-#                    X = int(L[0:k])
-#                    Y = int(L[k+1:])
+                    
             if (X,Y) in L_pos:
-#                        print("Position hors du rayon d'action de l'unité. \n")
-#                        L = input('Envoyez la nouvelle position en x et en y (format x,y). \n')
-#                        k = L.find(',')
-#                        X,Y = int(L[0:k]) , int(L[k+1:])
                 U=Robot_combat(self.L_joueur[0]._role,self._carte,X,Y)
                 self.L_joueur[0]._liste_unite.append(U)
                 self.L_joueur[0].metal_tot=self.L_joueur[0].metal_tot-Constante.cout_M_P
                 self.L_joueur[0].energie_tot=self.L_joueur[0].energie_tot-Constante.cout_E_P
-                print("Energie restante :", self.L_joueur[0].energie_tot, "\n")
-                print("Métal restant :", self.L_joueur[0].energie_tot, "\n")
-                                                                    
-#            elif choix_DH=='NO':
-#                pass
+
             
     def production_unite_defense_production(self,X,Y):
+        """
+        Produit une unité de production pour le défenseur, si celui-ci a suffisamment de ressources et avec son accord.
+        Il doit également décider de la position de cette unité, parmi les positions possibles.
+        
+        Paramètres :
+        ------------
+        Aucun.
+        
+        Renvoie :
+        ----------
+        Rien.
+        
+        """
         if (self.L_joueur[0].metal_tot>=Constante.cout_M_RO and self.L_joueur[0].energie_tot>=Constante.cout_E_RO):
-#            choix_DH=input("Construire un robot ouvrier?  (YES/NO)")
-#            if choix_DH=='YES':
-                
+    
             x_inf = (self.__xmax )//2 -1
             x_sup = (self.__xmax)//2 +2
             y_inf =  (self.__ymax)//2 - 1
             y_sup = (self.__ymax)//2 +2
-            #A VERIF
-
             L_pos = self.placement_pos(x_inf,x_sup,y_inf,y_sup,' ')
-#                if len(L_pos) == 0:
-#                    print('Aucune position disponible, étape suivante. \n')
-#                else:
-#                    print('Positions possibles :', L_pos)
-#                    L = input('Envoyez la nouvelle position en x et en y (format x,y). \n')
-#                    k = L.find(',')
-#                    while k == -1:
-#                        print("Erreur de synthaxe. Recommencez svp")
-#                        L = input('Envoyez la nouvelle position en x et en y (format x,y). \n')
-#                        k = L.find(',')
-#                    X = int(L[0:k])
-#                    Y = int(L[k+1:])
+    
             if (X,Y) in L_pos:
-#                        print("Position hors du rayon d'action de l'unité. \n")
-#                        L = input('Envoyez la nouvelle position en x et en y (format x,y). \n')
-#                        k = L.find(',')
-#                        X,Y = int(L[0:k]) , int(L[k+1:])
                 U=Robot_Ouvrier(self.L_joueur[0]._role,self._carte,X,Y)
                 self.L_joueur[0]._liste_unite.append(U)
                 self.L_joueur[0].metal_tot=self.L_joueur[0].metal_tot-Constante.cout_M_P
                 self.L_joueur[0].energie_tot=self.L_joueur[0].energie_tot-Constante.cout_E_P
-                print("Energie restante :", self.L_joueur[0].energie_tot, "\n")
-                print("Métal restant :", self.L_joueur[0].energie_tot, "\n")
-#                                                                    
-#            elif choix_DH=='NO':
-#                pass
+
         
-    def production_unite_attaque(self,role,k):
-        if role[0:2] == 'AI':
-            if role[3] == '0':
-                self.production_unite_attaque_IA_0(k)
-        elif role[0:2] == 'AH' :
-            self.production_unite_attaque_Hn(k)
-    
-    def production_unite_attaque_Hn(self,k,X,Y):
+    def production_unite_attaque_Hn(self,X,Y):
+        """
+        Produit des unités de combat pour l'attaquant, avec son accord.
+        Il doit également décider de la position de cette unité, parmi les positions possibles.
         
-        Jr = self.L_joueur[k]
-        unite_disp = self.unite_disp_par_tour + Jr.nbe_unite_restantes
+        Paramètres :
+        ------------
+        k : int
+            La position du joueur exécutant la méthode dans la liste L_joueur.
         
-        if unite_disp < 1:
+        Renvoie :
+        ----------
+        Rien.
+        
+        """
+
+        
+        if self.L_joueur[self.Jr_en_crs].nbe_unite_restantes < 1:
             print("Aucune unité à placer pour ce tour. \n")
         
         else:
@@ -277,51 +353,51 @@ class Un_Tour_Joueur_Hn():
             else : 
                 print("Nombre de scorpions disponibles : ", int(unite_disp) )
                 
-               # choix_AH=input("placer un Scorpion ? (YES/NO)")
+                choix_AH=input("placer un Scorpion ? (YES/NO)")
             
-                if len(L_pos) != 0 and unite_disp >=1:# and choix_AH == 'YES':
-#                    print('Positions possibles :', L_pos)
-#                    L = input('Envoyez la nouvelle position en x et en y (format x,y). \n')
-#                    c = L.find(',')
-#                    while c == -1:
-#                        print("Erreur de synthaxe. Recommencez svp")
-#                        L = input('Envoyez la nouvelle position en x et en y (format x,y). \n')
-#                        c = L.find(',')                        
-#                    X = int(L[0:c])
-#                    Y = int(L[c+1:])
-                    if (X,Y) in L_pos:
-#                        print("Position hors de la zone d'apparition. \n")
-#                        L = input('Envoyez la nouvelle position en x et en y (format x,y). \n')
-#                        c = L.find(',')
-#                        X,Y = int(L[0:c]) , int(L[c+1:])
+                while len(L_pos) != 0 and unite_disp >=1 and choix_AH == 'YES':
+                    print('Positions possibles :', L_pos)
+                    L = input('Envoyez la nouvelle position en x et en y (format x,y). \n')
+                    c = L.find(',')
+                    while c == -1:
+                        print("Erreur de synthaxe. Recommencez svp")
+                        L = input('Envoyez la nouvelle position en x et en y (format x,y). \n')
+                        c = L.find(',')                        
+                    X = int(L[0:c])
+                    Y = int(L[c+1:])
+                    while (X,Y) not in L_pos:
+                        print("Position hors de la zone d'apparition. \n")
+                        L = input('Envoyez la nouvelle position en x et en y (format x,y). \n')
+                        c = L.find(',')
+                        X,Y = int(L[0:c]) , int(L[c+1:])
 
-                        L_pos.remove((X,Y))
-                        self.U = Scorpion(Jr._role,self._carte,X,Y,k)
-                        Jr._liste_unite.append(self.U)
-                        unite_disp-=1
+                    L_pos.remove((X,Y))
+                    self.U = Scorpion(Jr._role,self._carte,X,Y,k)
+                    Jr._liste_unite.append(self.U)
+                    unite_disp-=1
                 
                     if unite_disp <1:
                         print("Plus d'unité disponible, étape suivante \n")
-                        #break
+                        break
                 
                     if len(L_pos) == 0:
                         print("Aucune zone d'apparition d'unité disponible, étape suivante. \n")
-                        #break
+                        break
                         
-#                    else:
-#                        print("Nombre de scorpions disponibles : ", int(unite_disp))
-#                        choix_AH=input("placer un autre Scorpion ? (YES/NO)")
+                    else:
+                        print("Nombre de scorpions disponibles : ", int(unite_disp))
+                        choix_AH=input("placer un autre Scorpion ? (YES/NO)")
             
-                if len(L_pos) == 0:
+                if choix_AH == 'NO' or len(L_pos) == 0:
                     Jr.nbe_unite_restantes = unite_disp
 
  
                 
         
-    def unTourHn(self):
+    def deb_unTourHn(self):
 
         """
-        Effectue toutes les actions liées à un tour de jeu.
+        Effectue toutes les actions liées à un tour de jeu, pour les joueurs humains dans la partie.
         
         Paramètres
         ----------
@@ -331,40 +407,64 @@ class Un_Tour_Joueur_Hn():
         -------
         Rien
         """
-        # rnd.shuffle(self)    Utile si gestion des collisions
 
-    #Pour print : créer une fonction IHM.fenetre(chaine de carac), qui affiche dans une fenêtre la chaîne de caractère.
-    
-    # Faire les modifications IHM ici!
-        
         n = len(self.L_joueur)
-        for k in range(n):
-            if self._carte.V_atta == 1:
-                break
-            role = self.L_joueur[k]._role
-            if role[1] == 'H':
-                print("\\\ Tour du joueur %r ///"%(role))
-                if role[0] == 'D':
-                    self.construction_bat()
-                self.production_unite(role,k)
-                L_unite = self.L_joueur[k]._liste_unite
-                for c in L_unite:
-                    if self._carte.V_atta == 1:
-                        break
-    
-                    print("Tour de %r \n"%(c.T_car()))
-                    print("Position actuelle : (%i,%i) \n"%(c.x,c.y))
-                    if c._role[1] == 'H':
-                        Chx = input("Voulez-vous la déplacer? (Y/N) \n")
-                        if Chx == "Y":
-                            c.bouger()
-                    else : 
-                        c.bouger()
-                    c.action()
-    
-        self.unite_disp_par_tour += Constante.nbe_unite_ajoute
-        if self.unite_disp_par_tour > min(self.L,self.H):
-            self.unite_disp_par_tour = min(self.L,self.H)
+        if self.Jr_en_crs < n:
             
+            k = self.Jr_en_crs
+            role = self.L_joueur[k]._role
+            while k < n-1 and role[1] != 'H' : 
+                k += 1
+                role = self.L_joueur[k]._role
+
+            if role[1] == "H" :
+                self.Jr_en_crs = k
+                self.IHM.tr_Hn_en_crs = 1
+                print("\\\ Tour du joueur %r ///"%(role))
+                if role[0] == "D":
+                    self.IHM.ui.Attaquant.hide()
+                    self.IHM.ui.Defenseur.show()
+  
+                elif role[0] == "A":
+                    self.IHM.ui.Attaquant.show()
+                    self.IHM.ui.Defenseur.hide()
+                    self.L_joueur[self.Jr_en_crs].nbe_unite_restantes += self.unite_disp_par_tour
+                    self.IHM.maj_compteur_ressources()
+            else : 
+                self.Jr_en_crs += 1
+                self.deb_unTourHn()
+                
+        else : 
+            self.unite_disp_par_tour += Constante.nbe_unite_ajoute
+            if self.unite_disp_par_tour > min(self.L,self.H):
+                self.unite_disp_par_tour = min(self.L,self.H)
+            self.Jr_en_crs = 0
+            self._carte.TrIA.unTourIA()
+                
+    def fin_unTourHn(self):
+        i = self.Jr_en_crs
+        L_unite = self.L_joueur[i]._liste_unite
+        for c in L_unite:
+            c.action()
+            role_u = c.T_car()
+            k = -2
+            tTyp = role_u[k:]
+            while tTyp[0] not in ['R','S']:
+                k = k- 1
+                tTyp = role_u[k:]
+            role_u = tTyp
+            if role_u[0:2] == "RC":
+                c.capmvt = Constante.capmvt_RC
+            elif role_u[0:2] == "RO":
+                c.capmvt = Constante.capmvt_RO
+            elif role_u[1] == "S":
+                c.capmvt = Constante.capmvt_S
+        self.Jr_en_crs += 1
+        self.IHM.tr_Hn_en_crs = 0
+        self.IHM.simuler()
+
+
+            
+
             
     
