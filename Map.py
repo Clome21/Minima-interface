@@ -149,6 +149,7 @@ class Map(list):
         Paramètres
         ----------
         Aucun
+        
         Renvoie
         -------
         s : string 
@@ -215,6 +216,7 @@ class Map(list):
         Paramètres
         ----------
         Aucun
+        
         Renvoie
         -------
         Rien  
@@ -254,6 +256,7 @@ class Map(list):
         Paramètres
         ----------
         Aucun
+        
         Renvoie
         -------
         Rien  
@@ -284,12 +287,12 @@ class Map(list):
             *Affiche le terrain de jeu, avec les objets dessus.
         
         Lorsque tous les tours de jeu ont défilé (ou lorsque le QG défenseur a
-        été détruit), la méthode indique si le défenseur ou les attaquants ont
-        gagnés.
+        été détruit), la méthode dresse le bilan de la partie via la méthode fin_de_partie().
         
         Paramètres
         ----------
         Aucun
+        
         Renvoie
         -------
         Rien  
@@ -329,6 +332,18 @@ class Map(list):
             self.fin_de_partie()
              
     def fin_de_partie(self):
+        """
+        Termine la partie en cours. Indique si le défenseur ou les attaquants ont gagnés.
+        
+        Paramètres : 
+        -------------
+        Aucun.
+        
+        Renvoie :
+        ----------
+        Rien.
+        
+        """
         print("Fin de partie \n")
         if len(self.L_joueur[0]._liste_bat[0]) !=0:
             print("Le défenseur gagne!")
