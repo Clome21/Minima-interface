@@ -467,28 +467,28 @@ class MonAppli(QtWidgets.QMainWindow):
                 if Obj.T_car()[0:2] == "AH":
                     if Obj.T_car()[2] == "0":
                         """ il faudrait une couleur spécifique pour l'attaquant humain 0 """
-                        self.dessin_Scorpion(qp,Obj)
+                        self.dessin_Scorpion0(qp,Obj)
                     if Obj.T_car()[2] == "1":
                         """ il faudrait une couleur spécifique pour l'attaquant humain 1 """
-                        self.dessin_Scorpion(qp,Obj)                    
+                        self.dessin_Scorpion1(qp,Obj)                    
                     if Obj.T_car()[2] == "2":
                         """ il faudrait une couleur spécifique pour l'attaquant humain 2 """
-                        self.dessin_Scorpion(qp,Obj)                    
+                        self.dessin_Scorpion2(qp,Obj)                    
                     if Obj.T_car()[2] == "3":
                         """ il faudrait une couleur spécifique pour l'attaquant humain 3 """
-                        self.dessin_Scorpion(qp,Obj)
+                        self.dessin_Scorpion3(qp,Obj)
 
                 elif Obj.T_car()[0:2] == "AI":
                     """ Idem pour les couleurs; je te laisse choisir si on met 
                     les mêmes qu'en haut ou non."""
                     if Obj.T_car()[5] == "0":
-                        self.dessin_Scorpion(qp,Obj)
+                        self.dessin_Scorpion0(qp,Obj)
                     if Obj.T_car()[5] == "1":
-                        self.dessin_Scorpion(qp,Obj)                    
+                        self.dessin_Scorpion1(qp,Obj)                    
                     if Obj.T_car()[5] == "2":
-                        self.dessin_Scorpion(qp,Obj)                    
+                        self.dessin_Scorpion2(qp,Obj)                    
                     if Obj.T_car()[5] == "3":
-                       self.dessin_Scorpion(qp,Obj)
+                        self.dessin_Scorpion3(qp,Obj)
 
                 
     def affiche_Jr_en_crs(self,k):
@@ -551,9 +551,21 @@ class MonAppli(QtWidgets.QMainWindow):
         u = QtCore.QRectF(i*36,j*36, 36, 36)
         QPainter.fillRect(u,QtCore.Qt.black)
     
-    def dessin_Scorpion(self,QPainter,Scorpion):
+    def dessin_Scorpion0(self,QPainter,Scorpion):
         u = QtCore.QRectF(Scorpion.x*36,Scorpion.y*36, 36, 36)
         QPainter.fillRect(u,QtGui.QColor(0,50,0))
+        
+    def dessin_Scorpion1(self,QPainter,Scorpion):
+        u = QtCore.QRectF(Scorpion.x*36,Scorpion.y*36, 36, 36)
+        QPainter.fillRect(u,QtGui.QColor(0,60,0))
+        
+    def dessin_Scorpion2(self,QPainter,Scorpion):
+        u = QtCore.QRectF(Scorpion.x*36,Scorpion.y*36, 36, 36)
+        QPainter.fillRect(u,QtGui.QColor(0,70,0))
+        
+    def dessin_Scorpion3(self,QPainter,Scorpion):
+        u = QtCore.QRectF(Scorpion.x*36,Scorpion.y*36, 36, 36)
+        QPainter.fillRect(u,QtGui.QColor(0,80,0))
 
     def dessin_metal (self,QPainter,metal):
         u = QtCore.QRectF(metal.x*36,metal.y*36, 36, 36)
