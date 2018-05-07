@@ -9,10 +9,10 @@ from PyQt5 import QtGui, QtCore, QtWidgets
 from Minima_prop import Ui_Minima_Accueil
 #from Minima_2_fen import Ui_Minima_Accueil,Ui_Minima_Jeu
 from Partie import Partie
-from Un_Tour_Hn import Un_Tour_Joueur_Hn
-from Unites_Hn_Defenseur import Robot_combat
-from Batiments import Panneau_solaire
-from Joueur import Joueur
+#from Un_Tour_Hn import Un_Tour_Joueur_Hn
+#from Unites_Hn_Defenseur import Robot_combat
+#from Batiments import Panneau_solaire
+#from Joueur import Joueur
 from Constantes import Constante
 from Map import Map
 import time
@@ -39,7 +39,8 @@ class MonAppli(QtWidgets.QMainWindow):
         self.tr_actuel = 0
 
 #        self.ui.Bouton_Generer.clicked.connect(self.generer)
-
+        self.BA=0
+        self.g="i"
         self.l = "i"
         self.coord="O"
         self.__xmax = Constante.xmax
@@ -74,6 +75,7 @@ class MonAppli(QtWidgets.QMainWindow):
 
         self.ui.Button_Ready.clicked.connect(self.jeu)
         self.ui.Button_Ready.clicked.connect( self.ui.Button_Ready.hide)
+        self.ui.Button_Ready.clicked.connect( self.generer_bis)
         self.ui.Button_Ready.clicked.connect(self.simuler)
         
         
@@ -105,9 +107,37 @@ class MonAppli(QtWidgets.QMainWindow):
         self.ui.Button_Robot_Ouvrier.clicked.connect(self.plac_RO)
         self.ui.Button_Robot_Ouvrier.clicked.connect(self.L_pos_u)
         
+        self.ui.Button_Scorpion.clicked.connect(self.active_Sc)
+        self.ui.Button_Scorpion.clicked.connect(self.plac_Sc)
+        self.ui.Button_Scorpion.clicked.connect(self.L_pos_u)
+        
         self.ui.Bouton_Generer.clicked.connect(self.gestion_deplacement)
         
         self.ui.Button_J_D_U_Fermer.clicked.connect(self.raz)
+        
+        self.ui.Defaite.buttonClicked.connect(self.fin_du_jeu)
+        self.ui.Victoire.buttonClicked.connect(self.fin_du_jeu)
+
+        
+
+
+
+    def generer(self):
+        if self.BA=="clic":
+ #           while self.button
+            self.partie = Partie(self.ui.nb_IA_choisi(),self.ui.nb_Hn_choisi(),self)
+#            self.partie = Partie(1,1,self) 
+            print('generer')
+    
+    def generer_bis(self):
+        self.BA="clic"
+        self.generer()
+
+        
+    def fin_du_jeu(self):
+        self.l="i"
+        self.paintEvent(2)
+        self.ui.conteneur.update()
 
         
     def active_for(self):
@@ -255,7 +285,7 @@ class MonAppli(QtWidgets.QMainWindow):
         self.ui.lcdNumber_Metal.display(self.partie.L_joueur[0].metal_tot)
         self.ui.lcdNumber_Energie.display(self.partie.L_joueur[0].energie_tot)
         self.ui.lcdNumber_Tours_restant.display(self.nbtour-self.carte.tr_actuel)
-
+        
 
     def plac_RC(self):
         if self.l == "purc" and self.pos_souris_x != int:
@@ -348,10 +378,10 @@ class MonAppli(QtWidgets.QMainWindow):
         qp.end()
         
     def affiche_L_pos_a(self,qp):
-        L_Ht = self.placement_pos(0,self.Epp + 1,(self.__ymax -self.H)//2,(self.__ymax + self.H )//2,' ')            
-        L_Bas = self.placement_pos(self.__xmax-1-self.Epp,self.__xmax,(self.__ymax -self.H)//2,(self.__ymax + self.H )//2,' ')        
-        L_Gche = self.placement_pos((self.__xmax - self.L )//2 , (self.__xmax + self.L )//2,0,self.Epp+1,' ')        
-        L_Dte = self.placement_pos((self.__xmax - self.L )//2, (self.__xmax + self.L )//2,self.__ymax -1-self.Epp,self.__ymax,' ')
+        L_Ht = self.partie.carte.TrHn.placement_pos(0,self.Epp + 1,(self.__ymax -self.H)//2,(self.__ymax + self.H )//2,' ')            
+        L_Bas = self.partie.carte.TrHn.placement_pos(self.__xmax-1-self.Epp,self.__xmax,(self.__ymax -self.H)//2,(self.__ymax + self.H )//2,' ')        
+        L_Gche = self.partie.carte.TrHn.placement_pos((self.__xmax - self.L )//2 , (self.__xmax + self.L )//2,0,self.Epp+1,' ')        
+        L_Dte = self.partie.carte.TrHn.placement_pos((self.__xmax - self.L )//2, (self.__xmax + self.L )//2,self.__ymax -1-self.Epp,self.__ymax,' ')
         
         L_pos = L_Ht + L_Bas + L_Gche + L_Dte 
         for i in L_pos:
@@ -413,6 +443,7 @@ class MonAppli(QtWidgets.QMainWindow):
 
         for Obj in self.carte : 
             if Obj.T_car()[-1]== 'M':
+                self.dessin_metal(qp,Obj)
                 """Dessin d'un métal """
             elif Obj.T_car()[0] == 'D':
                 if Obj.car() == 'RC':
@@ -460,30 +491,34 @@ class MonAppli(QtWidgets.QMainWindow):
                        self.dessin_Scorpion(qp,Obj)
 
                 
-                
-                
-                
-#                
-#        for k in range (len(self.partie.L_joueur)):
-#            if k==1:
-#                for obj in self.partie.L_joueur[1]._liste_unite:
-#                    if obj.car() == 's ':
-#                        self.dessin_Scorpion(qp,obj)
-#            if k==2:
-#                for obj in self.partie.L_joueur[2]._liste_unite:
-#                    if obj.car() == 's ':
-#                        self.dessin_Scorpion(qp,obj)
-#            
-#            if k==3:
-#                for obj in self.partie.L_joueur[3]._liste_unite:
-#                    if obj.car() == 's ':
-#                        self.dessin_Scorpion(qp,obj)
-#                        
-#            if k==4:
-#                for obj in self.partie.L_joueur[4]._liste_unite:
-#                    if obj.car() == 's ':
-#                        self.dessin_Scorpion(qp,obj)
-#            
+    def affiche_Jr_en_crs(self,k):
+    
+        if k==1:
+            self.ui.tr_attaquant_1_text.show()
+            self.ui.tr_attaquant_2_text.hide()
+            self.ui.tr_attaquant_3_text.hide()
+            self.ui.tr_attaquant_4_text.hide()
+            self.ui.tr_defenseur_text.hide()
+        if k==2:
+            self.ui.tr_attaquant_1_text.hide()
+            self.ui.tr_attaquant_2_text.show()
+            self.ui.tr_attaquant_3_text.hide()
+            self.ui.tr_attaquant_4_text.hide()
+            self.ui.tr_defenseur_text.hide()
+        if k==3:
+            self.ui.tr_attaquant_1_text.hide()
+            self.ui.tr_attaquant_2_text.hide()
+            self.ui.tr_attaquant_3_text.show()
+            self.ui.tr_attaquant_4_text.hide()
+            self.ui.tr_defenseur_text.hide()          
+        if k==4:
+            self.ui.tr_attaquant_1_text.hide()
+            self.ui.tr_attaquant_2_text.hide()
+            self.ui.tr_attaquant_3_text.hide()
+            self.ui.tr_attaquant_4_text.show()
+            self.ui.tr_defenseur_text.hide()
+            
+            
 #        for obj in self.partie.L_joueur[0]._liste_unite:
 #            if obj.car() == 'RC':
 #                self.dessin_Robot_combat(qp,obj)
@@ -520,6 +555,9 @@ class MonAppli(QtWidgets.QMainWindow):
         u = QtCore.QRectF(Scorpion.x*36,Scorpion.y*36, 36, 36)
         QPainter.fillRect(u,QtGui.QColor(0,50,0))
 
+    def dessin_metal (self,QPainter,metal):
+        u = QtCore.QRectF(metal.x*36,metal.y*36, 36, 36)
+        QPainter.fillRect(u,QtGui.QColor(192,192,192))
         
 
     def dessin_Robot_combat(self,QPainter,Robot_combat):

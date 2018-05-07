@@ -312,7 +312,7 @@ class Un_Tour_Joueur_Hn():
                 self.L_joueur[0].energie_tot=self.L_joueur[0].energie_tot-Constante.cout_E_P
 
         
-    def production_unite_attaque_Hn(self,X,Y):
+    def production_unite_attaque_Hn(self,k,X,Y):
         """
         Produit des unités de combat pour l'attaquant, avec son accord.
         Il doit également décider de la position de cette unité, parmi les positions possibles.
@@ -328,6 +328,9 @@ class Un_Tour_Joueur_Hn():
         
         """
 
+        Jr = self.L_joueur[k]
+        unite_disp = self.unite_disp_par_tour + Jr.nbe_unite_restantes
+        
         
         if self.L_joueur[self.Jr_en_crs].nbe_unite_restantes < 1:
             print("Aucune unité à placer pour ce tour. \n")
@@ -347,51 +350,53 @@ class Un_Tour_Joueur_Hn():
             L_pos = L_Ht + L_Bas + L_Gche + L_Dte 
         
             #Sélectionne les emplacements disponibles
-            if len(L_pos) == 0 :
+        if len(L_pos) == 0 :
                 print("Aucune zone d'apparition d'unité disponible, étape suivante. \n")
         
-            else : 
-                print("Nombre de scorpions disponibles : ", int(unite_disp) )
-                
-                choix_AH=input("placer un Scorpion ? (YES/NO)")
-            
-                while len(L_pos) != 0 and unite_disp >=1 and choix_AH == 'YES':
-                    print('Positions possibles :', L_pos)
-                    L = input('Envoyez la nouvelle position en x et en y (format x,y). \n')
-                    c = L.find(',')
-                    while c == -1:
-                        print("Erreur de synthaxe. Recommencez svp")
-                        L = input('Envoyez la nouvelle position en x et en y (format x,y). \n')
-                        c = L.find(',')                        
-                    X = int(L[0:c])
-                    Y = int(L[c+1:])
-                    while (X,Y) not in L_pos:
-                        print("Position hors de la zone d'apparition. \n")
-                        L = input('Envoyez la nouvelle position en x et en y (format x,y). \n')
-                        c = L.find(',')
-                        X,Y = int(L[0:c]) , int(L[c+1:])
+        else : 
+#                print("Nombre de scorpions disponibles : ", int(unite_disp) )
+#                
+#                choix_AH=input("placer un Scorpion ? (YES/NO)")
+            self.IHM.ui.lcdNumber_Unitdispo.display(unite_disp)
+            while len(L_pos) != 0 and unite_disp >=1 :
+#                    print('Positions possibles :', L_pos)
+#                    L = input('Envoyez la nouvelle position en x et en y (format x,y). \n')
+#                    c = L.find(',')
+#                    while c == -1:
+#                        print("Erreur de synthaxe. Recommencez svp")
+#                        L = input('Envoyez la nouvelle position en x et en y (format x,y). \n')
+#                        c = L.find(',')                        
+#                    X = int(L[0:c])
+#                    Y = int(L[c+1:])
+                    
+#        if (X,Y) in L_pos:
+                        #print("Position hors de la zone d'apparition. \n")
+                        #L = input('Envoyez la nouvelle position en x et en y (format x,y). \n')
+                        #c = L.find(',')
+                        #X,Y = int(L[0:c]) , int(L[c+1:])
 
-                    L_pos.remove((X,Y))
-                    self.U = Scorpion(Jr._role,self._carte,X,Y,k)
-                    Jr._liste_unite.append(self.U)
-                    unite_disp-=1
+                L_pos.remove((X,Y))
+                self.U = Scorpion(Jr._role,self._carte,X,Y,k)
+                Jr._liste_unite.append(self.U)
+                unite_disp-=1
                 
-                    if unite_disp <1:
-                        print("Plus d'unité disponible, étape suivante \n")
-                        break
                 
-                    if len(L_pos) == 0:
-                        print("Aucune zone d'apparition d'unité disponible, étape suivante. \n")
-                        break
-                        
-                    else:
-                        print("Nombre de scorpions disponibles : ", int(unite_disp))
-                        choix_AH=input("placer un autre Scorpion ? (YES/NO)")
-            
-                if choix_AH == 'NO' or len(L_pos) == 0:
+                if unite_disp <1:
+                      print("Plus d'unité disponible, étape suivante \n")
+                      break
+#                
+                if len(L_pos) == 0:
+                      print("Aucune zone d'apparition d'unité disponible, étape suivante. \n")
+                      break
+#                        
+#                    else:
+#                        print("Nombre de scorpions disponibles : ", int(unite_disp))
+#                        choix_AH=input("placer un autre Scorpion ? (YES/NO)")
+#            
+                if len(L_pos) == 0:
                     Jr.nbe_unite_restantes = unite_disp
 
- 
+                self.IHM.ui.lcdNumber_Unitdispo.display(unite_disp)
                 
         
     def deb_unTourHn(self):
@@ -424,12 +429,20 @@ class Un_Tour_Joueur_Hn():
                 if role[0] == "D":
                     self.IHM.ui.Attaquant.hide()
                     self.IHM.ui.Defenseur.show()
+                    self.IHM.ui.tr_defenseur_text.show()
+                    self.IHM.ui.tr_attaquant_1_text.hide()
+                    self.IHM.ui.tr_attaquant_2_text.hide()
+                    self.IHM.ui.tr_attaquant_3_text.hide()
+                    self.IHM.ui.tr_attaquant_4_text.hide()
   
                 elif role[0] == "A":
                     self.IHM.ui.Attaquant.show()
                     self.IHM.ui.Defenseur.hide()
                     self.L_joueur[self.Jr_en_crs].nbe_unite_restantes += self.unite_disp_par_tour
                     self.IHM.maj_compteur_ressources()
+                    self.IHM.ui.tr_defenseur_text.hide()
+                    self.IHM.affiche_Jr_en_crs(self.Jr_en_crs)
+                    
             else : 
                 self.Jr_en_crs += 1
                 self.deb_unTourHn()

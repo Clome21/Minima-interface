@@ -177,6 +177,52 @@ class Ui_Minima_Accueil(object):
         self.Bouton_Findetour.setGeometry(QtCore.QRect(130, 740, 91, 21))
         self.Bouton_Findetour.setObjectName("Bouton_Findetour")
         
+        self.Defaite = QtWidgets.QMessageBox(self.groupBox_Jeu)
+        self.Defaite.setIcon(QtWidgets.QMessageBox.Information)
+        self.Defaite.setText("Les attaquants gagnent")
+        self.Defaite.setWindowTitle("Fin de partie")
+        self.Defaite.setStandardButtons(QtWidgets.QMessageBox.Ok)
+        self.Defaite.buttonClicked.connect(self.Defaite.close)
+        self.Defaite.buttonClicked.connect(Minima_Accueil.close)
+        self.Defaite.hide()
+        
+        self.Victoire = QtWidgets.QMessageBox(self.groupBox_Jeu)
+        self.Victoire.setIcon(QtWidgets.QMessageBox.Information)       
+        self.Victoire.setText("Le défenseur gagne")
+        self.Victoire.setWindowTitle("Fin de partie")
+        self.Victoire.setStandardButtons(QtWidgets.QMessageBox.Ok)
+        self.Victoire.buttonClicked.connect(self.Victoire.close)
+        self.Victoire.buttonClicked.connect(Minima_Accueil.close)
+        self.Victoire.hide()
+         
+        
+
+        self.tr_defenseur_text = QtWidgets.QTextBrowser(self.groupBox_Jeu)
+        self.tr_defenseur_text.append("Tour_du_Défenseur")
+        self.tr_defenseur_text.setGeometry(QtCore.QRect(660, 200, 200, 30))
+        self.tr_defenseur_text.hide()
+        
+        self.tr_attaquant_1_text = QtWidgets.QTextBrowser(self.groupBox_Jeu)
+        self.tr_attaquant_1_text.append("tr_attaquant_1")
+        self.tr_attaquant_1_text.setGeometry(QtCore.QRect(660, 200, 200, 30))
+        self.tr_attaquant_1_text.hide()
+        
+        self.tr_attaquant_2_text = QtWidgets.QTextBrowser(self.groupBox_Jeu)
+        self.tr_attaquant_2_text.append("tr_attaquant_2")
+        self.tr_attaquant_2_text.setGeometry(QtCore.QRect(660, 200, 200, 30))
+        self.tr_attaquant_2_text.hide()
+        
+        self.tr_attaquant_3_text = QtWidgets.QTextBrowser(self.groupBox_Jeu)
+        self.tr_attaquant_3_text.append("tr_attaquant_3")
+        self.tr_attaquant_3_text.setGeometry(QtCore.QRect(660, 200, 200, 30))
+        self.tr_attaquant_3_text.hide()
+        
+        self.tr_attaquant_4_text = QtWidgets.QTextBrowser(self.groupBox_Jeu)
+        self.tr_attaquant_4_text.append("tr_attaquant_4")
+        self.tr_attaquant_4_text.setGeometry(QtCore.QRect(660, 200, 200, 30))
+        self.tr_attaquant_4_text.hide()
+        
+        
         
         
         self.groupBox_Option = QtWidgets.QGroupBox(self.centralwidget)
@@ -282,30 +328,31 @@ class Ui_Minima_Accueil(object):
         self.checkBox_Option_Hum_NON.raise_()
         self.groupBox_Accueil_nb_humain.raise_()
         self.textBrowser.raise_()
+        self.tr_defenseur_text.raise_()
         self.groupBox_Accueil.raise_()
         self.groupBox_Jeu.raise_()
         self.groupBox_Option.raise_()
         self.textBrowser.raise_()
         Minima_Accueil.setCentralWidget(self.centralwidget)
-        self.menubar = QtWidgets.QMenuBar(Minima_Accueil)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 1240, 22))
-        self.menubar.setObjectName("menubar")
-        self.menuFichier = QtWidgets.QMenu(self.menubar)
-        self.menuFichier.setObjectName("menuFichier")
-        Minima_Accueil.setMenuBar(self.menubar)
-        self.statusbar = QtWidgets.QStatusBar(Minima_Accueil)
-        self.statusbar.setObjectName("statusbar")
-        Minima_Accueil.setStatusBar(self.statusbar)
-        self.actionQuitter = QtWidgets.QAction(Minima_Accueil)
-        icon2 = QtGui.QIcon()
-        icon2.addPixmap(QtGui.QPixmap("../../Images/croix_rouge.png"), QtGui.QIcon.Normal, QtGui.QIcon.On)
-        self.actionQuitter.setIcon(icon2)
-        self.actionQuitter.setObjectName("actionQuitter")
-        self.actionSauvegarder = QtWidgets.QAction(Minima_Accueil)
-        self.actionSauvegarder.setObjectName("actionSauvegarder")
-        self.menuFichier.addAction(self.actionQuitter)
-        self.menuFichier.addAction(self.actionSauvegarder)
-        self.menubar.addAction(self.menuFichier.menuAction())
+#        self.menubar = QtWidgets.QMenuBar(Minima_Accueil)
+#        self.menubar.setGeometry(QtCore.QRect(0, 0, 1240, 22))
+#        self.menubar.setObjectName("menubar")
+#        self.menuFichier = QtWidgets.QMenu(self.menubar)
+#        self.menuFichier.setObjectName("menuFichier")
+#        Minima_Accueil.setMenuBar(self.menubar)
+#        self.statusbar = QtWidgets.QStatusBar(Minima_Accueil)
+#        self.statusbar.setObjectName("statusbar")
+#        Minima_Accueil.setStatusBar(self.statusbar)
+#        self.actionQuitter = QtWidgets.QAction(Minima_Accueil)
+#        icon2 = QtGui.QIcon()
+#        icon2.addPixmap(QtGui.QPixmap("../../Images/croix_rouge.png"), QtGui.QIcon.Normal, QtGui.QIcon.On)
+#        self.actionQuitter.setIcon(icon2)
+#        self.actionQuitter.setObjectName("actionQuitter")
+#        self.actionSauvegarder = QtWidgets.QAction(Minima_Accueil)
+#        self.actionSauvegarder.setObjectName("actionSauvegarder")
+#        self.menuFichier.addAction(self.actionQuitter)
+#        self.menuFichier.addAction(self.actionSauvegarder)
+#        self.menubar.addAction(self.menuFichier.menuAction())
 
         self.retranslateUi(Minima_Accueil)
         self.Button_Ac_Quitter.clicked.connect(Minima_Accueil.close)
@@ -404,9 +451,29 @@ class Ui_Minima_Accueil(object):
 
     
     
+    def nb_IA_choisi(self):
+        if self.checkBox_IA_0.isChecked():
+            return 0
+        if self.checkBox_IA_1.isChecked():
+            return 2
+        if self.checkBox_IA_2.isChecked():
+            return 3
+        if self.checkBox_IA_3.isChecked():
+            return 4
+        if self.checkBox_IA_4.isChecked():
+            return 5
     
-    
-    
+    def nb_Hn_choisi(self):
+        if self.checkBox_IA_9.isChecked():
+            return 0
+        if self.checkBox_IA_5.isChecked():
+            return 2
+        if self.checkBox_IA_6.isChecked():
+            return 3
+        if self.checkBox_IA_7.isChecked():
+            return 4
+        if self.checkBox_IA_8.isChecked():
+            return 5
     
     
     
@@ -430,6 +497,8 @@ class Ui_Minima_Accueil(object):
 "<tr>\n"
 "<td style=\"border: none;\">\n"
 "<p align=\"center\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'Cantarell\'; font-size:72pt; text-decoration: underline; color:#cd0808;\">Minima</span></p></td></tr></table></body></html>"))
+        
+        
         self.Button_Ac_Jouer.setText(_translate("Minima_Accueil", "Jouer"))
         self.Button_Ac_Quitter.setText(_translate("Minima_Accueil", "Quitter"))
         self.Button_Ac_Charger.setText(_translate("Minima_Accueil", "Charger"))
@@ -536,10 +605,10 @@ class Ui_Minima_Accueil(object):
         self.checkBox_IA_7.setText(_translate("Minima_Accueil", "3"))
         self.checkBox_IA_8.setText(_translate("Minima_Accueil", "4"))
         self.checkBox_IA_9.setText(_translate("Minima_Accueil", "0"))
-        self.menuFichier.setTitle(_translate("Minima_Accueil", "fichier"))
-        self.actionQuitter.setText(_translate("Minima_Accueil", "Quitter"))
-        self.actionQuitter.setShortcut(_translate("Minima_Accueil", "Ctrl+Q"))
-        self.actionSauvegarder.setText(_translate("Minima_Accueil", "Sauvegarder"))
+#        self.menuFichier.setTitle(_translate("Minima_Accueil", "fichier"))
+#        self.actionQuitter.setText(_translate("Minima_Accueil", "Quitter"))
+#        self.actionQuitter.setShortcut(_translate("Minima_Accueil", "Ctrl+Q"))
+#        self.actionSauvegarder.setText(_translate("Minima_Accueil", "Sauvegarder"))
 
 
 if __name__ == "__main__":
