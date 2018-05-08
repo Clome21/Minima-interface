@@ -594,7 +594,8 @@ class Scorpion(Unites_Humain_Attaquant):
         
         Renvoie : 
         ----------
-        Rien.
+        'S ' : str
+            Le symbole associé.
         
         """
         return 'S '
