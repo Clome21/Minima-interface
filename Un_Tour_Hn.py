@@ -305,6 +305,7 @@ class Un_Tour_Joueur_Hn():
                 self.U = Scorpion(Jr._role,self._carte,X,Y,self.Jr_en_crs)
                 Jr._liste_unite.append(self.U)
                 Jr.nbe_unite_restantes -= 1
+                self.IHM.ui.lcdNumber_Unitdispo.display(int(Jr.nbe_unite_restantes) )
                 print("Nombre de scorpions disponibles : ", int(Jr.nbe_unite_restantes))
 
 
@@ -344,10 +345,21 @@ class Un_Tour_Joueur_Hn():
                 if role[0] == "D":
                     self.IHM.ui.Attaquant.hide()
                     self.IHM.ui.Defenseur.show()
-  
+                    self.IHM.ui.tr_defenseur_text.show() 
+
+                    self.IHM.ui.tr_attaquant_1_text.hide() 
+
+                    self.IHM.ui.tr_attaquant_2_text.hide() 
+
+                    self.IHM.ui.tr_attaquant_3_text.hide() 
+
+                    self.IHM.ui.tr_attaquant_4_text.hide() 
                 elif role[0] == "A":
                     self.IHM.ui.Attaquant.show()
                     self.IHM.ui.Defenseur.hide()
+                    self.IHM.ui.tr_defenseur_text.hide() 
+
+                    self.IHM.affiche_Jr_en_crs(self.Jr_en_crs) 
                     self.L_joueur[self.Jr_en_crs].nbe_unite_restantes += self.unite_disp_par_tour
                     self.IHM.maj_compteur_ressources()
             else : 
