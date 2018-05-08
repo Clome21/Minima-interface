@@ -46,6 +46,9 @@ class Map(list):
             L'indice indiquant si l'objet carte doit être issu d'une sauvegarde
         ou non.
         
+        IHM : Objet MonAppli
+            Permet de gérer l'interface graphique.
+        
         Renvoie
         --------
         Rien
