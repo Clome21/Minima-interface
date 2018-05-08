@@ -24,9 +24,6 @@ class Un_Tour_Joueur_Hn():
         carte : Objet Map
             L'objet Map utilisé pour la partie.
         
-        IHM : Objet MonAppli
-            Permet de gérer l'interface graphique.
-       
         """
         self.IHM = IHM
         self._carte = carte
@@ -45,12 +42,16 @@ class Un_Tour_Joueur_Hn():
          
     def placer_une_foreuse(self,X,Y)   :
         """
-        Permet au joueur s'il le souhaite et s'il en a le droit de construire le batiment Foreuse
+        Permet au joueur, s'il en a le droit, de construire le batiment Foreuse
+        sur la case dont il a indiqué les coordonnées en entrée.
+        Cette case doit cependant être comprise dans les emplacements de construction
+        disponibles.
         Met également à jour la quantité de ressource à sa disposition.
         
         Paramètres : 
         -------------
-        Aucun.
+        X,Y : int
+            Les coordonnées de la case sur laquelle le joueur veut placer le batiment.
         
         Renvoie :
         ----------
@@ -76,16 +77,21 @@ class Un_Tour_Joueur_Hn():
 
     def placer_un_Panneau_solaire(self,X,Y):
         """
-        Permet au joueur s'il le souhaite et s'il en a le droit de construire le batiment Foreuse
+        Permet au joueur, s'il en a le droit, de construire le batiment 
+        Panneau solaire sur la case dont il a indiqué les coordonnées en entrée.
+        Cette case doit cependant être comprise dans les emplacements de construction
+        disponibles.
         Met également à jour la quantité de ressource à sa disposition.
         
         Paramètres : 
         -------------
-        Aucun.
+        X,Y : int
+            Les coordonnées de la case sur laquelle le joueur veut placer le batiment.
         
         Renvoie :
         ----------
         Rien.
+        
         """
 
         if (self.L_joueur[0].metal_tot>=Constante.cout_M_P and self.L_joueur[0].energie_tot>=Constante.cout_E_P):
@@ -176,7 +182,7 @@ class Un_Tour_Joueur_Hn():
             L'ensemble des coordonnées sur lesquelles se trouve l'objet typ, dans la portion de carte étudiée.
         """
         L_pos = self.placement_pos(x_inf_b,x_sup_b,y_inf_b,y_sup_b,typ)
-    #    print(L_pos)
+
         x_inf = (self.__xmax )//2 -1
         x_sup = (self.__xmax)//2 +2
         y_inf =  (self.__ymax)//2 - 1
@@ -189,80 +195,18 @@ class Un_Tour_Joueur_Hn():
         E_pos = set(L_pos)
         L_pos_tot =list( E_pos - (E_pos&E_pos_imp))
         return(L_pos_tot)
-
-    
-    def construction_bat(self):
-        """
-        Permet au joueur s'il le souhaite de placer un batiment
-        
-        Paramètres :
-        ------------
-        Aucun.
-        
-        Renvoie :
-        ----------
-        Rien.
-        
-        """
-        choix=input("placer un batiment ? (YES/NO)")
-        if choix=='YES':
-            self.placer_une_foreuse()
-            self.placer_un_Panneau_solaire()
-        elif choix=='NO':
-            pass
-        
-    def production_unite(self,role,k):
-        """
-        Sélectionne la méthode de production d'unité qui doit être sélectionnée,
-        selon le rôle du joueur dans la partie (attaquant ou défenseur).
-        
-        Paramètres :
-        ------------
-        role : str
-            Le rôle du joueur exécutant la méthode.
-        
-        k : int
-            La position du joueur dans la liste L_joueur.
-        
-        Renvoie :
-        ---------
-        Rien.
-        
-        """
-        
-        if role[0] == 'D':
-            self.production_unite_defense()
-        elif role[0] == 'A':
-            self.production_unite_attaque_Hn(k)
- 
-    def production_unite_defense(self):
-        """
-        Enclenche la méthode de production d'unités pour le défenseur, selon ses ressources et avec son accord.
-        
-        Paramètres :
-        ------------
-        Aucun.
-        
-        Renvoie :
-        ----------
-        Rien.
-        
-        """
-        if (self.L_joueur[0].metal_tot>=Constante.cout_M_RO and self.L_joueur[0].energie_tot>=Constante.cout_E_RO):
-            choix_DH = input("Construire un robot? (YES/NO)")
-            if choix_DH == 'YES':
-                self.production_unite_defense_combat()
-                self.production_unite_defense_production()
-
     
     def production_unite_defense_combat(self,X,Y):
         """
-        Produit une unité de combat pour le défenseur, si celui-ci a suffisamment de ressources et avec son accord.
-        Il doit également décider de la position de cette unité, parmi les positions possibles.
+        Produit une unité de combat pour le défenseur, si celui-ci a suffisamment de ressources,
+        sur la case qu'il a indiqué en entrée.
+        Cette case doit cependant être comprise dans les emplacements de production
+        disponibles.
         
         Paramètres :
         ------------
-        Aucun.
+        X,Y : int
+            Les coordonnées de la case sur laquelle le joueur veut placer l'unité.
         
         Renvoie :
         ----------
@@ -275,8 +219,7 @@ class Un_Tour_Joueur_Hn():
             x_sup = (self.__xmax)//2 +2
             y_inf =  (self.__ymax)//2 - 1
             y_sup = (self.__ymax)//2 +2
-                    #A VERIF
-    
+     
             L_pos = self.placement_pos(x_inf,x_sup,y_inf,y_sup,' ')
                     
             if (X,Y) in L_pos:
@@ -288,12 +231,15 @@ class Un_Tour_Joueur_Hn():
             
     def production_unite_defense_production(self,X,Y):
         """
-        Produit une unité de production pour le défenseur, si celui-ci a suffisamment de ressources et avec son accord.
-        Il doit également décider de la position de cette unité, parmi les positions possibles.
+        Produit une unité de production pour le défenseur, si celui-ci a suffisamment de ressources,
+        sur la case qu'il a indiqué en entrée.
+        Cette case doit cependant être comprise dans les emplacements de production
+        disponibles.
         
         Paramètres :
         ------------
-        Aucun.
+        X,Y : int
+            Les coordonnées de la case sur laquelle le joueur veut placer l'unité.
         
         Renvoie :
         ----------
@@ -315,15 +261,16 @@ class Un_Tour_Joueur_Hn():
                 self.L_joueur[0].energie_tot=self.L_joueur[0].energie_tot-Constante.cout_E_P
 
         
-    def production_unite_attaque_Hn(self,k,X,Y):
+    def production_unite_attaque_Hn(self,X,Y):
         """
-        Produit des unités de combat pour l'attaquant, avec son accord.
-        Il doit également décider de la position de cette unité, parmi les positions possibles.
+        Produit des unités de combat pour l'attaquant, sur la case qu'il a indiqué en
+        entrée. Cette case doit cependant être comprise dans les emplacements de production
+        disponibles.
         
         Paramètres :
         ------------
-        k : int
-            La position du joueur exécutant la méthode dans la liste L_joueur.
+        X,Y : int
+            Les coordonnées de la case sur laquelle le joueur veut placer l'unité.
         
         Renvoie :
         ----------
@@ -331,9 +278,6 @@ class Un_Tour_Joueur_Hn():
         
         """
 
-        Jr = self.L_joueur[k]
-        unite_disp = self.unite_disp_par_tour + Jr.nbe_unite_restantes
-        
         
         if self.L_joueur[self.Jr_en_crs].nbe_unite_restantes < 1:
             print("Aucune unité à placer pour ce tour. \n")
@@ -353,59 +297,27 @@ class Un_Tour_Joueur_Hn():
             L_pos = L_Ht + L_Bas + L_Gche + L_Dte 
         
             #Sélectionne les emplacements disponibles
-        if len(L_pos) == 0 :
+            if len(L_pos) == 0 :
                 print("Aucune zone d'apparition d'unité disponible, étape suivante. \n")
         
-        else : 
-#                print("Nombre de scorpions disponibles : ", int(unite_disp) )
-#                
-#                choix_AH=input("placer un Scorpion ? (YES/NO)")
-            self.IHM.ui.lcdNumber_Unitdispo.display(unite_disp)
-            while len(L_pos) != 0 and unite_disp >=1 :
-#                    print('Positions possibles :', L_pos)
-#                    L = input('Envoyez la nouvelle position en x et en y (format x,y). \n')
-#                    c = L.find(',')
-#                    while c == -1:
-#                        print("Erreur de synthaxe. Recommencez svp")
-#                        L = input('Envoyez la nouvelle position en x et en y (format x,y). \n')
-#                        c = L.find(',')                        
-#                    X = int(L[0:c])
-#                    Y = int(L[c+1:])
-                    
-#        if (X,Y) in L_pos:
-                        #print("Position hors de la zone d'apparition. \n")
-                        #L = input('Envoyez la nouvelle position en x et en y (format x,y). \n')
-                        #c = L.find(',')
-                        #X,Y = int(L[0:c]) , int(L[c+1:])
-
-                L_pos.remove((X,Y))
-                self.U = Scorpion(Jr._role,self._carte,X,Y,k)
+            else : 
+                Jr = self.L_joueur[self.Jr_en_crs]
+                self.U = Scorpion(Jr._role,self._carte,X,Y,self.Jr_en_crs)
                 Jr._liste_unite.append(self.U)
-                unite_disp-=1
-                
-                
-                if unite_disp <1:
-                      print("Plus d'unité disponible, étape suivante \n")
-                      break
-#                
-                if len(L_pos) == 0:
-                      print("Aucune zone d'apparition d'unité disponible, étape suivante. \n")
-                      break
-#                        
-#                    else:
-#                        print("Nombre de scorpions disponibles : ", int(unite_disp))
-#                        choix_AH=input("placer un autre Scorpion ? (YES/NO)")
-#            
-                if len(L_pos) == 0:
-                    Jr.nbe_unite_restantes = unite_disp
+                Jr.nbe_unite_restantes -= 1
+                print("Nombre de scorpions disponibles : ", int(Jr.nbe_unite_restantes))
 
-                self.IHM.ui.lcdNumber_Unitdispo.display(unite_disp)
-                
-        
+
     def deb_unTourHn(self):
 
         """
-        Effectue toutes les actions liées à un tour de jeu, pour les joueurs humains dans la partie.
+        Effectue toutes les actions liées au début d'un tour de jeu, pour les joueurs
+        humains dans la partie.
+        Pour cela, après avoir vérifié que le joueur est bien humain, la méthode 
+        active les options correspondantes au rôle du joueur sélectionné.
+        Une fois tous les joueurs humains passés, la méthode met à jour le nombre
+        d'unités disponibles pour les attaquants, puis lance le tour de jeu des
+        joueurs IA.
         
         Paramètres
         ----------
@@ -432,20 +344,12 @@ class Un_Tour_Joueur_Hn():
                 if role[0] == "D":
                     self.IHM.ui.Attaquant.hide()
                     self.IHM.ui.Defenseur.show()
-                    self.IHM.ui.tr_defenseur_text.show()
-                    self.IHM.ui.tr_attaquant_1_text.hide()
-                    self.IHM.ui.tr_attaquant_2_text.hide()
-                    self.IHM.ui.tr_attaquant_3_text.hide()
-                    self.IHM.ui.tr_attaquant_4_text.hide()
   
                 elif role[0] == "A":
                     self.IHM.ui.Attaquant.show()
                     self.IHM.ui.Defenseur.hide()
                     self.L_joueur[self.Jr_en_crs].nbe_unite_restantes += self.unite_disp_par_tour
                     self.IHM.maj_compteur_ressources()
-                    self.IHM.ui.tr_defenseur_text.hide()
-                    self.IHM.affiche_Jr_en_crs(self.Jr_en_crs)
-                    
             else : 
                 self.Jr_en_crs += 1
                 self.deb_unTourHn()
@@ -458,6 +362,20 @@ class Un_Tour_Joueur_Hn():
             self._carte.TrIA.unTourIA()
                 
     def fin_unTourHn(self):
+        """
+        Termine le tour de jeu d'un joueur humain. Pour cela, il remet à zéro
+        les capacités de mouvement des unités, puis passe au tour du joueur
+        suivant.
+        
+        Paramètres : 
+        -------------
+        Aucun.
+        
+        Renvoie :
+        -----------
+        Rien.
+        
+        """
         i = self.Jr_en_crs
         L_unite = self.L_joueur[i]._liste_unite
         for c in L_unite:
@@ -479,8 +397,4 @@ class Un_Tour_Joueur_Hn():
         self.IHM.tr_Hn_en_crs = 0
         self.IHM.simuler()
 
-
-            
-
-            
     
