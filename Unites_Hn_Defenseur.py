@@ -603,6 +603,15 @@ class Robot_combat(Unites_Humain_Defenseur):
         """
         Méthode permettant d'afficher le robot de combat sur la carte. Elle renvoie le symbole associé à 
         ce robot.
+        
+        Paramètres :
+        -------------
+        Aucun.
+        
+        Renvoie : 
+        ----------
+        'RC' : str
+            Le symbole associé.
         """
         return "RC"
 
@@ -615,6 +624,15 @@ class Robot_combat(Unites_Humain_Defenseur):
             RC : le role de l'objet. Ici, Robot de Combat.
             self.id : l'identifiant de l'objet, afin de le différencier des autres
             robots de combat.
+        
+        Paramètres : 
+        -------------
+        Aucun.
+        
+        Renvoie : 
+        ----------
+       'D_U_RC' + 'Id' : str
+            La chaîne de caractère identifiant l'unité.
         """ 
         return "D_U_RC%i"%( self.id )
     
@@ -625,6 +643,15 @@ class Robot_combat(Unites_Humain_Defenseur):
         
         A noter : il existe deux méthodes pour cette action de combat : une 
         méthode itérative, et une méthode récursive.
+        
+        Paramètres : 
+        -------------
+        Aucun.
+        
+        Renvoie :
+        ----------
+        Rien.
+        
         """
         self.combat_rec()
         return(None)
@@ -661,6 +688,16 @@ class Robot_Ouvrier(Unites_Humain_Defenseur):
         """
         Méthode permettant d'afficher le robot de combat sur la carte. Elle renvoie le symbole associé à 
         ce robot.
+        
+        Paramètres :
+        -------------
+        Aucun.
+        
+        Renvoie : 
+        ----------
+        'RO' : str
+            Le symbole associé.
+        
         """
         return "RO"
     
@@ -672,6 +709,15 @@ class Robot_Ouvrier(Unites_Humain_Defenseur):
             RO : le role de l'objet. Ici, Robot Ouvrier.
             self.id : l'identifiant de l'objet, afin de le différencier des autres
             robots ouvriers.
+            
+        Paramètres : 
+        -------------
+        Aucun.
+        
+        Renvoie : 
+        ----------
+       'D_U_RO' + 'Id' : str
+            La chaîne de caractère identifiant l'unité.
         """ 
         return "D_U_RO%i"%( self.id )
         
@@ -679,6 +725,15 @@ class Robot_Ouvrier(Unites_Humain_Defenseur):
         """
         Méthode définissant l'action de l'unité, après s'être déplacée.
         Pour un robot ouvrier, cette action est une tentative de capture de ressources.
+        
+        Paramètres : 
+        -------------
+        Aucun.
+        
+        Renvoie :
+        ----------
+        Rien.
+        
         """
         self.capture_ressources()
         return(None)
