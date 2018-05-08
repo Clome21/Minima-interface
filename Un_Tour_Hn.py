@@ -24,6 +24,9 @@ class Un_Tour_Joueur_Hn():
         carte : Objet Map
             L'objet Map utilisé pour la partie.
         
+        IHM : Objet MonAppli
+            Permet de gérer l'interface graphique.
+       
         """
         self.IHM = IHM
         self._carte = carte
