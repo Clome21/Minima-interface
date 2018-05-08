@@ -370,33 +370,33 @@ class Unite_IA_Facile():
                     self._carte.fin_de_partie()
     
         
-    def mvt_poss2(self):
-        x,y = self.coords
-        
-        self.L_vide = []
-        x_inf = max(0,int(-self.capmvt) + x)
-        x_sup = min(self._carte.dims[0]-1, int(self.capmvt + x))
-        y_inf = max(0,int(-self.capmvt) + y)
-        y_sup = min(self._carte.dims[1]-1, int(self.capmvt + y))
-
-        
-        Altrs = self._carte.ss_carte[x_inf:x_sup+1,y_inf:y_sup+1]
-        
-
-        
-        Coords = np.where(Altrs == ' ')
-
-        
-
-        
-        for k in range(len(Coords[0])):
-            i,j = Coords[0][k] + x_inf , Coords[1][k] + y_inf
-            self.L_vide.append((i,j))
-            
-
-        return(self.L_vide)
-    
     def mvt_poss(self):
+        """ Méthode permettant de sélectionner les cases sur lesquelles 
+        l'unité peut se déplacer. Ces cases doivent être vides.
+        Dans un premier temps, la méthode sélectionne les cases vides et non vides
+        dans la zone de déplacement de l'unité.
+        Cependant, une case non vide bloque également les cases autour de celles-ci
+        (pour des questions de champ de vision, ou d'impossibilité de déplacement au
+        delà de l'obstacle). 
+        Donc dans un second temps, la méthode retire de la liste les cases qui 
+        sont bloqués par les obstacles au déplacement de l'unité.
+        Les cases retirées dépendent de la position de l'unité par rapport aux obstacles.
+        
+        A noter : actuellement, la façon dont les cases bloquées sont choisies a été
+        prévu pour des unitées dont les déplacements sont inférieurs ou égaux à 2. 
+        Une MAJ pourra être faite plus tard pour corriger ce problème.
+        
+        
+        Paramètres
+        ----------
+        Aucun
+        
+        Renvoie
+        -------
+        L_vide : list
+            La liste contenant toutes les cases où l'unité peut se déplacer.
+        
+        """
         x,y = self.coords
         
         self.L_vide = []
@@ -470,6 +470,18 @@ class Unite_IA_Facile():
         return(self.L_vide)        
     
     def disparition(self):
+        """ Méthode permettant de détruire l'unité. Elle supprime celui-ci
+        de l'ensemble des listes/arrays où l'unité est stockée.
+        
+        Paramètres : 
+        ------------
+        Aucun.
+        
+        Renvoie :
+        ---------
+        Rien.
+        
+        """
         print("%s est mort! \n"%(self.T_car()))
         (x,y) = self.coords
         self._carte.remove(self)
@@ -479,11 +491,30 @@ class Unite_IA_Facile():
         
         
 class Scorpion0(Unite_IA_Facile):
-
+"""
+Classe spécialisant la classe Unite_IA_Facile pour représenter un scorpion de niveau 0.
+"""
     
     def __init__(self, role, cart, x, y, k):
+    """Permet d'initialiser l'unité.
+            
+    Paramètres
+    ----------
+    
+    role : str
+    Le rôle du joueur possèdant l'unité
+            
+    carte : classe Map
+    La carte sur laquelle évolue l'unité.
+    
+    x, y : int
+    Les coordonnées de l'unité en abscisse et en ordonnée
+    
+    k : int
+    La position du joueur possédant l'unité, dans la liste L_joueur.
+        """
         super().__init__(x, y, cart)
-#        self.name = "Scorpion"
+
         self.id =  self._carte.L_joueur[k].IdU 
         self._role = role
         self.num_joueur = k
@@ -494,19 +525,56 @@ class Scorpion0(Unite_IA_Facile):
         self.zonecbt = math.sqrt(2)
 
     def T_car(self):
-        """ Renvoie l'ensemble des caractéristiques de l'objet étudié """
+        """ Renvoie l'ensemble des caractéristiques de l'objet étudié
+            Dans l'ordre : 
+            self._role : le rôle du joueur possédant l'objet. Ici, l'attaquant (avec un
+            identifiant pour le reconnaître).
+            U : le type global de l'objet. Ici, Unité.
+            S0 : le role de l'objet. Ici, Scorpion d'une IA de niveau 0.
+            self.id : l'identifiant de l'objet, afin de le différencier des autres
+            scorpions.
+            
+        Paramètres : 
+        -------------
+        Aucun.
+        
+        Renvoie : 
+        ----------
+       'Role_joueur' + '_U_S' + 'Id' : str
+            La chaîne de caractère identifiant l'unité.
+            """
         return "%s_U_S0%i"%(self._role, self.id )
     
     def car(self):
+        """Méthode permettant d'afficher le scorpion sur la carte. Elle renvoie
+        le symbole associé au scorpion.
+        
+        Paramètres : 
+        -------------
+        Aucun.
+        
+        Renvoie : 
+        ----------
+        's ' : str
+            Le symbole associé.
+        
+        """
         return 's '
        
     
     def bouger(self):
         """
-        Mouvement aléatoire uniforme dans un rayon d'une case vers le centre ou le cotée autour
-        de la position courante, mais ne peut passer a travers les cases marquées par /. Utilise les 
-        zones délimité par droite1 et droite2. Le QG vers lequel les fourmis essaient de ce diriger se trouve 
-        à l'ntersection de ces deux droites.
+        Permet un mouvement aléatoire de l'unité, parmi les cases possibles. Utilise la méthode mvt_poss() pour
+        déterminer ces cases.
+        
+        Paramètres :
+        ------------
+        Aucun.
+        
+        Renvoie :
+        ----------
+        Rien.
+        
         """
         L_dep_poss  = self.mvt_poss()
         print(L_dep_poss)
@@ -519,6 +587,21 @@ class Scorpion0(Unite_IA_Facile):
         return(self.coords)
     
     def action(self):
+        """ Méthode définissant l'action de l'unité, après s'être déplacée.
+        Pour un scorpion, cette action est une action de combat.
+        
+        A noter : il existe deux méthodes pour cette action de combat : une 
+        méthode itérative, et une méthode récursive.
+        
+        Paramètres : 
+        -------------
+        Aucun.
+        
+        Renvoie :
+        ----------
+        Rien.
+        
+        """
         self.combat_rec()
         return(None)
         
