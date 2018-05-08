@@ -587,6 +587,15 @@ class Scorpion(Unites_Humain_Attaquant):
     def car(self):
         """Méthode permettant d'afficher le scorpion sur la carte. Elle renvoie
         le symbole associé au scorpion.
+        
+        Paramètres : 
+        -------------
+        Aucun.
+        
+        Renvoie : 
+        ----------
+        Rien.
+        
         """
         return 'S '
     
@@ -599,6 +608,16 @@ class Scorpion(Unites_Humain_Attaquant):
             S : le role de l'objet. Ici, Scorpion
             self.id : l'identifiant de l'objet, afin de le différencier des autres
             scorpions.
+            
+        Paramètres : 
+        -------------
+        Aucun.
+        
+        Renvoie : 
+        ----------
+       'Role_joueur' + '_U_S' + 'Id' : str
+            La chaîne de caractère identifiant le batiment.
+            
         """  
                     
         return "%s_U_S%i"%(self._role, self.id )
@@ -609,6 +628,15 @@ class Scorpion(Unites_Humain_Attaquant):
         
         A noter : il existe deux méthodes pour cette action de combat : une 
         méthode itérative, et une méthode récursive.
+        
+        Paramètres : 
+        -------------
+        Aucun.
+        
+        Renvoie :
+        ----------
+        Rien.
+        
         """
         self.combat_rec()
         return(None)
