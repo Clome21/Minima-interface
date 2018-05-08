@@ -617,7 +617,7 @@ class Scorpion(Unites_Humain_Attaquant):
         Renvoie : 
         ----------
        'Role_joueur' + '_U_S' + 'Id' : str
-            La chaîne de caractère identifiant le batiment.
+            La chaîne de caractère identifiant l'unité.
             
         """  
                     
