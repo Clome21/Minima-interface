@@ -276,12 +276,13 @@ class MonAppli(QtWidgets.QMainWindow):
         
         Jr_en_crs = self.carte.TrHn.Jr_en_crs
         if self.carte.L_joueur[Jr_en_crs].nbe_unite_restantes > 1:
-            """Activer / désactiver le bouton de placement d'attaquants. """
-                
-        
-        
+            self.ui.Button_Scorpion.setEnabled(True)
+        else:
+            self.ui.Button_Scorpion.setEnabled(False)
+
         
     def maj_compteur_ressources(self):
+
         self.ui.lcdNumber_Metal.display(self.partie.L_joueur[0].metal_tot)
         self.ui.lcdNumber_Energie.display(self.partie.L_joueur[0].energie_tot)
         self.ui.lcdNumber_Tours_restant.display(self.nbtour-self.carte.tr_actuel)
@@ -324,7 +325,6 @@ class MonAppli(QtWidgets.QMainWindow):
         if self.l == "pus" and self.pos_souris_x != int:
             self.activation_boutons()
             self.partie.carte.TrHn.production_unite_attaque_Hn(self.k,self.pos_souris_x,self.pos_souris_y)
-            self.maj_compteur_ressources()
             self.l=1
             self.paintEvent(2)
             self.ui.conteneur.update()
@@ -547,25 +547,24 @@ class MonAppli(QtWidgets.QMainWindow):
         QPainter.drawRect(i*36,j*36, 36, 36)
         
     def dessin_mur(self,QPainter,i,j):
-        QPainter.setPen(QtCore.Qt.blue)
         u = QtCore.QRectF(i*36,j*36, 36, 36)
         QPainter.fillRect(u,QtCore.Qt.black)
     
     def dessin_Scorpion0(self,QPainter,Scorpion):
         u = QtCore.QRectF(Scorpion.x*36,Scorpion.y*36, 36, 36)
-        QPainter.fillRect(u,QtGui.QColor(0,50,0))
+        QPainter.fillRect(u,QtGui.QColor(20,50,0))
         
     def dessin_Scorpion1(self,QPainter,Scorpion):
         u = QtCore.QRectF(Scorpion.x*36,Scorpion.y*36, 36, 36)
-        QPainter.fillRect(u,QtGui.QColor(0,60,0))
+        QPainter.fillRect(u,QtGui.QColor(0,60,20))
         
     def dessin_Scorpion2(self,QPainter,Scorpion):
         u = QtCore.QRectF(Scorpion.x*36,Scorpion.y*36, 36, 36)
-        QPainter.fillRect(u,QtGui.QColor(0,70,0))
+        QPainter.fillRect(u,QtGui.QColor(10,70,10))
         
     def dessin_Scorpion3(self,QPainter,Scorpion):
         u = QtCore.QRectF(Scorpion.x*36,Scorpion.y*36, 36, 36)
-        QPainter.fillRect(u,QtGui.QColor(0,80,0))
+        QPainter.fillRect(u,QtGui.QColor(20,80,20))
 
     def dessin_metal (self,QPainter,metal):
         u = QtCore.QRectF(metal.x*36,metal.y*36, 36, 36)
