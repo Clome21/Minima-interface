@@ -15,25 +15,49 @@ import time
 from Un_Tour_Hn import Un_Tour_Joueur_Hn
 from Un_Tour_IA import Un_Tour_Joueur_IA
 from Ressource import metal
-
 from Joueur import Joueur
-
 from unites_IA_facile import Scorpion0
-from unites_IA_Moyenne import Scorpion1
-from Constantes import Constante
 
+from Constantes import Constante
 from Unites_Hn_Defenseur import Robot_combat, Robot_Ouvrier
 from Unites_Hn_Attaquant import Scorpion
 
-#rajouter nbe unite dispo/tr
-
 class Save():
+    """
+    Classe gérant le processus de sauvegarde d'une partie.
+    """
     def __init__(self,name,carte):
+        """
+        Initialise la création de la sauvegarde. Les informations nécessaires pour recréer la partie 
+        sauvegardée sont stockées dans un fichier .txt, dont le nom est choisi par l'utilisateur. Le
+        programme vérifie avant si le nom est déjà employé par une autre sauvegarde, puis écrit/modifie
+        le fichier .txt avec les informations.
+        
+        Paramètres : 
+        ------------
+        
+        name : str
+            Le nom de la sauvegarde choisi par l'utilisateur.
+            
+        carte : objet Carte.
+            L'objet Carte de la partie devant être sauvegardée.
+            
+        Renvoie :
+        -----------
+        Rien.
+        
+        """
+        
+        
+        # Sauvegarder également le joueur en cours, la variable tour_en_crs, et la variable tour_jr_en_cours.
+        # (pas forcément les deux dernières : si la sauvegarde a pu avoir lieu, ça devait forcément être pendant un tour
+        # de jeu d'un joueur humain; donc les deux seraient égales à 1.
+        # Sauvegarder aussi les capacités de mouvement des unités pour le joueur humain en cours (uniquement).
+        # Voir si une option est nécessaire pour quitter (si un objet partie va forcément rester en arrière plan ou non).
         
         self.Nme = self.Test_nom(name)
         Save = open(self.Nme,"w+")
         
-                    
         Save.write("Carte \n")
         Save.write("Dimensions \n")
         Save.write(str(carte.dims))
@@ -43,12 +67,11 @@ class Save():
         Save.write(" \n")
         Save.write("Nbe de tours totaux \n")
         Save.write(str(carte.nbtour))
-        Save.write(" \n")
-                
+        Save.write(" \n") 
         Save.write(str(carte.TrIA.unite_disp_par_tour))
         Save.write(" \n")
-        
-        
+        Save.write(str(carte.TrHn.Jr_en_crs))
+        Save.write(" \n")
         for k in range(len(carte)):
             if carte[k].car() == 'M ':
                 R = carte[k]
@@ -58,10 +81,7 @@ class Save():
                 Save.write(str(R.coords))
                 Save.write(" \n")
         Save.write("Fin ressources \n")
-
-        
         L_joueur = carte.L_joueur
-
         for k in range(len(L_joueur)):
             Save.write("Joueur \n")
             Jr = L_joueur[k]
@@ -73,8 +93,6 @@ class Save():
             Save.write(" \n")
             Save.write(str(Jr.nbe_unite_restantes))
             Save.write(" \n")
-#            Save.write(str(Jr.IdU))
-#            Save.write(" \n")
             L_bat = Jr._liste_bat
             if len(L_bat[0]) != 0:
                 Save.write("Batiments du joueur \n")
@@ -102,16 +120,31 @@ class Save():
                     Save.write(" \n")
                     Save.write(str(L_unite[j].coords))
                     Save.write(" \n")
+                    if Jr._role[1] == 'H':
+                        Save.write( str(L_unite[j].capmvt))
+                        Save.write(" \n")
                 Save.write("Fin unite \n")
             Save.write("Fin joueur \n")
-
         Save.write("Fin sauvegarde")
-
         print("Sauvegarde effectuée!")
 
-        
-    
     def Test_nom(self,name):
+        """
+        Contrôle le nom de la sauvegarde choisie par l'utilisateur. Si le nom correspond à une 
+        sauvegarde déjà existante, la méthode demande une confirmation auprès de l'utilisateur 
+        pour l'écraser. Si l'utilisateur refuse, elle invite alors celui-ci à entrer un autre nom.
+        Sinon, la sauvegarde est directement écrite avec le nom choisi.
+        
+        Paramètres : 
+        -------------
+        name : str
+            Le nom de la sauvegarde choisi par l'utilisateur.
+            
+        Renvoie : 
+        ------------
+        name : str
+            Le nom de la sauvegarde, choisi par l'utilisateur et confirmé par la méthode.
+        """
         try:
             f = open(name,"r")
         except FileNotFoundError:
@@ -128,16 +161,68 @@ class Save():
             return(name)
     
 class Load():
-    def __init__(self,name):
+    """
+    Classe gérant le processus de chargement d'une partie.
+    """
+    def __init__(self,name,IHM):
+        """
+        Permet d'initialiser le chargement de la partie. La méthode vérifie d'abord que le nom entré
+        est correct; ensuite, il rassemble toutes les lignes de caractères de la sauvegarde dans une
+        liste L. Il recrée ensuite la partie grâce à la méthode process(L).
+        
+        Paramètres : 
+        ------------
+        name : str
+            Le nom de la sauvegarde devant être chargée
+        
+        Renvoie :
+        ----------
+        Rien.
+        
+        """
         self.Nme = self.Test_save(name)
         if self.Nme != 'Q':
             with open(self.Nme, 'r') as f:
                 self.Load = [line.strip() for line in f]
+            self.IHM = IHM
             self.process(self.Load)
             print("Chargement terminé! \n")
+            
+            """
+            Il faut que : 
+                *une fenêtre pop, dans laquelle on puisse écrire du texte
+                *une fois ce texte validé, le contenu de la fenêtre est mis en format
+                str et sauvegardé.
+                *on l'utilise pour la méthode save/load
+            OU : 
+                *lorsqu'on appuie sur le bouton save/load, une fenêtre indique qu'il faut
+                revenir à la console pour écrire le nom de la sauvegarde (en indiquant
+                que le jeu restera bloqué en attendant).
+                *on utilise pour la méthode save/load classique.
+            
+            Une fois ce texte écrit, une fenêtre indique que la partie a été sauvegardée
+            ou chargée, et renvoie à l'écran de la carte de jeu.
+                
+                
+            """
 
         
     def Test_save(self,name):
+        """
+        Teste le nom de la sauvegarde entré par l'utilisateur. Si ce nom est faux, la méthode le
+        signale à l'utilisateur, et l'invite à entrer un nouveau nom ou à quitter le processus de
+        sauvegarde. Sinon, il confirme le nom entré par l'utilisateur.
+        
+        Paramètres :
+        -------------
+        name : str
+            Le nom de la sauvegarde devant être chargée, entré par l'utilisateur.
+        
+        Renvoie : 
+        ------------
+        name : str
+            Le nom de la sauvegarde devant être chargée, choisi par l'utilisateur et confirmé par la méthode.
+        """
         try:
             f = open(name,"r")
         except FileNotFoundError:
@@ -149,17 +234,33 @@ class Load():
         return(name)
                 
     def process(self,L):
+        """
+        Effectue le processus de chargement de la partie, en testant les différentes chaînes de caractères de
+        la liste L.
+        
+        Paramètres:
+        ------------
+        L : list
+            Liste contenant toutes les chaînes de caractères de la sauvegarde; chaque élément de
+            la liste correspond à une ligne de la sauvegarde.
+            
+        Renvoie : 
+        ----------
+        Rien.
+        
+        """
         Tst = ['S','R']
+        self.IHM.tr_en_crs = 1
+        self.IHM.tr_Hn_en_crs = 1
         while len(L) !=0:
-
             if L[0] == 'Carte':
-
+                # Processus de recréation de la carte sauvegardée.
                 Dims = L[2]
                 Nbta = L[4]
                 Nbt = L[6]
                 U_disp = L[7]
-                L = L[8:]
-                
+                Jr_en_crs = L[8]
+                L = L[9:]
                 Dims = Dims[1:-1]
                 k = Dims.find(',')
                 X = int(Dims[0:k])
@@ -185,9 +286,11 @@ class Load():
                 U_disp = int(U_disp)
                 self.Lcarte = Map.Map([],1)
                 self.Lcarte.TrIA.unite_disp_par_tour = U_disp
+                self.Lcarte.TrHn.unite_disp_par_tour = U_disp
+                self.Lcarte.TrHn.Jr_en_crs = int(Jr_en_crs)
                 
             while L[0] == 'Ressource':
-                print("Ressource")
+                #Processus de chargement des ressources sauvegardées sur la carte.
                 Val = L[1]
                 Pos = L[2]
                 L = L[4:]
@@ -202,20 +305,19 @@ class Load():
                 metal(X,Y,self.Lcarte,Val)
 
             while L[0] == 'Joueur':
-
+                # Processus de chargement des joueurs de la partie, et de leurs caractéristiques principales.
                 Role = L[1]
                 Metal_tot = int(L[2])
                 Energie_tot = int(L[3])
                 Ur = int(L[4])
-   #             Idu = int(L[5])
                 self.Jr = Joueur(Role)
                 self.Lcarte.L_joueur.append(self.Jr)
                 self.Jr.metal_tot = Metal_tot
                 self.Jr.energie_tot = Energie_tot
-  #               self.Jr.IdU = Idu
                 self.Jr.nbe_unite_restantes = Ur                
                 L = L[6:]
                 while L[0] == 'Bat':
+                # Processus de chargement des batiments du joueur actuel.
                     Typ = L[1]
                     Sante = L[2]
                     Pos = L[3]
@@ -246,18 +348,21 @@ class Load():
                     L = L[2:]
                 
                 while L[0] == "Unite":
+                    # Processus de chargement des unités du joueur actuel.
                     k = -2
                     Typ = L[1]
                     Num_joueur = L[2]
                     Sante = L[3]
                     Pos = L[4]
-                    L = L[5:]
+                    if Role[1] == 'H':
+                        Capmvt = int(L[5])
+                        L = L[6:]
+                    else:
+                        L = L[5:]
                     tTyp = Typ[k:]
                     while tTyp[0] not in Tst:
                          k = k- 1
                          tTyp = Typ[k:]
-                         print(k,tTyp)
-
                     Typ = tTyp
                     Num_joueur = int(Num_joueur)
                     Sante = int(Sante)
@@ -265,20 +370,20 @@ class Load():
                     k = Pos.find(',')
                     X = int(Pos[0:k])
                     Y = int(Pos[k+1:])
-                    print(Typ)
                     if Typ[0:2] == "RC":
                         Id = int(Typ[2])
                         U = Robot_combat(Role,self.Lcarte,X,Y)
                         U.sante = Sante
+                        U.capmvt = Capmvt
                         self.Jr._liste_unite.append(U)
                         
                     elif Typ[0:2] == "RO":
                         Id = int(Typ[2])
                         U = Robot_Ouvrier(Role,self.Lcarte,X,Y)
                         U.sante = Sante
+                        U.capmvt = Capmvt
                         self.Jr._liste_unite.append(U)
-                        
-                    
+
                     elif Typ[0] == "S":
                             if Typ[1] == "0":
                                 Id = int(Typ[2:])
@@ -287,18 +392,19 @@ class Load():
                                 U.id = Id
                                 self.Jr._liste_unite.append(U)
                             
-                            elif Typ[1] == "1":
-                                Id = int(Typ[2:])
-                                U = Scorpion1(Role,self.Lcarte,X,Y, Num_joueur)
-                                U.sante = Sante
-                                U.id = Id
-                                self.Jr._liste_unite.append(U)
+#                            elif Typ[1] == "1":
+#                                Id = int(Typ[2:])
+#                                U = Scorpion1(Role,self.Lcarte,X,Y, Num_joueur)
+#                                U.sante = Sante
+#                                U.id = Id
+#                                self.Jr._liste_unite.append(U)
                             
                     elif Typ[1] == "S":
                                 Id = int(Typ[2:])
                                 U = Scorpion(Role,self.Lcarte,X,Y, Num_joueur)
                                 U.sante = Sante
                                 U.id = Id
+                                U.capmvt = Capmvt
                                 self.Jr._liste_unite.append(U)
                 if L[0] == "Fin unite":
                     L = L[1:]
@@ -306,103 +412,10 @@ class Load():
                 L = []
             else: 
                 L = L[1:]    
-                
-            
-    
-                            
-                    
-                
-                    
-                    
-                
-                
-        
-            
-                
-    def process2(self,line,carac):
-        line = line[:-2]
-        
-        if line == "Joueur":
-            carac = "jr"
-            self.Jr = Joueur.Joueur("Load")
-            return(carac)
-        if carac[0] == "j":
-            if carac == "jr":
-                self.Jr._role = line
-                carac = "None"
-            if carac[0:2] == "jb":
-                if line == "Bat":
-                    carac = "jbr"
-                    return(carac)
-                if carac == "jbr":
-                    line = line[-2:]
-                    if line == "QG":
-                        B = Batiments.QG(0,0,carte)
-                    elif line[0] == "P":
-                        return(None)
-                        
-                
-        
-        if line == "Batiments du joueur":
-            carac = "jb"
-        
-        
-        
-#VOIR QUI ON CREE EN PREMIER : MAP OU LISTE?
-
-# A NOTER : TOUS LES BATIMENTS ET TOUS LES UNITES ONT BESOIN 
-# D'UNE MAP EN PARAMETRES.
-#SEMBLE MIEUX DE COMMENCER PAR MAP, PUIS D'AJOUTER A MAP LA LISTE DES JOUEURS.
-        
-        
-        
-        
-        if line == "Carte":
-            carac = "c"
-        if carac[0] == "c":
-            if line == "Dimensions":
-                carac = "cd"
-                return(carac)
-            if carac == "cd":
-                line = line[1:-1]
-                k = line.find(',')
-                X = int(line[0:k])
-                Y = int(line[k+1:])
-                Constante.xL = X
-                Constante.yL = Y
-
-            if line == "Tr actuel":
-                carac = "cta"
-                return(carac)
-            if carac == "cta":
-                Constante.Lnbta = int(line)
-            
-            if line == "Nbe de tours totaux":
-                carac = "ct"
-                return(carac)
-            
-            if carac == "ct":
-                Constante.Lnbt = int(line)
-                self.Lcarte = Map.Map([],1)
-                return("None")
-        
-        if line == "Ressources":
-            carac = "r"
-            self.M = metal(0,0,self.Lcarte,0)
-        
-        if carac[0] == "r":
-            return(None)
-            
-                
-                
-        return(carac)
-        
-    
 
     
 if __name__ == "__main__":
     f = open("Text1.txt","w+")
-
     L=  []
     V = []
     Load = open('Test1.txt')

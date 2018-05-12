@@ -7,7 +7,7 @@ from Ressource import metal
 from Batiments import Foreuse,QG,Panneau_solaire
 from Unites_Hn_Defenseur import Robot_combat, Robot_Ouvrier
 from unites_IA_facile import Scorpion0
-from unites_IA_Moyenne import Scorpion1
+
 from Constantes import Constante
 import Save_Load as sl
 import numpy as np
@@ -350,8 +350,10 @@ class Map(list):
         print("Fin de partie \n")
         if len(self.L_joueur[0]._liste_bat[0]) !=0:
             print("Le défenseur gagne!")
+            self.IHM.ui.Victoire.show()
         else:
             print("Les attaquants gagnent!")
+            self.IHM.ui.Defaite.show()
         
         self.IHM.ui.Attaquant.hide()
         self.IHM.ui.Defenseur.hide()

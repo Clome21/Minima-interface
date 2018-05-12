@@ -25,10 +25,10 @@ class MonAppli(QtWidgets.QMainWindow):
         self.setMouseTracking(True)
 
         # Configuration de l'interface utilisateur.
-        self.partie = Partie(4,1,self)  
-        self.carte=self.partie.carte
+
+
         self.ui = Ui_Minima_Accueil()
-        self.ui.setupUi(self,self.carte)
+        self.ui.setupUi(self)
         
         self.tr_en_crs =0
         self.tr_Hn_en_crs = 0
@@ -77,11 +77,7 @@ class MonAppli(QtWidgets.QMainWindow):
         self.ui.Button_Ready.clicked.connect( self.ui.Button_Ready.hide)
         self.ui.Button_Ready.clicked.connect( self.generer_bis)
         self.ui.Button_Ready.clicked.connect(self.simuler)
-        
-        
-        self.ui.lcdNumber_Metal.display(self.partie.L_joueur[0].metal_tot)
-        self.ui.lcdNumber_Energie.display(self.partie.L_joueur[0].energie_tot)
-        
+    
               
  #       self.ui.Bouton_Findetour.clicked.connect(self.tr_suivant)
         self.ui.Bouton_Findetour.clicked.connect(self.simuler) 
@@ -111,6 +107,8 @@ class MonAppli(QtWidgets.QMainWindow):
         self.ui.Button_Scorpion.clicked.connect(self.plac_Sc)
         self.ui.Button_Scorpion.clicked.connect(self.L_pos_u)
         
+        self.ui.Button_J_A_Fermer.clicked.connect(self.raz)
+        
         self.ui.Bouton_Generer.clicked.connect(self.gestion_deplacement)
         
         self.ui.Button_J_D_U_Fermer.clicked.connect(self.raz)
@@ -126,6 +124,9 @@ class MonAppli(QtWidgets.QMainWindow):
         if self.BA=="clic":
  #           while self.button
             self.partie = Partie(self.ui.nb_IA_choisi(),self.ui.nb_Hn_choisi(),self)
+            self.carte=self.partie.carte
+            self.ui.lcdNumber_Metal.display(self.partie.L_joueur[0].metal_tot)
+            self.ui.lcdNumber_Energie.display(self.partie.L_joueur[0].energie_tot)
 #            self.partie = Partie(1,1,self) 
             print('generer')
     
@@ -163,14 +164,6 @@ class MonAppli(QtWidgets.QMainWindow):
         self.pos_souris_x=int
         self.pos_souris_y=int
         
-        
-#    def tr_suivant(self):
-#        self.partie.carte.TrHn.unTourHn()
-#        
-#        self.k+=1
-#        if self.k>=len(self.partie.L_joueur):
-#            self.k=0
-#            self.tr_actuel+=1
     
     def active_Sc(self):
         self.l = "pus"
@@ -274,8 +267,10 @@ class MonAppli(QtWidgets.QMainWindow):
         else:
             self.ui.Button_Robot_Ouvrier.setEnabled(False)
         
-        Jr_en_crs = self.carte.TrHn.Jr_en_crs
-        if self.carte.L_joueur[Jr_en_crs].nbe_unite_restantes > 1:
+        no_jr_en_crs = self.carte.TrHn.Jr_en_crs
+        Jr_en_crs = self.carte.L_joueur[no_jr_en_crs]
+
+        if Jr_en_crs._role[0] == 'A' and Jr_en_crs.nbe_unite_restantes >= 1:
             self.ui.Button_Scorpion.setEnabled(True)
         else:
             self.ui.Button_Scorpion.setEnabled(False)
@@ -286,46 +281,46 @@ class MonAppli(QtWidgets.QMainWindow):
         self.ui.lcdNumber_Metal.display(self.partie.L_joueur[0].metal_tot)
         self.ui.lcdNumber_Energie.display(self.partie.L_joueur[0].energie_tot)
         self.ui.lcdNumber_Tours_restant.display(self.nbtour-self.carte.tr_actuel)
+        self.ui.lcdNumber_Unitdispo.display(int(self.carte.L_joueur[self.carte.TrHn.Jr_en_crs].nbe_unite_restantes))
         
 
     def plac_RC(self):
         if self.l == "purc" and self.pos_souris_x != int:
-            self.activation_boutons()
             self.partie.carte.TrHn.production_unite_defense_combat(self.pos_souris_x,self.pos_souris_y)
+            self.activation_boutons()
             self.maj_compteur_ressources()
             self.paintEvent(2)
             self.ui.conteneur.update()
         
     def plac_RO(self):
         if self.l == "puro" and self.pos_souris_x != int:
-            self.activation_boutons()
             self.partie.carte.TrHn.production_unite_defense_production(self.pos_souris_x,self.pos_souris_y)
+            self.activation_boutons()
             self.maj_compteur_ressources()
             self.paintEvent(2)
             self.ui.conteneur.update()
         
     def plac_for(self):
         if self.l == "pbf" and self.pos_souris_x != int:
-            self.activation_boutons()
             self.partie.carte.TrHn.placer_une_foreuse(self.pos_souris_x,self.pos_souris_y) 
+            self.activation_boutons()
             self.maj_compteur_ressources()
             self.paintEvent(2)
             self.ui.conteneur.update()
 
-    
+
     def plac_PS(self):
         if self.l == "pbp" and self.pos_souris_x != int:
-            self.activation_boutons()
             self.partie.carte.TrHn.placer_un_Panneau_solaire(self.pos_souris_x,self.pos_souris_y)
+            self.activation_boutons()
             self.maj_compteur_ressources()
             self.paintEvent(2)
             self.ui.conteneur.update()
         
     def plac_Sc(self):
         if self.l == "pus" and self.pos_souris_x != int:
+            self.partie.carte.TrHn.production_unite_attaque_Hn(self.pos_souris_x,self.pos_souris_y)
             self.activation_boutons()
-            self.partie.carte.TrHn.production_unite_attaque_Hn(self.k,self.pos_souris_x,self.pos_souris_y)
-            self.l=1
             self.paintEvent(2)
             self.ui.conteneur.update()
 
@@ -492,48 +487,28 @@ class MonAppli(QtWidgets.QMainWindow):
 
                 
     def affiche_Jr_en_crs(self,k):
-    
+
         if k==1:
-            self.ui.tr_attaquant_1_text.show()
-            self.ui.tr_attaquant_2_text.hide()
-            self.ui.tr_attaquant_3_text.hide()
-            self.ui.tr_attaquant_4_text.hide()
             self.ui.tr_defenseur_text.hide()
+            self.ui.tr_attaquant_1_text.show()
+
         if k==2:
             self.ui.tr_attaquant_1_text.hide()
             self.ui.tr_attaquant_2_text.show()
-            self.ui.tr_attaquant_3_text.hide()
-            self.ui.tr_attaquant_4_text.hide()
-            self.ui.tr_defenseur_text.hide()
+
+
         if k==3:
-            self.ui.tr_attaquant_1_text.hide()
+
             self.ui.tr_attaquant_2_text.hide()
             self.ui.tr_attaquant_3_text.show()
-            self.ui.tr_attaquant_4_text.hide()
-            self.ui.tr_defenseur_text.hide()          
+       
         if k==4:
-            self.ui.tr_attaquant_1_text.hide()
-            self.ui.tr_attaquant_2_text.hide()
+
             self.ui.tr_attaquant_3_text.hide()
             self.ui.tr_attaquant_4_text.show()
-            self.ui.tr_defenseur_text.hide()
+
             
-            
-#        for obj in self.partie.L_joueur[0]._liste_unite:
-#            if obj.car() == 'RC':
-#                self.dessin_Robot_combat(qp,obj)
-#            
-#        for obj in self.partie.L_joueur[0]._liste_unite:
-#            if obj.car() == 'RO':
-#                self.dessin_Robot_ouvrier(qp,obj)
-#            
-#        for obj in self.partie.L_joueur[0]._liste_bat[0]:
-#            self.dessin_QG(qp,obj)
-#        for obj in self.partie.L_joueur[0]._liste_bat[1]:
-#            self.dessin_Foreuse(qp,obj)
-#        for obj in self.partie.L_joueur[0]._liste_bat[2]:
-#            self.dessin_Panneau_Solaire(qp,obj) 
-            
+
     def dessin_case(self,QPainter,i,j):
         QPainter.setPen(QtGui.QColor(0,100,0))
         QPainter.drawRect(i*36,j*36, 36, 36)
@@ -552,19 +527,19 @@ class MonAppli(QtWidgets.QMainWindow):
     
     def dessin_Scorpion0(self,QPainter,Scorpion):
         u = QtCore.QRectF(Scorpion.x*36,Scorpion.y*36, 36, 36)
-        QPainter.fillRect(u,QtGui.QColor(20,50,0))
+        QPainter.fillRect(u,QtGui.QColor(50,50,200))
         
     def dessin_Scorpion1(self,QPainter,Scorpion):
         u = QtCore.QRectF(Scorpion.x*36,Scorpion.y*36, 36, 36)
-        QPainter.fillRect(u,QtGui.QColor(0,60,20))
+        QPainter.fillRect(u,QtGui.QColor(0,66,0))
         
     def dessin_Scorpion2(self,QPainter,Scorpion):
         u = QtCore.QRectF(Scorpion.x*36,Scorpion.y*36, 36, 36)
-        QPainter.fillRect(u,QtGui.QColor(10,70,10))
+        QPainter.fillRect(u,QtGui.QColor(66,0,0))
         
     def dessin_Scorpion3(self,QPainter,Scorpion):
         u = QtCore.QRectF(Scorpion.x*36,Scorpion.y*36, 36, 36)
-        QPainter.fillRect(u,QtGui.QColor(20,80,20))
+        QPainter.fillRect(u,QtGui.QColor(0,0,66))
 
     def dessin_metal (self,QPainter,metal):
         u = QtCore.QRectF(metal.x*36,metal.y*36, 36, 36)
@@ -574,8 +549,7 @@ class MonAppli(QtWidgets.QMainWindow):
     def dessin_Robot_combat(self,QPainter,Robot_combat):
         u = QtCore.QRectF(Robot_combat.x*36,Robot_combat.y*36, 36, 36)
         QPainter.fillRect(u,QtGui.QColor(220,20,60))
-#        QPainter.drawEllipse(Robot_combat.x*30,Robot_combat.y*30,30,30)
-        
+
     def dessin_Robot_ouvrier(self,QPainter,Robot_ouvrier):
         u = QtCore.QRectF(Robot_ouvrier.x*36,Robot_ouvrier.y*36, 36, 36)
         QPainter.fillRect(u,QtGui.QColor(255,20,147))

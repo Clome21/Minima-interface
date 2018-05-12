@@ -362,6 +362,7 @@ class Un_Tour_Joueur_Hn():
                     self.IHM.affiche_Jr_en_crs(self.Jr_en_crs) 
                     self.L_joueur[self.Jr_en_crs].nbe_unite_restantes += self.unite_disp_par_tour
                     self.IHM.maj_compteur_ressources()
+                self.IHM.activation_boutons()
             else : 
                 self.Jr_en_crs += 1
                 self.deb_unTourHn()
@@ -399,11 +400,12 @@ class Un_Tour_Joueur_Hn():
                 k = k- 1
                 tTyp = role_u[k:]
             role_u = tTyp
+            print(role_u)
             if role_u[0:2] == "RC":
                 c.capmvt = Constante.capmvt_RC
             elif role_u[0:2] == "RO":
                 c.capmvt = Constante.capmvt_RO
-            elif role_u[1] == "S":
+            elif role_u[0] == "S":
                 c.capmvt = Constante.capmvt_S
         self.Jr_en_crs += 1
         self.IHM.tr_Hn_en_crs = 0

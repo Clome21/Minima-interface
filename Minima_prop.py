@@ -6,17 +6,18 @@
 #
 # WARNING! All changes made in this file will be lost!
 import sys
+from Constantes import Constante
 from PyQt5 import QtCore, QtGui, QtWidgets
 
 class Ui_Minima_Accueil(object):
     
 
     
-    def setupUi(self, Minima_Accueil,carte):
+    def setupUi(self, Minima_Accueil):
         
         
-        x,y=carte.dims
-        
+
+        x,y = Constante.xmax, Constante.ymax
         
         Minima_Accueil.setObjectName("Minima_Accueil")
         Minima_Accueil.resize(1240, 813)
@@ -609,6 +610,8 @@ class Ui_Minima_Accueil(object):
 #        self.actionQuitter.setText(_translate("Minima_Accueil", "Quitter"))
 #        self.actionQuitter.setShortcut(_translate("Minima_Accueil", "Ctrl+Q"))
 #        self.actionSauvegarder.setText(_translate("Minima_Accueil", "Sauvegarder"))
+        
+
 
 
 if __name__ == "__main__":

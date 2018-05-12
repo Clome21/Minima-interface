@@ -33,10 +33,10 @@ class Constante:
     Ep_app = int(max(xmax,ymax)/20)
     
 #----------------------------------------Constantes ressources de départ    
-    metal_tot=20
-    energie_tot=20
+    metal_tot= 6
+    energie_tot= 6
     nbt= 15
-    spawn_ress=2
+    spawn_ress=1
 #----------------------------------------Constantes Batiments
 #----------------------------------Foreuse    
     cout_M_F=2
@@ -52,7 +52,7 @@ class Constante:
     prod_E_QG = 1
     prod_M_QG = 1
     
-    nbe_unite_ajoute = 1 #0.5
+    nbe_unite_ajoute = 0.5 #0.5
     
 #----------------------------------------Constantes Unites
 #-------------------------------Robot combat

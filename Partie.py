@@ -36,7 +36,7 @@ class Partie():
         """
         self.IHM = IHM
         self.L_joueur = [Joueur('DH')]
-        self.nb_hn = nb_hn - 1
+        self.nb_hn = nb_hn 
         Posdisp = [ str(k) for k in range(self.nb_hn+nb_ia)]
         while self.nb_hn > 0:
             self.L_joueur.append(Joueur('AH'+Posdisp[0]))
@@ -67,15 +67,6 @@ class Partie():
         """
         Méthode exécutant les ajustements de base pour débuter la partie, sur chaque
         joueur.
-        
-        Paramètres : 
-        -------------
-        Aucun.
-        
-        Renvoie :
-        ----------
-        Rien.
-        
         """
 
         self.L_joueur[0].metal_tot, self.L_joueur[0].energie_tot = Constante.metal_tot, Constante.energie_tot

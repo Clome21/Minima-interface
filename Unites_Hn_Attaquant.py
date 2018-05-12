@@ -83,15 +83,14 @@ class Unites_Humain_Attaquant():
     
 
 
-    def bouger(self):
+    def bouger(self,X,Y):
         """
         Mouvement de l'unité, choisie par l'utilisateur. Elle a lieu dans un rayon correspondant 
         à la capacité de mouvement autour de la position courante. Utilise l'accesseur coords.
         La capacité de mouvement restante de l'unité est alors mise à jour, selon le nombre de
         cases parcourues par l'unité. Si cette capacité est supérieure à 1, le joueur humain a encore
         la possibilité de déplacer l'unité avant la fin de son tour.        
-
-        
+       
         Paramètres :
         ------------
         Aucun.
@@ -101,34 +100,17 @@ class Unites_Humain_Attaquant():
         Le résultat de la méthode coords.
         
         """
+
         if self.capmvt >= 1 :
 
             L_vide = self.mvt_poss()
 
             xi, yi = self.coords
-            print("Mouvements possibles :", L_vide)
-            L = input('Envoyez la nouvelle position en x et en y (format x,y). \n')
-            k = L.find(',')
-            while k == -1:
-                print("Erreur de synthaxe. Recommencez svp")
-                L = input('Envoyez la nouvelle position en x et en y (format x,y). \n')
-                k = L.find(',')
-            X = int(L[0:k])
-            Y = int(L[k+1:])
-            while (X,Y) not in L_vide:
-                print("Position hors du rayon d'action de l'unité. \n")
-                L = input('Envoyez la nouvelle position en x et en y (format x,y). \n')
-                k = L.find(',')
-                while k == -1:
-                    print("Erreur de synthaxe. Recommencez svp")
-                    L = input('Envoyez la nouvelle position en x et en y (format x,y). \n')
-                    k = L.find(',')
-                X,Y = int(L[0:k]) , int(L[k+1:])
-                self.capmvt -= math.sqrt( X**2 + Y**2)
+            if (X,Y) in L_vide :
+                self.capmvt -= int(math.sqrt( (X-xi)**2 + (Y-yi)**2))
                 self.coords = (X, Y)
                 self._carte.ss_carte[xi][yi], self._carte.ss_carte[X][Y] = self._carte.ss_carte[X][Y], self._carte.ss_carte[xi][yi]
                 return(self.coords)  
-
     
     def mvt_poss(self):
         """ Méthode permettant de sélectionner les cases sur lesquelles 
