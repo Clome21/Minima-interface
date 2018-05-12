@@ -17,6 +17,7 @@ from Constantes import Constante
 from Map import Map
 import time
 import math
+import Save_Load as sl
 
 class MonAppli(QtWidgets.QMainWindow):
     
@@ -116,6 +117,34 @@ class MonAppli(QtWidgets.QMainWindow):
         self.ui.Defaite.buttonClicked.connect(self.fin_du_jeu)
         self.ui.Victoire.buttonClicked.connect(self.fin_du_jeu)
 
+        self.ui.Bouton_Sauvegarde.clicked.connect(self.ui.nom_sauvegarde.show)
+        self.ui.nom_sauvegarde.returnPressed.connect(self.ui.nom_sauvegarde.hide)
+
+        self.ui.nom_sauvegarde.returnPressed.connect(self.sauvegarde)
+        self.ui.nom_sauvegarde.returnPressed.connect(self.nom_sauvegarde)
+        self.ui.Button_Ac_Charger.clicked.connect(self.ui.nom_charger.show)
+        self.ui.nom_charger.returnPressed.connect(self.ui.nom_charger.hide)
+        self.ui.nom_charger.returnPressed.connect(self.charger)
+
+
+    def sauvegarde(self):
+        self.Save = sl.Save(self.nom_sauvegarde,self.partie.carte,self)
+        
+    def charger (self):
+         name = self.ui.nom_charger.text()
+         name = name + ".txt"    
+         self.Load = sl.Load(name)
+         if self.Load.Nme == 'Q':
+             print("### Tour i ###")#(t))
+         else:                          
+            self.groupBox_Jeu.show
+            self.groupBox_Accueil.hide
+       #     self.Load.Lcarte.simuler()
+
+    def nom_sauvegarde (self):
+        name = self.ui.nom_sauvegarde.text()
+        name = name + ".txt"
+        return name
         
 
 
