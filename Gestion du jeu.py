@@ -16,6 +16,7 @@ from Partie import Partie
 from Constantes import Constante
 from Map import Map
 import time
+import math
 
 class MonAppli(QtWidgets.QMainWindow):
     
@@ -60,7 +61,6 @@ class MonAppli(QtWidgets.QMainWindow):
         self.x_sup = (self.__xmax)//2 +2
         self.y_inf =  (self.__ymax)//2 - 1
         self.y_sup = (self.__ymax)//2 +2
-        
 
 
 #        self.ui.Button_Jouer.clicked.connect(self.test)
@@ -183,7 +183,7 @@ class MonAppli(QtWidgets.QMainWindow):
             self.plac_RO()
             self.plac_Sc()
 
-            print(self.pos_souris_x,self.pos_souris_y)
+#            print(self.pos_souris_x,self.pos_souris_y)
         if event.button() == QtCore.Qt.RightButton :
             self.pos_souris_x_bouger=int((event.x()/36))
             self.pos_souris_y_bouger=int((event.y()/36))
@@ -193,7 +193,7 @@ class MonAppli(QtWidgets.QMainWindow):
     def info_obj(self):
         if type(self.pos_souris_x) == int:
             Obj = self.carte.ss_carte[self.pos_souris_x][self.pos_souris_y]
-            print(Obj)
+#            print(Obj)
             if Obj != ' ' and Obj != '/' :
                 Obj.affichage()
         
@@ -217,7 +217,7 @@ class MonAppli(QtWidgets.QMainWindow):
     def bouger_poss_u(self):
         if type(self.pos_souris_x) == int:
             Obj = self.carte.ss_carte[self.pos_souris_x][self.pos_souris_y]
-            print(Obj)
+#            print(Obj)
             if Obj != ' ' and Obj != '/':
                 Jr_en_crs = self.carte.TrHn.Jr_en_crs
                 role =self.carte.L_joueur[ Jr_en_crs ]._role
@@ -354,40 +354,107 @@ class MonAppli(QtWidgets.QMainWindow):
         
 
     def paintEvent(self,e):
-        qp = QtGui.QPainter()
-        qp.begin(self)
-        print(self.l)
-        if self.l!= "i":
-            self.affiche_map(qp)
-            self.affiche_jeu(qp)# une méthode à définir
-        if type(self.l) != int and self.l[0:2]== "pb":    
-            self.affiche_L_pos_bat(qp)
-        if type(self.l) != int and self.l[0:2] == "pu":   
-            if self.l == "pus":
-                self.affiche_L_pos_a(qp)
-            else:
-                self.affiche_L_pos_u(qp)
-        if self.l=="bg":
-            self.affiche_L_pos_bouger(qp)
+            qp = QtGui.QPainter()
+            qp.begin(self)
+#            print(self.l)
+            if self.l!= "i":
+                self.affiche_map(qp)
+                self.affiche_jeu(qp)# une méthode à définir
+            if type(self.l) != int and self.l[0:2]== "pb":    
+                self.affiche_L_pos_bat(qp)
+            if type(self.l) != int and self.l[0:2] == "pu":   
+                if self.l == "pus":
+                    self.affiche_L_pos_a(qp)
+                else:
+                    self.affiche_L_pos_u(qp)
+            if self.l=="bg":
+                try : 
+                    zone = self.Obj.zonecbt
+                    self.affiche_L_pos_bouger_cbt(qp,zone)
+                except Exception as e:
+     #               print(e)
+                    zone = self.Obj.capmvt
+                    self.affiche_L_pos_bouger_ressource(qp,zone)
+            qp.end()
 
-        qp.end()
         
     def affiche_L_pos_a(self,qp):
-        L_Ht = self.partie.carte.TrHn.placement_pos(0,self.Epp + 1,(self.__ymax -self.H)//2,(self.__ymax + self.H )//2,' ')            
-        L_Bas = self.partie.carte.TrHn.placement_pos(self.__xmax-1-self.Epp,self.__xmax,(self.__ymax -self.H)//2,(self.__ymax + self.H )//2,' ')        
-        L_Gche = self.partie.carte.TrHn.placement_pos((self.__xmax - self.L )//2 , (self.__xmax + self.L )//2,0,self.Epp+1,' ')        
-        L_Dte = self.partie.carte.TrHn.placement_pos((self.__xmax - self.L )//2, (self.__xmax + self.L )//2,self.__ymax -1-self.Epp,self.__ymax,' ')
+        L_Ht = self.carte.TrHn.placement_pos(0,self.Epp + 1,(self.__ymax -self.H)//2,(self.__ymax + self.H )//2,' ')            
+        L_Bas = self.carte.TrHn.placement_pos(self.__xmax-1-self.Epp,self.__xmax,(self.__ymax -self.H)//2,(self.__ymax + self.H )//2,' ')        
+        L_Gche = self.carte.TrHn.placement_pos((self.__xmax - self.L )//2 , (self.__xmax + self.L )//2,0,self.Epp+1,' ')        
+        L_Dte = self.carte.TrHn.placement_pos((self.__xmax - self.L )//2, (self.__xmax + self.L )//2,self.__ymax -1-self.Epp,self.__ymax,' ')
         
         L_pos = L_Ht + L_Bas + L_Gche + L_Dte 
         for i in L_pos:
-                self.dessin_L_pos(qp,i[0],i[1])
-        
-    def affiche_L_pos_bouger(self,qp):
+            self.dessin_L_pos(qp,i[0],i[1])
 
-         self.L_pos=self.Obj.mvt_poss()
-         for i in self.L_pos:
-             print(i)
-             self.dessin_L_pos(qp,i[0],i[1])
+    def affiche_L_pos_bouger_cbt(self,qp,zone):
+        Ennemi = None
+        self.L_pos=self.Obj.mvt_poss()
+        for i in self.L_pos:
+            x,y = i
+            x_inf = max(0,int(-zone + x))
+            x_sup = min(self.Obj._carte.dims[0]-1, int(zone + x))
+            y_inf = max(0,int(-zone + y))
+            y_sup = min(self.Obj._carte.dims[1]-1, int(zone + y))
+        
+            A = self.Obj._carte.ss_carte[x_inf:x_sup+1,y_inf:y_sup+1]
+            if self.Obj.T_car()[0] == 'D':
+                U,r_min_u = self.Obj.chx_ennemi_rec(A,x,y)
+                Ennemi = U
+            else: 
+                U,r_min_u,B,r_min_b = self.Obj.chx_ennemi_rec(A,x,y)
+                if U != None or B != None:
+                    if r_min_u > r_min_b:
+                        Ennemi = B
+                    else:
+                        Ennemi = U
+            self.dessin_L_pos(qp,x,y)
+            if Ennemi != None:  
+                X,Y = Ennemi.coords
+                self.dessin_interet(qp,X,Y)
+        x,y = self.Obj.coords
+        x_inf = max(0,int(-zone + x))
+        x_sup = min(self.Obj._carte.dims[0]-1, int(zone + x))
+        y_inf = max(0,int(-zone + y))
+        y_sup = min(self.Obj._carte.dims[1]-1, int(zone + y))
+        
+        A = self.Obj._carte.ss_carte[x_inf:x_sup+1,y_inf:y_sup+1]
+        if self.Obj.T_car()[0] == 'D':
+            U,r_min_u = self.Obj.chx_ennemi_rec(A,x,y)
+            Ennemi = U
+        else: 
+            U,r_min_u,B,r_min_b = self.Obj.chx_ennemi_rec(A,x,y)
+            if U != None or B != None:
+                if r_min_u > r_min_b:
+                    Ennemi = B
+                else:
+                    Ennemi = U
+
+        if Ennemi != None:  
+            X,Y = Ennemi.coords
+            self.dessin_interet(qp,X,Y)
+
+    def affiche_L_pos_bouger_ressource(self,qp,zone):
+        Ress = None
+        self.L_pos=self.Obj.mvt_poss()
+        for i in self.L_pos:
+            x,y = i
+            Ress = self.Obj.chx_ressources(x,y)
+            self.dessin_L_pos(qp,x,y)
+            if Ress != None:
+                X,Y = Ress.coords
+                self.dessin_interet(qp,X,Y)
+        x,y = self.Obj.coords
+        Ress = self.Obj.chx_ressources(x,y)
+        if Ress != None:
+            X,Y = Ress.coords
+            self.dessin_interet(qp,X,Y)
+            
+            
+
+
+
         
     def affiche_L_pos_bat(self,qp):
         self.L_pos = self.partie.carte.TrHn.placement_pos_bat(self.x_inf_b,self.x_sup_b,self.y_inf_b,self.y_sup_b,' ')
@@ -548,11 +615,11 @@ class MonAppli(QtWidgets.QMainWindow):
 
     def dessin_Robot_combat(self,QPainter,Robot_combat):
         u = QtCore.QRectF(Robot_combat.x*36,Robot_combat.y*36, 36, 36)
-        QPainter.fillRect(u,QtGui.QColor(220,20,60))
+        QPainter.fillRect(u,QtGui.QColor(150,20,60))
 
     def dessin_Robot_ouvrier(self,QPainter,Robot_ouvrier):
         u = QtCore.QRectF(Robot_ouvrier.x*36,Robot_ouvrier.y*36, 36, 36)
-        QPainter.fillRect(u,QtGui.QColor(255,20,147))
+        QPainter.fillRect(u,QtGui.QColor(155,20,147))
     
     def dessin_QG(self,QPainter,QG):
         u = QtCore.QRectF(QG.x*36,QG.y*36, 36, 36)
@@ -572,6 +639,12 @@ class MonAppli(QtWidgets.QMainWindow):
         u=QtCore.QRectF(x*36, y*36, 36,36)
         qp.fillRect(u,QtGui.QColor(0,255,0))
         qp.drawRect(u)
+        
+    def dessin_interet(self,qp,x,y):
+        qp.setPen(QtGui.QColor(255,0,0))
+        u=QtCore.QRectF(x*36, y*36, 36,36)
+        qp.drawRect(u)
+        
     
     def simuler(self):
         

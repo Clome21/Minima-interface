@@ -344,8 +344,7 @@ class Unites_Humain_Defenseur():
         y_inf = max(0,int(-self.zonecbt + y))
         y_sup = min(self._carte.dims[1]-1, int(self.zonecbt + y))
         
-        print(x_inf, x_sup)
-        print(y_inf,y_sup)
+
         
         Ennemi = None
         R_plus_petit_unit = self.zonecbt +1
@@ -357,8 +356,6 @@ class Unites_Humain_Defenseur():
                 Obj = self._carte.ss_carte[i][j]
                 if Obj != ' ' and Obj !='/' and Obj.T_car()[0] == 'D':
                     R_Obj = math.sqrt((x-i)**2 + (y-j)**2)
-                    
-                    print(R_Obj,Obj)
                     
                     if Obj.T_car()[2] == 'U' and R_Obj < R_plus_petit_unit:
                         R_plus_petit_unit = R_Obj
@@ -427,11 +424,11 @@ class Unites_Humain_Defenseur():
             A3 = A[:l//2,c//2:]
             A4 = A[:l//2,:c//2]
 
-            print(A1,A2,A3,A4)
-            print(np.shape(A1))
-            print(np.shape(A2))
-            print(np.shape(A3))
-            print(np.shape(A4))
+#            print(A1,A2,A3,A4)
+#            print(np.shape(A1))
+#            print(np.shape(A2))
+#            print(np.shape(A3))
+#            print(np.shape(A4))
             
             U1,ru1= self.chx_ennemi_rec(A1,x,y)
             U2,ru2 = self.chx_ennemi_rec(A2,x,y)
@@ -512,7 +509,7 @@ class Unites_Humain_Defenseur():
         self._carte.ss_carte[x][y] = ' '
         self._carte.L_joueur[0]._liste_unite.remove(self)
     
-    def chx_ressources(self):
+    def chx_ressources(self,x,y):
         """
         Sélectionne la ressource la plus proche dans la zone de capture du robot ouvrier.
         
@@ -526,10 +523,9 @@ class Unites_Humain_Defenseur():
             La ressource la plus proche de l'unité.
         
         """
-        x,y = self.coords
-        x_inf = max(0, int(-self.zonecap) + x)
+        x_inf = max(0, int(-self.zonecap + x))
         x_sup = min(self._carte.dims[0]-1, int(self.zonecap + x))
-        y_inf = max(0,int(-self.zonecap) + y)
+        y_inf = max(0,int(-self.zonecap + y))
         y_sup = min(self._carte.dims[1]-1, int(self.zonecap + y))
         
         Ress = None
@@ -559,7 +555,8 @@ class Unites_Humain_Defenseur():
         Rien.
         
         """
-        Ress = self.chx_ressources()
+        x,y = self.coords
+        Ress = self.chx_ressources(x,y)
         if Ress != None:
             print("%s a trouvé du métal! Sa valeur est de %r."%(self.T_car(),Ress.valeur))
             self._carte.L_joueur[0].metal_tot += Ress.valeur
