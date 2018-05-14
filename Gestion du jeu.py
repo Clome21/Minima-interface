@@ -118,10 +118,11 @@ class MonAppli(QtWidgets.QMainWindow):
         self.ui.Victoire.buttonClicked.connect(self.fin_du_jeu)
 
         self.ui.Bouton_Sauvegarde.clicked.connect(self.ui.nom_sauvegarde.show)
+        
         self.ui.nom_sauvegarde.returnPressed.connect(self.ui.nom_sauvegarde.hide)
-
+#        self.ui.nom_sauvegarde.returnPressed.connect(self.nom_sauvegarde)
         self.ui.nom_sauvegarde.returnPressed.connect(self.sauvegarde)
-        self.ui.nom_sauvegarde.returnPressed.connect(self.nom_sauvegarde)
+
         self.ui.Button_Ac_Charger.clicked.connect(self.ui.nom_charger.show)
         self.ui.nom_charger.returnPressed.connect(self.ui.nom_charger.hide)
         self.ui.nom_charger.returnPressed.connect(self.charger)
