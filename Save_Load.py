@@ -26,7 +26,7 @@ class Save():
     """
     Classe gérant le processus de sauvegarde d'une partie.
     """
-    def __init__(self,name,carte):
+    def __init__(self,name,carte,IHM):
         """
         Initialise la création de la sauvegarde. Les informations nécessaires pour recréer la partie 
         sauvegardée sont stockées dans un fichier .txt, dont le nom est choisi par l'utilisateur. Le
@@ -55,79 +55,83 @@ class Save():
         # Sauvegarder aussi les capacités de mouvement des unités pour le joueur humain en cours (uniquement).
         # Voir si une option est nécessaire pour quitter (si un objet partie va forcément rester en arrière plan ou non).
         
-        self.Nme = self.Test_nom(name)
-        Save = open(self.Nme,"w+")
+        self.IHM = IHM
         
-        Save.write("Carte \n")
-        Save.write("Dimensions \n")
-        Save.write(str(carte.dims))
-        Save.write(" \n")
-        Save.write("Tr actuel \n")
-        Save.write(str(carte.tr_actuel))
-        Save.write(" \n")
-        Save.write("Nbe de tours totaux \n")
-        Save.write(str(carte.nbtour))
-        Save.write(" \n") 
-        Save.write(str(carte.TrIA.unite_disp_par_tour))
-        Save.write(" \n")
-        Save.write(str(carte.TrHn.Jr_en_crs))
-        Save.write(" \n")
-        for k in range(len(carte)):
-            if carte[k].car() == 'M ':
-                R = carte[k]
-                Save.write("Ressource \n")
-                Save.write(str(R.valeur))
+        self.Nme = self.Test_nom(name)
+        if type(self.Nme) is not None :
+            Save = open(self.Nme,"w+")
+            
+            Save.write("Carte \n")
+            Save.write("Dimensions \n")
+            Save.write(str(carte.dims))
+            Save.write(" \n")
+            Save.write("Tr actuel \n")
+            Save.write(str(carte.tr_actuel))
+            Save.write(" \n")
+            Save.write("Nbe de tours totaux \n")
+            Save.write(str(carte.nbtour))
+            Save.write(" \n") 
+            Save.write(str(carte.TrIA.unite_disp_par_tour))
+            Save.write(" \n")
+            Save.write(str(carte.TrHn.Jr_en_crs))
+            Save.write(" \n")
+            for k in range(len(carte)):
+                if carte[k].car() == 'M ':
+                    R = carte[k]
+                    Save.write("Ressource \n")
+                    Save.write(str(R.valeur))
+                    Save.write(" \n")
+                    Save.write(str(R.coords))
+                    Save.write(" \n")
+            Save.write("Fin ressources \n")
+            L_joueur = carte.L_joueur
+            for k in range(len(L_joueur)):
+                Save.write("Joueur \n")
+                Jr = L_joueur[k]
+                Save.write(str(Jr._role))
                 Save.write(" \n")
-                Save.write(str(R.coords))
+                Save.write(str(Jr.metal_tot))
                 Save.write(" \n")
-        Save.write("Fin ressources \n")
-        L_joueur = carte.L_joueur
-        for k in range(len(L_joueur)):
-            Save.write("Joueur \n")
-            Jr = L_joueur[k]
-            Save.write(str(Jr._role))
-            Save.write(" \n")
-            Save.write(str(Jr.metal_tot))
-            Save.write(" \n")
-            Save.write(str(Jr.energie_tot))
-            Save.write(" \n")
-            Save.write(str(Jr.nbe_unite_restantes))
-            Save.write(" \n")
-            L_bat = Jr._liste_bat
-            if len(L_bat[0]) != 0:
-                Save.write("Batiments du joueur \n")
-                for k in range(len(L_bat)):
-                    L = L_bat[k]
-                    for j in range(len(L)):
-                        Save.write("Bat \n")
-                        Save.write(str(L[j].T_car()))
+                Save.write(str(Jr.energie_tot))
+                Save.write(" \n")
+                Save.write(str(Jr.nbe_unite_restantes))
+                Save.write(" \n")
+                L_bat = Jr._liste_bat
+                if len(L_bat[0]) != 0:
+                    Save.write("Batiments du joueur \n")
+                    for k in range(len(L_bat)):
+                        L = L_bat[k]
+                        for j in range(len(L)):
+                            Save.write("Bat \n")
+                            Save.write(str(L[j].T_car()))
+                            Save.write(" \n")
+                            Save.write(str(L[j].sante))
+                            Save.write(" \n")
+                            Save.write(str(L[j].coords))
+                            Save.write(" \n")
+                    Save.write("Fin bat \n")
+                L_unite = Jr._liste_unite
+                if len(L_unite) !=0:
+                    Save.write("Unites du joueur \n")
+                    for j in range(len(L_unite)):
+                        Save.write("Unite \n")
+                        Save.write(str(L_unite[j].T_car()))
                         Save.write(" \n")
-                        Save.write(str(L[j].sante))
+                        Save.write(str(L_unite[j].num_joueur))
                         Save.write(" \n")
-                        Save.write(str(L[j].coords))
+                        Save.write(str(L_unite[j].sante))
                         Save.write(" \n")
-                Save.write("Fin bat \n")
-            L_unite = Jr._liste_unite
-            if len(L_unite) !=0:
-                Save.write("Unites du joueur \n")
-                for j in range(len(L_unite)):
-                    Save.write("Unite \n")
-                    Save.write(str(L_unite[j].T_car()))
-                    Save.write(" \n")
-                    Save.write(str(L_unite[j].num_joueur))
-                    Save.write(" \n")
-                    Save.write(str(L_unite[j].sante))
-                    Save.write(" \n")
-                    Save.write(str(L_unite[j].coords))
-                    Save.write(" \n")
-                    if Jr._role[1] == 'H':
-                        Save.write( str(L_unite[j].capmvt))
+                        Save.write(str(L_unite[j].coords))
                         Save.write(" \n")
-                Save.write("Fin unite \n")
-            Save.write("Fin joueur \n")
-        Save.write("Fin sauvegarde")
-        print("Sauvegarde effectuée!")
-
+                        if Jr._role[1] == 'H':
+                            Save.write( str(L_unite[j].capmvt))
+                            Save.write(" \n")
+                    Save.write("Fin unite \n")
+                Save.write("Fin joueur \n")
+            Save.write("Fin sauvegarde")
+            #print("Sauvegarde effectuée!")
+            self.IHM.ui.Sauvegarde.show()
+        
     def Test_nom(self,name):
         """
         Contrôle le nom de la sauvegarde choisie par l'utilisateur. Si le nom correspond à une 
@@ -149,14 +153,20 @@ class Save():
             f = open(name,"r")
         except FileNotFoundError:
             return(name)
+        except TypeError :
+            print(name)
+            print(type(name))
+            return(name)
 
-        L = input("Sauvegarde déjà existante. L'effacer? (Y/N)")
-        if L == "Y":
+        #L = input("Sauvegarde déjà existante. L'effacer? (Y/N)")
+        self.IHM.ui.choix_sauvegarde()
+        if self.IHM.ui.choix_sauvegarde == "Yes":
             name = name+ ".txt"
             return(name)
         else:
-            name = input("Entrez un nouveau nom de sauvegarde")
-            name = name + ".txt"
+            self.IHM.ui.nom_sauvegarde.show()
+            name = self.IHM.nom_sauvegard()
+#            name = name + ".txt"
             self.Test_nom(name)
             return(name)
     
