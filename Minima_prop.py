@@ -25,7 +25,7 @@ class Ui_Minima_Accueil(object):
         self.centralwidget.setObjectName("centralwidget")
         self.groupBox_Accueil = QtWidgets.QGroupBox(self.centralwidget)
         self.groupBox_Accueil.setEnabled(True)
-        self.groupBox_Accueil.setGeometry(QtCore.QRect(210, 50, 631, 541))
+        self.groupBox_Accueil.setGeometry(QtCore.QRect(210, 50, 10000, 1000))
         self.groupBox_Accueil.setTitle("")
         self.groupBox_Accueil.setObjectName("groupBox_Accueil")
         self.textBrowser = QtWidgets.QTextBrowser(self.groupBox_Accueil)
@@ -171,9 +171,9 @@ class Ui_Minima_Accueil(object):
         self.Bouton_Jeu_Quitter = QtWidgets.QPushButton(self.groupBox_Jeu)
         self.Bouton_Jeu_Quitter.setGeometry(QtCore.QRect(900, 720, 91, 28))
         self.Bouton_Jeu_Quitter.setObjectName("Bouton_Jeu_Quitter")
-        self.Bouton_Generer = QtWidgets.QPushButton(self.groupBox_Jeu)
-        self.Bouton_Generer.setGeometry(QtCore.QRect(0, 740, 121, 21))
-        self.Bouton_Generer.setObjectName("Bouton_Generer")
+        self.Bouton_Sauvegarde = QtWidgets.QPushButton(self.groupBox_Jeu)
+        self.Bouton_Sauvegarde.setGeometry(QtCore.QRect(0, 740, 121, 21))
+        self.Bouton_Sauvegarde.setObjectName("Bouton_Sauvegarde")
         self.Bouton_Findetour = QtWidgets.QPushButton(self.groupBox_Jeu)
         self.Bouton_Findetour.setGeometry(QtCore.QRect(130, 740, 91, 21))
         self.Bouton_Findetour.setObjectName("Bouton_Findetour")
@@ -222,6 +222,25 @@ class Ui_Minima_Accueil(object):
         self.tr_attaquant_4_text.append("tr_attaquant_4")
         self.tr_attaquant_4_text.setGeometry(QtCore.QRect(660, 200, 200, 30))
         self.tr_attaquant_4_text.hide()
+        
+        
+        self.nom_sauvegarde = QtWidgets.QLineEdit(self.groupBox_Jeu)
+        self.nom_sauvegarde.setGeometry(QtCore.QRect(1000, 40, 113, 20))
+        self.nom_sauvegarde.setObjectName("Nom de la Sauvegarde")
+        self.nom_sauvegarde.hide()
+        
+        self.nom_charger = QtWidgets.QLineEdit(self.groupBox_Accueil)
+        self.nom_charger.setGeometry(QtCore.QRect(1000, 40, 113, 20))
+        self.nom_charger.setObjectName("Nom de la partie à charger")
+        self.nom_charger.hide()
+        
+        self.Sauvegarde = QtWidgets.QMessageBox(self.groupBox_Jeu)
+        self.Sauvegarde.setIcon(QtWidgets.QMessageBox.Information)       
+        self.Sauvegarde.setText("Sauvegarde réussie")
+        self.Sauvegarde.setWindowTitle("Sauvegarde")
+        self.Sauvegarde.setStandardButtons(QtWidgets.QMessageBox.Ok)
+        self.Sauvegarde.buttonClicked.connect(self.Sauvegarde.close)
+        self.Sauvegarde.hide()
         
         
         
@@ -361,6 +380,9 @@ class Ui_Minima_Accueil(object):
         self.Button_Ac_Jouer.clicked.connect(self.groupBox_Option.show)
         self.Button_Retour.clicked.connect(self.groupBox_Option.hide)
         self.Button_Retour.clicked.connect(self.groupBox_Accueil.show)
+        
+
+        
         self.Button_Jouer.clicked.connect(self.groupBox_Jeu.show)
         self.Button_Jouer.clicked.connect(self.groupBox_Option.hide)
         self.Bouton_Jeu_Quitter.clicked.connect(Minima_Accueil.close)
@@ -449,6 +471,14 @@ class Ui_Minima_Accueil(object):
 
     
     
+    def choix_sauvegarde (self):
+         result = QtWidgets.QMessageBox.question(self.groupBox_Jeu,'Erreur Sauvegarde', "Sauvegarde déjà existante. L'effacer?", QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No)
+ 
+         if result == QtWidgets.QMessageBox.Yes:
+             return ("Yes")
+         else:
+             return ("No")
+             
 
     
     
@@ -456,25 +486,25 @@ class Ui_Minima_Accueil(object):
         if self.checkBox_IA_0.isChecked():
             return 0
         if self.checkBox_IA_1.isChecked():
-            return 2
+            return 1
         if self.checkBox_IA_2.isChecked():
-            return 3
+            return 2
         if self.checkBox_IA_3.isChecked():
-            return 4
+            return 3
         if self.checkBox_IA_4.isChecked():
-            return 5
+            return 4
     
     def nb_Hn_choisi(self):
         if self.checkBox_IA_9.isChecked():
             return 0
         if self.checkBox_IA_5.isChecked():
-            return 2
+            return 1
         if self.checkBox_IA_6.isChecked():
-            return 3
+            return 2
         if self.checkBox_IA_7.isChecked():
-            return 4
+            return 3
         if self.checkBox_IA_8.isChecked():
-            return 5
+            return 4
     
     
     
@@ -546,7 +576,7 @@ class Ui_Minima_Accueil(object):
 "<td style=\"border: none;\">\n"
 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'Cantarell\'; font-size:11pt;\">disponibles</span></p></td></tr></table></body></html>"))
         self.Bouton_Jeu_Quitter.setText(_translate("Minima_Accueil", "Quitter"))
-        self.Bouton_Generer.setText(_translate("Minima_Accueil", "Génerer"))
+        self.Bouton_Sauvegarde.setText(_translate("Minima_Accueil", "Sauvegarder"))
         self.Button_Ready.setText(_translate("Minima_Accueil", "Ready" ))
         self.Button_Ready.setStyleSheet("QPushButton {font: 100pt Times New Roman}")
         self.Bouton_Findetour.setText(_translate("Minima_Accueil", "Fin de tour"))
