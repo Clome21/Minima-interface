@@ -177,9 +177,9 @@ class Unite_IA_Facile():
         Méthode sélectionnant l'objet ennemi le plus proche de l'unité.
         Elle parcourt les cases dans le rayon d'attaque de l'unité, et sélectionne
         les objets ennemis dans ce rayon.
-        Elle sélectionne en priorité les unités ennemis les plus proches; mais si
-        un batiment ennemi est plus proche de l'unité que les autres unités ennemis, 
-        l'unité en train de combattre attaquera alors le batiment.
+        Elle sélectionne en priorité les BATIMENTS ennemis les plus proches; mais si
+        une UNITE ennemie est plus proche de l'unité que les autres BATIMENTS ennemis, 
+        l'unité en train de combattre attaquera alors l'unité.
         
         Paramètres
         ----------
@@ -193,18 +193,16 @@ class Unite_IA_Facile():
         """
 
         x,y = self.coords
-        x_inf = max(0,int(-self.zonecbt + x))
-        x_sup = min(self._carte.dims[0]-1, int(self.zonecbt + x))
-        y_inf = max(0,int(-self.zonecbt + y))
-        y_sup = min(self._carte.dims[1]-1, int(self.zonecbt + y))
+        x_inf = max(0,int(-self.zonecbt) + x)
+        x_sup = min(self._carte.dims[0]-1, int(self.zonecbt) + x)
+        y_inf = max(0,int(-self.zonecbt) + y)
+        y_sup = min(self._carte.dims[1]-1, int(self.zonecbt) + y)
         
-        print(x_inf, x_sup)
-        print(y_inf,y_sup)
         
         Ennemi = None
         R_plus_petit_unit = self.zonecbt +1
         R_plus_petit_bat = self.zonecbt + 1
-        
+        # Attaquer en priorité batiments, pas unité
         
         for i in range(x_inf,x_sup+1):
             for j in range(y_inf,y_sup+1):
@@ -212,16 +210,13 @@ class Unite_IA_Facile():
                 if Obj != ' ' and Obj !='/' and Obj.T_car()[0] == 'D':
                     R_Obj = math.sqrt((x-i)**2 + (y-j)**2)
                     
-                    print(R_Obj,Obj)
-                    
-                    if Obj.T_car()[2] == 'U' and R_Obj < R_plus_petit_unit:
-                        R_plus_petit_unit = R_Obj
-                        Ennemi = Obj
-                        
-                    if Obj.T_car()[2] == 'B' and R_Obj < min(R_plus_petit_bat,R_plus_petit_unit):
+                    if Obj.T_car()[2] == 'B' and R_Obj < R_plus_petit_bat:
                         R_plus_petit_bat = R_Obj
                         Ennemi = Obj
-        
+                        
+                    if Obj.T_car()[2] == 'U' and R_Obj < min(R_plus_petit_bat,R_plus_petit_unit):
+                        R_plus_petit_unit = R_Obj
+                        Ennemi = Obj
         return(Ennemi)
     
     def chx_ennemi_rec(self,A,x,y):
@@ -282,7 +277,6 @@ class Unite_IA_Facile():
                 return((None,self.zonecbt+1,None,self.zonecbt+1))
 
         elif np.shape(A) == (0,0) or A.tolist() == [] or A.tolist()[0] == []:
-            print("OK")
             return((None,self.zonecbt+1,None,self.zonecbt+1))
 
         else : 
@@ -291,12 +285,6 @@ class Unite_IA_Facile():
             A2 = A[l//2:,:c//2]
             A3 = A[:l//2,c//2:]
             A4 = A[:l//2,:c//2]
-
-#            print(A1,A2,A3,A4)
-#            print(np.shape(A1))
-#            print(np.shape(A2))
-#            print(np.shape(A3))
-#            print(np.shape(A4))
             
             U1,ru1,B1,rb1 = self.chx_ennemi_rec(A1,x,y)
             U2,ru2,B2,rb2 = self.chx_ennemi_rec(A2,x,y)
@@ -333,6 +321,8 @@ class Unite_IA_Facile():
         des attaquants, passe à 1. Les attaquants gagnent alors.
         La méthode signale également quel est l'objet blessé par l'unité.
         
+        PRIORITE AUX BATIMENTS
+        
         Paramètres :
         ------------
         Aucun.
@@ -343,10 +333,10 @@ class Unite_IA_Facile():
         
         """
         x,y = self.coords
-        x_inf = max(0,int(-self.zonecbt + x))
-        x_sup = min(self._carte.dims[0]-1, int(self.zonecbt + x))
-        y_inf = max(0,int(-self.zonecbt + y))
-        y_sup = min(self._carte.dims[1]-1, int(self.zonecbt + y))
+        x_inf = max(0,int(-self.zonecbt) + x)
+        x_sup = min(self._carte.dims[0]-1, int(self.zonecbt) + x)
+        y_inf = max(0,int(-self.zonecbt) + y)
+        y_sup = min(self._carte.dims[1]-1, int(self.zonecbt) + y)
         
         A = self._carte.ss_carte[x_inf:x_sup+1,y_inf:y_sup+1]
         
@@ -355,10 +345,10 @@ class Unite_IA_Facile():
         if U == None and B == None:
             print("%s n'a blessé personne"%(self.T_car()) )
         else:
-            if r_min_u > r_min_b:
-                Ennemi = B
-            else:
+            if r_min_b > r_min_u:
                 Ennemi = U
+            else:
+                Ennemi = B
             
             print( "%s a blessé %s"%(self.T_car(), Ennemi.T_car() ) )
             Ennemi.sante = Ennemi.sante - self.capcbt
@@ -366,7 +356,6 @@ class Unite_IA_Facile():
                 role = Ennemi.T_car()
                 Ennemi.disparition()
                 if role[-2] + role[-1] == 'QG':
-                    self._carte.V_atta = 1
                     self._carte.fin_de_partie()
     
         
@@ -492,27 +481,27 @@ class Unite_IA_Facile():
         
 class Scorpion0(Unite_IA_Facile):
     """
-    Classe spécialisant la classe Unite_IA_Facile pour représenter un scorpion de niveau 0.
+Classe spécialisant la classe Unite_IA_Facile pour représenter un scorpion de niveau 0.
     """
     
     def __init__(self, role, cart, x, y, k):
         """Permet d'initialiser l'unité.
-                
-        Paramètres
-        ----------
-        
-        role : str
-        Le rôle du joueur possèdant l'unité
-                
-        carte : classe Map
-        La carte sur laquelle évolue l'unité.
-        
-        x, y : int
-        Les coordonnées de l'unité en abscisse et en ordonnée
-        
-        k : int
-        La position du joueur possédant l'unité, dans la liste L_joueur.
-            """
+            
+    Paramètres
+    ----------
+    
+    role : str
+    Le rôle du joueur possèdant l'unité
+            
+    carte : classe Map
+    La carte sur laquelle évolue l'unité.
+    
+    x, y : int
+    Les coordonnées de l'unité en abscisse et en ordonnée
+    
+    k : int
+    La position du joueur possédant l'unité, dans la liste L_joueur.
+        """
         super().__init__(x, y, cart)
 
         self.id =  self._carte.L_joueur[k].IdU 
@@ -577,7 +566,6 @@ class Scorpion0(Unite_IA_Facile):
         
         """
         L_dep_poss  = self.mvt_poss()
-        print(L_dep_poss)
         if L_dep_poss != []:
             xi, yi = self.coords
             k = randint(len(L_dep_poss))

@@ -403,7 +403,6 @@ class Un_Tour_Joueur_Hn():
                 k = k- 1
                 tTyp = role_u[k:]
             role_u = tTyp
-            print(role_u)
             if role_u[0:2] == "RC":
                 c.capmvt = Constante.capmvt_RC
             elif role_u[0:2] == "RO":

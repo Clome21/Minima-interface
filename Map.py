@@ -81,7 +81,7 @@ class Map(list):
             self.__xmax = Constante.xL
             self.__ymax = Constante.yL  
             self.nbtour = Constante.Lnbt
-            self.Ltr_actuel = Constante.Lnbta
+            self.tr_actuel = Constante.Lnbta
             self.H=Constante.LH_Z_Constructible
             self.L=Constante.LL_Z_Constructible
             self.Epp = Constante.LEp_app

@@ -61,7 +61,6 @@ class Unites_Humain_Defenseur():
             self.T_car(), self.x, self.y,
             self.sante, self._max
             )
-        
     
     
     def car(self):
@@ -207,6 +206,8 @@ class Unites_Humain_Defenseur():
                 E_pos = set(self.L_vide)
                 Occ = E_pos&E_pos_imp
                 self.L_vide =list( E_pos - Occ)
+            
+           # print(self.L_vide)
         
         return(self.L_vide)        
 
@@ -338,10 +339,10 @@ class Unites_Humain_Defenseur():
         """
 
         x,y = self.coords
-        x_inf = max(0,int(-self.zonecbt + x))
-        x_sup = min(self._carte.dims[0]-1, int(self.zonecbt + x))
-        y_inf = max(0,int(-self.zonecbt + y))
-        y_sup = min(self._carte.dims[1]-1, int(self.zonecbt + y))
+        x_inf = max(0,int(-self.zonecbt) + x)
+        x_sup = min(self._carte.dims[0]-1, int(self.zonecbt) + x)
+        y_inf = max(0,int(-self.zonecbt) + y)
+        y_sup = min(self._carte.dims[1]-1, int(self.zonecbt) + y)
         
 
         
@@ -413,7 +414,6 @@ class Unites_Humain_Defenseur():
                 return(None,self.zonecbt+1)
 
         elif np.shape(A) == (0,0) or A.tolist() == [] or A.tolist()[0] == []:
-            print("OK")
             return(None,self.zonecbt+1)
 
         else : 
@@ -422,6 +422,12 @@ class Unites_Humain_Defenseur():
             A2 = A[l//2:,:c//2]
             A3 = A[:l//2,c//2:]
             A4 = A[:l//2,:c//2]
+
+#            print(A1,A2,A3,A4)
+#            print(np.shape(A1))
+#            print(np.shape(A2))
+#            print(np.shape(A3))
+#            print(np.shape(A4))
             
             U1,ru1= self.chx_ennemi_rec(A1,x,y)
             U2,ru2 = self.chx_ennemi_rec(A2,x,y)
@@ -463,10 +469,10 @@ class Unites_Humain_Defenseur():
         
         """
         x,y = self.coords
-        x_inf = max(0,int(-self.zonecbt + x))
-        x_sup = min(self._carte.dims[0]-1, int(self.zonecbt + x))
-        y_inf = max(0,int(-self.zonecbt + y))
-        y_sup = min(self._carte.dims[1]-1, int(self.zonecbt + y))
+        x_inf = max(0,int(-self.zonecbt) + x)
+        x_sup = min(self._carte.dims[0]-1, int(self.zonecbt) + x)
+        y_inf = max(0,int(-self.zonecbt) + y)
+        y_sup = min(self._carte.dims[1]-1, int(self.zonecbt) + y)
         
         A = self._carte.ss_carte[x_inf:x_sup+1,y_inf:y_sup+1]
         
@@ -516,10 +522,10 @@ class Unites_Humain_Defenseur():
             La ressource la plus proche de l'unité.
         
         """
-        x_inf = max(0, int(-self.zonecap + x))
-        x_sup = min(self._carte.dims[0]-1, int(self.zonecap + x))
-        y_inf = max(0,int(-self.zonecap + y))
-        y_sup = min(self._carte.dims[1]-1, int(self.zonecap + y))
+        x_inf = max(0, int(-self.zonecap) + x)
+        x_sup = min(self._carte.dims[0]-1, int(self.zonecap) + x)
+        y_inf = max(0,int(-self.zonecap) + y)
+        y_sup = min(self._carte.dims[1]-1, int(self.zonecap) + y)
         
         Ress = None
         R_plus_petit = self.zonecap +1

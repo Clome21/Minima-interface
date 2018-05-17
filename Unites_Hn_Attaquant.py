@@ -205,7 +205,7 @@ class Unites_Humain_Attaquant():
                 Occ = E_pos&E_pos_imp
                 self.L_vide =list( E_pos - Occ)
             
-            print(self.L_vide)
+
         
         return(self.L_vide)        
 
@@ -320,9 +320,9 @@ class Unites_Humain_Attaquant():
         Méthode sélectionnant l'objet ennemi le plus proche de l'unité.
         Elle parcourt les cases dans le rayon d'attaque de l'unité, et sélectionne
         les objets ennemis dans ce rayon.
-        Elle sélectionne en priorité les unités ennemis les plus proches; mais si
-        un batiment ennemi est plus proche de l'unité que les autres unités ennemis, 
-        l'unité en train de combattre attaquera alors le batiment.
+        Elle sélectionne en priorité les BATIMENTS ennemis les plus proches; mais si
+        une UNITE ennemie est plus proche de l'unité que les autres BATIMENTS ennemis, 
+        l'unité en train de combattre attaquera alors l'unité.
         
         Paramètres
         ----------
@@ -336,18 +336,16 @@ class Unites_Humain_Attaquant():
         """
 
         x,y = self.coords
-        x_inf = max(0,int(-self.zonecbt + x))
-        x_sup = min(self._carte.dims[0]-1, int(self.zonecbt + x))
-        y_inf = max(0,int(-self.zonecbt + y))
-        y_sup = min(self._carte.dims[1]-1, int(self.zonecbt + y))
+        x_inf = max(0,int(-self.zonecbt) + x)
+        x_sup = min(self._carte.dims[0]-1, int(self.zonecbt) + x)
+        y_inf = max(0,int(-self.zonecbt) + y)
+        y_sup = min(self._carte.dims[1]-1, int(self.zonecbt) + y)
         
-        print(x_inf, x_sup)
-        print(y_inf,y_sup)
         
         Ennemi = None
         R_plus_petit_unit = self.zonecbt +1
         R_plus_petit_bat = self.zonecbt + 1
-        
+        # Attaquer en priorité batiments, pas unité
         
         for i in range(x_inf,x_sup+1):
             for j in range(y_inf,y_sup+1):
@@ -357,12 +355,12 @@ class Unites_Humain_Attaquant():
                     
                     print(R_Obj,Obj)
                     
-                    if Obj.T_car()[2] == 'U' and R_Obj < R_plus_petit_unit:
-                        R_plus_petit_unit = R_Obj
+                    if Obj.T_car()[2] == 'B' and R_Obj < R_plus_petit_bat:
+                        R_plus_petit_bat = R_Obj
                         Ennemi = Obj
                         
-                    if Obj.T_car()[2] == 'B' and R_Obj < min(R_plus_petit_bat,R_plus_petit_unit):
-                        R_plus_petit_bat = R_Obj
+                    if Obj.T_car()[2] == 'U' and R_Obj < min(R_plus_petit_bat,R_plus_petit_unit):
+                        R_plus_petit_unit = R_Obj
                         Ennemi = Obj
         
         return(Ennemi)
@@ -425,7 +423,6 @@ class Unites_Humain_Attaquant():
                 return((None,self.zonecbt+1,None,self.zonecbt+1))
 
         elif np.shape(A) == (0,0) or A.tolist() == [] or A.tolist()[0] == []:
-            print("OK")
             return((None,self.zonecbt+1,None,self.zonecbt+1))
 
         else : 
@@ -434,6 +431,12 @@ class Unites_Humain_Attaquant():
             A2 = A[l//2:,:c//2]
             A3 = A[:l//2,c//2:]
             A4 = A[:l//2,:c//2]
+
+#            print(A1,A2,A3,A4)
+#            print(np.shape(A1))
+#            print(np.shape(A2))
+#            print(np.shape(A3))
+#            print(np.shape(A4))
             
             U1,ru1,B1,rb1 = self.chx_ennemi_rec(A1,x,y)
             U2,ru2,B2,rb2 = self.chx_ennemi_rec(A2,x,y)
@@ -470,6 +473,8 @@ class Unites_Humain_Attaquant():
         des attaquants, passe à 1. Les attaquants gagnent alors.
         La méthode signale également quel est l'objet blessé par l'unité.
         
+        PRIORITE AUX BATIMENTS
+        
         Paramètres :
         ------------
         Aucun.
@@ -480,22 +485,22 @@ class Unites_Humain_Attaquant():
         
         """
         x,y = self.coords
-        x_inf = max(0,int(-self.zonecbt + x))
-        x_sup = min(self._carte.dims[0]-1, int(self.zonecbt + x))
-        y_inf = max(0,int(-self.zonecbt + y))
-        y_sup = min(self._carte.dims[1]-1, int(self.zonecbt + y))
+        x_inf = max(0,int(-self.zonecbt) + x)
+        x_sup = min(self._carte.dims[0]-1, int(self.zonecbt) + x)
+        y_inf = max(0,int(-self.zonecbt) + y)
+        y_sup = min(self._carte.dims[1]-1, int(self.zonecbt) + y)
         
         A = self._carte.ss_carte[x_inf:x_sup+1,y_inf:y_sup+1]
         
         U,r_min_u,B,r_min_b = self.chx_ennemi_rec(A,x,y)
-        
+
         if U == None and B == None:
             print("%s n'a blessé personne"%(self.T_car()) )
         else:
-            if r_min_u > r_min_b:
-                Ennemi = B
-            else:
+            if r_min_b > r_min_u:
                 Ennemi = U
+            else:
+                Ennemi = B
             
             print( "%s a blessé %s"%(self.T_car(), Ennemi.T_car() ) )
             Ennemi.sante = Ennemi.sante - self.capcbt

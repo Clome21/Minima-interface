@@ -121,7 +121,7 @@ class MonAppli(QtWidgets.QMainWindow):
         name = str(name)
         name = name + ".txt"
         self.ui.nom_sauvegarde.clear()
-        self.Save = sl.Save(name,self.partie.carte,self)
+        self.Save = sl.Save(name,self.carte,self)
         self.ui.groupBox_Jeu.show()
         
     def charger (self):
@@ -229,25 +229,19 @@ class MonAppli(QtWidgets.QMainWindow):
                     if Obj.T_car()[2] == 'U':
                         statut = "Unité"
                         if str(Obj.T_car()[4:6]) == 'RC':
-                            sante_max = "20"
                             nom = ("Robot de combat " + str(Obj.T_car()[6::]))
                         if str(Obj.T_car()[4:6]) == 'RO':
-                            sante_max = "10"
                             nom = ("Robot ouvrier " + str(Obj.T_car()[6::]))
-                        
                     if Obj.T_car()[2] == 'B':
                         statut = "Batiment"
                         if str(Obj.T_car()[4:6]) == 'QG':
                             nom = "QG"
-                            sante_max = "20"
                         if str(Obj.T_car()[4:5]) == 'P':
-                            sante_max = "20"
                             nom = "Panneau solaire"
                         if str(Obj.T_car()[4:5]) == 'F':
-                            sante_max = "20"
                             nom = "Foreuse"
                     
-                    
+                    sante_max = str(Obj._max)
                     appartenance = "Défenseur"                
                     sante = str(Obj.sante)
                 
@@ -271,19 +265,21 @@ class MonAppli(QtWidgets.QMainWindow):
                     appartenance = " "
                     statut = "Ressource"
                     sante_max = " "
-                    
-                                                
-                    
+
                 
                 position = str(Obj.coords)
-                
                 
                 self.ui.textBrowser_nomUn.setText(nom)
                 self.ui.textBrowser_appartenanceUn.setText(appartenance)
                 self.ui.textBrowser_statutUn.setText(statut)
                 self.ui.textBrowser_positionUn.setText(position)
                 self.ui.textBrowser_santeUn.setText(sante + "/" + sante_max)
-                
+            else :
+                self.ui.textBrowser_nomUn.clear()
+                self.ui.textBrowser_appartenanceUn.clear()
+                self.ui.textBrowser_statutUn.clear()
+                self.ui.textBrowser_positionUn.clear()
+                self.ui.textBrowser_santeUn.clear()
         
     def raz(self):
         self.l = 1
@@ -741,6 +737,10 @@ class MonAppli(QtWidgets.QMainWindow):
     
     def simuler(self):
         self.ui.textBrowser_nomUn.clear()
+        self.ui.textBrowser_appartenanceUn.clear()
+        self.ui.textBrowser_statutUn.clear()
+        self.ui.textBrowser_positionUn.clear()
+        self.ui.textBrowser_santeUn.clear()
         if self.tr_en_crs == 0:
             self.carte.simuler()
         elif self.tr_Hn_en_crs == 0: 
