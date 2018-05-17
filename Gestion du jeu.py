@@ -7,16 +7,8 @@ Created on Thu Apr 19 22:33:10 2018
 import sys
 from PyQt5 import QtGui, QtCore, QtWidgets
 from Minima_prop import Ui_Minima_Accueil
-#from Minima_2_fen import Ui_Minima_Accueil,Ui_Minima_Jeu
 from Partie import Partie
-#from Un_Tour_Hn import Un_Tour_Joueur_Hn
-#from Unites_Hn_Defenseur import Robot_combat
-#from Batiments import Panneau_solaire
-#from Joueur import Joueur
 from Constantes import Constante
-from Map import Map
-import time
-import math
 import Save_Load as sl
 
 class MonAppli(QtWidgets.QMainWindow):
@@ -40,7 +32,6 @@ class MonAppli(QtWidgets.QMainWindow):
         self.L_pos = []
         self.tr_actuel = 0
 
-#        self.ui.Bouton_Generer.clicked.connect(self.generer)
         self.BA=0
         self.g="i"
         self.l = "i"
@@ -63,9 +54,6 @@ class MonAppli(QtWidgets.QMainWindow):
         self.y_inf =  (self.__ymax)//2 - 1
         self.y_sup = (self.__ymax)//2 +2
 
-
-#        self.ui.Button_Jouer.clicked.connect(self.test)
-#        self.ui.Button_Jouer.clicked.connect(self.ui.Minima_Accueil.close)
         
         self.pos_souris_x=int
         self.pos_souris_y=int
@@ -78,14 +66,13 @@ class MonAppli(QtWidgets.QMainWindow):
         self.ui.Button_Ready.clicked.connect( self.ui.Button_Ready.hide)
         self.ui.Button_Ready.clicked.connect( self.generer_bis)
         self.ui.Button_Ready.clicked.connect(self.simuler)
-        self.ui.Button_Ready.clicked.connect(self.ui.info_clic.show)
+        self.ui.Button_Ready.clicked.connect(self.ui.info.show)
     
               
- #       self.ui.Bouton_Findetour.clicked.connect(self.tr_suivant)
         self.ui.Bouton_Findetour.clicked.connect(self.simuler) 
         self.ui.Bouton_Findetour.clicked.connect(self.jeu)
+        
 #-------------------place un batiment
-
         self.ui.Button_Foreuse.clicked.connect(self.active_for)
         self.ui.Button_Foreuse.clicked.connect(self.plac_for)
         self.ui.Button_Foreuse.clicked.connect(self.L_pos_bat)
@@ -117,15 +104,16 @@ class MonAppli(QtWidgets.QMainWindow):
         self.ui.Defaite.buttonClicked.connect(self.fin_du_jeu)
         self.ui.Victoire.buttonClicked.connect(self.fin_du_jeu)
 
-        self.ui.Bouton_Sauvegarde.clicked.connect(self.ui.nom_sauvegarde.show)
-        
-        self.ui.nom_sauvegarde.returnPressed.connect(self.ui.nom_sauvegarde.hide)
-#        self.ui.nom_sauvegarde.returnPressed.connect(self.nom_sauvegarde)
-        self.ui.nom_sauvegarde.returnPressed.connect(self.sauvegarde)
 
-        self.ui.Button_Ac_Charger.clicked.connect(self.ui.nom_charger.show)
-        self.ui.nom_charger.returnPressed.connect(self.ui.nom_charger.hide)
+
+        
+        
+        self.ui.nom_sauvegarde.returnPressed.connect(self.ui.groupBox_Sauvegarde.hide)
+        self.ui.nom_sauvegarde.returnPressed.connect(self.sauvegarde)      
+
+        self.ui.nom_charger.returnPressed.connect(self.ui.groupBox_Charger.hide)
         self.ui.nom_charger.returnPressed.connect(self.charger)
+        
 
 
     def sauvegarde(self):
@@ -134,6 +122,7 @@ class MonAppli(QtWidgets.QMainWindow):
         name = name + ".txt"
         self.ui.nom_sauvegarde.clear()
         self.Save = sl.Save(name,self.partie.carte,self)
+        self.ui.groupBox_Jeu.show()
         
     def charger (self):
          name = self.ui.nom_charger.text()
@@ -142,20 +131,18 @@ class MonAppli(QtWidgets.QMainWindow):
          self.ui.nom_charger.clear()
          self.Load = sl.Load(name,self)
          if type(self.Load.Nme) != int : 
-            self.ui.groupBox_Accueil.hide()
             self.ui.groupBox_Jeu.show()
             self.carte = self.Load.Lcarte
-            #self.carte.simuler()
-            self.ui.Chargement.show()
+            self.ui.Chargement.show()            
             self.mise_en_place()
     
     def mise_en_place(self):
         self.maj_compteur_ressources()
         self.affiche_Jr_en_crs(self.carte.TrHn.Jr_en_crs)
         self.ui.Button_Ready.hide()
-        self.ui.info_clic.show()
+        self.ui.info.show()
         self.jeu()
-        # Mettre ready; cacher bouton pour que soit pour le bon joueur; mettre bon texte; mette bon self.l
+       
 
     def nom_sauvegarde (self):
         name = self.ui.nom_sauvegarde.text()
@@ -166,12 +153,10 @@ class MonAppli(QtWidgets.QMainWindow):
 
     def generer(self):
         if self.BA=="clic":
- #           while self.button
             self.partie = Partie(self.ui.nb_IA_choisi(),self.ui.nb_Hn_choisi(),self)
             self.carte=self.partie.carte
             self.ui.lcdNumber_Metal.display(self.partie.L_joueur[0].metal_tot)
             self.ui.lcdNumber_Energie.display(self.partie.L_joueur[0].energie_tot)
-#            self.partie = Partie(1,1,self) 
             print('generer')
     
     def generer_bis(self):
@@ -219,7 +204,7 @@ class MonAppli(QtWidgets.QMainWindow):
         if event.button() == QtCore.Qt.LeftButton :
             self.pos_souris_x=int((event.x()/36))
             self.pos_souris_y=int((event.y()/36))
-            self.ui.info_clic.clear()
+
 
             self.bouger_poss_u()
             self.plac_PS()
@@ -229,7 +214,6 @@ class MonAppli(QtWidgets.QMainWindow):
             self.plac_Sc()
             self.info_obj()
 
-#            print(self.pos_souris_x,self.pos_souris_y)
         if event.button() == QtCore.Qt.RightButton :
             self.pos_souris_x_bouger=int((event.x()/36))
             self.pos_souris_y_bouger=int((event.y()/36))
@@ -241,8 +225,65 @@ class MonAppli(QtWidgets.QMainWindow):
             Obj = self.carte.ss_carte[self.pos_souris_x][self.pos_souris_y]
 
             if Obj != ' ' and Obj != '/' :
-                Description = str(Obj)
-                self.ui.info_clic.insert(Description)
+                if Obj.T_car()[0] == 'D':
+                    if Obj.T_car()[2] == 'U':
+                        statut = "Unité"
+                        if str(Obj.T_car()[4:6]) == 'RC':
+                            sante_max = "20"
+                            nom = ("Robot de combat " + str(Obj.T_car()[6::]))
+                        if str(Obj.T_car()[4:6]) == 'RO':
+                            sante_max = "10"
+                            nom = ("Robot ouvrier " + str(Obj.T_car()[6::]))
+                        
+                    if Obj.T_car()[2] == 'B':
+                        statut = "Batiment"
+                        if str(Obj.T_car()[4:6]) == 'QG':
+                            nom = "QG"
+                            sante_max = "20"
+                        if str(Obj.T_car()[4:5]) == 'P':
+                            sante_max = "20"
+                            nom = "Panneau solaire"
+                        if str(Obj.T_car()[4:5]) == 'F':
+                            sante_max = "20"
+                            nom = "Foreuse"
+                    
+                    
+                    appartenance = "Défenseur"                
+                    sante = str(Obj.sante)
+                
+                if Obj.T_car()[0:2] == "AI":
+                    sante = str(Obj.sante)
+                    nom = ("Scorpion " + str(Obj.T_car()[10::]))
+                    appartenance = ("AI" + str(Obj.T_car()[5]))
+                    statut = "Unité"
+                    sante_max = "10"
+                
+                if Obj.T_car()[0:2] == "AH":
+                    sante = str(Obj.sante)
+                    nom = ("Scorpion "+ str(Obj.T_car()[7::]))
+                    appartenance = ("Attaquant Humain " + str(Obj.T_car()[2]))
+                    statut = "Unité"
+                    sante_max = "10"
+                
+                if Obj.T_car()[-1]== 'M':
+                    sante = str(Obj.valeur)
+                    nom = "Metal"
+                    appartenance = " "
+                    statut = "Ressource"
+                    sante_max = " "
+                    
+                                                
+                    
+                
+                position = str(Obj.coords)
+                
+                
+                self.ui.textBrowser_nomUn.setText(nom)
+                self.ui.textBrowser_appartenanceUn.setText(appartenance)
+                self.ui.textBrowser_statutUn.setText(statut)
+                self.ui.textBrowser_positionUn.setText(position)
+                self.ui.textBrowser_santeUn.setText(sante + "/" + sante_max)
+                
         
     def raz(self):
         self.l = 1
@@ -263,7 +304,7 @@ class MonAppli(QtWidgets.QMainWindow):
     def bouger_poss_u(self):
         if type(self.pos_souris_x) == int:
             Obj = self.carte.ss_carte[self.pos_souris_x][self.pos_souris_y]
-#            print(Obj)
+
             if Obj != ' ' and Obj != '/':
                 Jr_en_crs = self.carte.TrHn.Jr_en_crs
                 role =self.carte.L_joueur[ Jr_en_crs ]._role
@@ -402,10 +443,10 @@ class MonAppli(QtWidgets.QMainWindow):
     def paintEvent(self,e):
             qp = QtGui.QPainter()
             qp.begin(self)
-#            print(self.l)
+
             if self.l!= "i":
                 self.affiche_map(qp)
-                self.affiche_jeu(qp)# une méthode à définir
+                self.affiche_jeu(qp)
             if type(self.l) != int and self.l[0:2]== "pb":    
                 self.affiche_L_pos_bat(qp)
             if type(self.l) != int and self.l[0:2] == "pu":   
@@ -418,7 +459,6 @@ class MonAppli(QtWidgets.QMainWindow):
                     zone = self.Obj.zonecbt
                     self.affiche_L_pos_bouger_cbt(qp,zone)
                 except Exception as e:
-     #               print(e)
                     zone = self.Obj.capmvt
                     self.affiche_L_pos_bouger_ressource(qp,zone)
             qp.end()
@@ -552,7 +592,7 @@ class MonAppli(QtWidgets.QMainWindow):
         for Obj in self.carte : 
             if Obj.T_car()[-1]== 'M':
                 self.dessin_metal(qp,Obj)
-                """Dessin d'un métal """
+               
             elif Obj.T_car()[0] == 'D':
                 if Obj.car() == 'RC':
                     self.dessin_Robot_combat(qp,Obj)
@@ -574,21 +614,20 @@ class MonAppli(QtWidgets.QMainWindow):
             else : 
                 if Obj.T_car()[0:2] == "AH":
                     if Obj.T_car()[2] == "0":
-                        """ il faudrait une couleur spécifique pour l'attaquant humain 0 """
+                        
                         self.dessin_Scorpion0(qp,Obj)
                     if Obj.T_car()[2] == "1":
-                        """ il faudrait une couleur spécifique pour l'attaquant humain 1 """
+                        
                         self.dessin_Scorpion1(qp,Obj)                    
                     if Obj.T_car()[2] == "2":
-                        """ il faudrait une couleur spécifique pour l'attaquant humain 2 """
+                        
                         self.dessin_Scorpion2(qp,Obj)                    
                     if Obj.T_car()[2] == "3":
-                        """ il faudrait une couleur spécifique pour l'attaquant humain 3 """
+                        
                         self.dessin_Scorpion3(qp,Obj)
 
                 elif Obj.T_car()[0:2] == "AI":
-                    """ Idem pour les couleurs; je te laisse choisir si on met 
-                    les mêmes qu'en haut ou non."""
+                    
                     if Obj.T_car()[5] == "0":
                         self.dessin_Scorpion0(qp,Obj)
                     if Obj.T_car()[5] == "1":
@@ -605,6 +644,7 @@ class MonAppli(QtWidgets.QMainWindow):
             self.ui.Attaquant.hide()
             self.ui.Defenseur.show()
             self.ui.tr_defenseur_text.show()
+            
         if k==1:
             self.ui.Attaquant.show()
             self.ui.Defenseur.hide()
@@ -615,14 +655,11 @@ class MonAppli(QtWidgets.QMainWindow):
             self.ui.tr_attaquant_1_text.hide()
             self.ui.tr_attaquant_2_text.show()
 
-
         if k==3:
-
             self.ui.tr_attaquant_2_text.hide()
             self.ui.tr_attaquant_3_text.show()
        
         if k==4:
-
             self.ui.tr_attaquant_3_text.hide()
             self.ui.tr_attaquant_4_text.show()
 
@@ -703,7 +740,7 @@ class MonAppli(QtWidgets.QMainWindow):
         qp.drawRect(u)        
     
     def simuler(self):
-        self.ui.info_clic.clear()
+        self.ui.textBrowser_nomUn.clear()
         if self.tr_en_crs == 0:
             self.carte.simuler()
         elif self.tr_Hn_en_crs == 0: 

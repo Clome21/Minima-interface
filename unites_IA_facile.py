@@ -491,28 +491,28 @@ class Unite_IA_Facile():
         
         
 class Scorpion0(Unite_IA_Facile):
-"""
-Classe spécialisant la classe Unite_IA_Facile pour représenter un scorpion de niveau 0.
-"""
+    """
+    Classe spécialisant la classe Unite_IA_Facile pour représenter un scorpion de niveau 0.
+    """
     
     def __init__(self, role, cart, x, y, k):
-    """Permet d'initialiser l'unité.
-            
-    Paramètres
-    ----------
-    
-    role : str
-    Le rôle du joueur possèdant l'unité
-            
-    carte : classe Map
-    La carte sur laquelle évolue l'unité.
-    
-    x, y : int
-    Les coordonnées de l'unité en abscisse et en ordonnée
-    
-    k : int
-    La position du joueur possédant l'unité, dans la liste L_joueur.
-        """
+        """Permet d'initialiser l'unité.
+                
+        Paramètres
+        ----------
+        
+        role : str
+        Le rôle du joueur possèdant l'unité
+                
+        carte : classe Map
+        La carte sur laquelle évolue l'unité.
+        
+        x, y : int
+        Les coordonnées de l'unité en abscisse et en ordonnée
+        
+        k : int
+        La position du joueur possédant l'unité, dans la liste L_joueur.
+            """
         super().__init__(x, y, cart)
 
         self.id =  self._carte.L_joueur[k].IdU 

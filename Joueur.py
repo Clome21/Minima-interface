@@ -5,7 +5,6 @@ Created on Wed Mar 21 10:34:28 2018
 @author: landaier
 """
 
-from Constantes import Constante
 
 class Joueur(object):
     def __init__(self, role):

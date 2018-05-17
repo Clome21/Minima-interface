@@ -61,6 +61,7 @@ class Unites_Humain_Defenseur():
             self.T_car(), self.x, self.y,
             self.sante, self._max
             )
+        
     
     
     def car(self):
@@ -206,8 +207,6 @@ class Unites_Humain_Defenseur():
                 E_pos = set(self.L_vide)
                 Occ = E_pos&E_pos_imp
                 self.L_vide =list( E_pos - Occ)
-            
-           # print(self.L_vide)
         
         return(self.L_vide)        
 
@@ -423,12 +422,6 @@ class Unites_Humain_Defenseur():
             A2 = A[l//2:,:c//2]
             A3 = A[:l//2,c//2:]
             A4 = A[:l//2,:c//2]
-
-#            print(A1,A2,A3,A4)
-#            print(np.shape(A1))
-#            print(np.shape(A2))
-#            print(np.shape(A3))
-#            print(np.shape(A4))
             
             U1,ru1= self.chx_ennemi_rec(A1,x,y)
             U2,ru2 = self.chx_ennemi_rec(A2,x,y)

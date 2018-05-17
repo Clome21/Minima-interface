@@ -7,15 +7,8 @@ Created on Sun Apr 22 13:30:19 2018
 
 
 import unittest
-from numpy.random import randint
-from numpy.random import choice
-import time
-from Un_Tour_Hn import Un_Tour_Joueur_Hn
-from Un_Tour_IA import Un_Tour_Joueur_IA
 from Ressource import metal
-from Batiments import Foreuse,QG,Panneau_solaire
-from unites_IA_facile import Scorpion0
-from unites_IA_Moyenne import Scorpion1
+from Batiments import Foreuse,Panneau_solaire
 from Constantes import Constante
 import Save_Load as sl
 import numpy as np

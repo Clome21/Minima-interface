@@ -1,5 +1,3 @@
-from numpy.random import randint
-
 
 class Ressource(object):
     """
@@ -41,10 +39,6 @@ class Ressource(object):
             self.car(), self.x, self.y,self.valeur)
         
         
-    
-
-
-
             
     def car(self):
         """

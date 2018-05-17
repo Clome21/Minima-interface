@@ -26,9 +26,6 @@ class Constante:
         H_Z_Constructible= int(ymax/2)+1
     else:
         H_Z_Constructible= int(ymax/2)
-    
-#    L_Z_Constructible = 9
-#    H_Z_Constructible = 11
         
     Ep_app = int(max(xmax,ymax)/20)
     
@@ -52,7 +49,7 @@ class Constante:
     prod_E_QG = 1
     prod_M_QG = 1
     
-    nbe_unite_ajoute = 0.5 #0.5
+    nbe_unite_ajoute = 0.5 
     
 #----------------------------------------Constantes Unites
 #-------------------------------Robot combat
@@ -94,10 +91,7 @@ class Constante:
         LH_Z_Constructible= int(yL/2)+1
     else:
         LH_Z_Constructible= int(yL/2)
-    
-#    L_Z_Constructible = 9
-#    H_Z_Constructible = 11
-        
+            
 
     LEp_app = int(max(xL,yL)/20)
     

@@ -1,15 +1,11 @@
 from numpy.random import randint
 from numpy.random import choice
-import time
 from Un_Tour_Hn import Un_Tour_Joueur_Hn
 from Un_Tour_IA import Un_Tour_Joueur_IA
 from Ressource import metal
-from Batiments import Foreuse,QG,Panneau_solaire
-from Unites_Hn_Defenseur import Robot_combat, Robot_Ouvrier
-from unites_IA_facile import Scorpion0
-
+from Batiments import QG
+from Unites_Hn_Defenseur import Robot_combat
 from Constantes import Constante
-import Save_Load as sl
 import numpy as np
 
 class Map(list):
@@ -305,24 +301,6 @@ class Map(list):
             t = self.tr_actuel 
             self.IHM.tr_en_crs = 1
             print("### Tour %i ###"%(t))
-                  
-#            Chx = input("Sauvegarder/Charger? (S pour sauvegarder, C pour charger, rien sinon) \n")
- #           if Chx == "S":
-  #              name = input("Entrez le nom de la sauvegarde \n")
-   #             name = name + ".txt"
-     #           self.Save = sl.Save(name,self)
-    #        elif Chx == "C":
-      #          name = input("Entrez le nom de votre sauvegarde \n")
-       #         name = name + ".txt"    
-        #        self.Load = sl.Load(name)
-         #       if self.Load.Nme == 'Q':
-          #          print("### Tour %i ###"%(t))
-           #     else:
-            #        Chx = ' '
-             #       self.Load.Lcarte.simuler()
-              #      break
-
-                  
                   
             if t%5==0:
                 self.apparition_ressource()

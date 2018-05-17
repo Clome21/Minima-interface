@@ -3,16 +3,8 @@
 Éditeur de Spyder
 """
 import Map
-
-import numpy as np
-from numpy.random import randint
-import sys
-import math
 from Joueur import Joueur
 from Constantes import Constante
-
-from Unites_Hn_Attaquant import Scorpion
-from Unites_Hn_Defenseur import Robot_combat
 
 class Partie():
     """
@@ -89,27 +81,9 @@ class Partie():
         
     
                 """
-#        nb_ia_0 = 0
         nb_ia_0 = nb_ia
         nb_ia_1 = 0
         nb_ia_2 = 0
-#        for k in range(nb_ia):
-#            self.lvl = False
-#            print("Difficulté IA %i \n"%k )
-#            self.niveau=input("Quel niveau voulez-vous lui donner ? 0 / 1 / 2")
-#            if self.niveau=='0' or self.niveau=='1' or self.niveau=='2':
-#                self.lvl=True
-#            else:
-#                while self.lvl==False:
-#                    self.niveau=input("Erreur. Quel niveau voulez vous lui donner ? 0 / 1 / 2")                    
-#                    if self.niveau=='0' or self.niveau=='1' or self.niveau=='2':
-#                        self.lvl=True
-#            if self.niveau == '0':
-#                nb_ia_0 +=1
-#            elif self.niveau == '1':
-#                nb_ia_1 +=1
-#            else:
-#                nb_ia_2 +=1
                 
         return(nb_ia_0, nb_ia_1, nb_ia_2)
             

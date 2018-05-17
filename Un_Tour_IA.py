@@ -192,6 +192,10 @@ class Un_Tour_Joueur_IA():
                 print("\\\ Tour du joueur %r ///"%(role))
                 self.IHM.ui.Attaquant.hide()
                 self.IHM.ui.Defenseur.hide()
+                self.IHM.ui.lcdNumber_Metal.hide()
+                self.IHM.ui.textBrowser_Metal.hide()
+                self.IHM.ui.textBrowser_Energie.hide()
+                self.IHM.ui.lcdNumber_Energie.hide()
                 self.production_unite_attaque_IA(role,k)
     
                 L_unite = self.L_joueur[k]._liste_unite

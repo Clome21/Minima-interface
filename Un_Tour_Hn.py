@@ -2,7 +2,6 @@ from Batiments import Foreuse,Panneau_solaire
 from Constantes import Constante
 from Unites_Hn_Defenseur import Robot_combat, Robot_Ouvrier
 from Unites_Hn_Attaquant import Scorpion
-from numpy.random import randint
 
 import numpy as np
 
@@ -346,22 +345,26 @@ class Un_Tour_Joueur_Hn():
                     self.IHM.ui.Attaquant.hide()
                     self.IHM.ui.Defenseur.show()
                     self.IHM.ui.tr_defenseur_text.show() 
-
                     self.IHM.ui.tr_attaquant_1_text.hide() 
-
                     self.IHM.ui.tr_attaquant_2_text.hide() 
-
                     self.IHM.ui.tr_attaquant_3_text.hide() 
-
-                    self.IHM.ui.tr_attaquant_4_text.hide() 
+                    self.IHM.ui.tr_attaquant_4_text.hide()
+                    self.IHM.ui.lcdNumber_Metal.show()
+                    self.IHM.ui.textBrowser_Metal.show()
+                    self.IHM.ui.textBrowser_Energie.show()
+                    self.IHM.ui.lcdNumber_Energie.show()
+                    
                 elif role[0] == "A":
                     self.IHM.ui.Attaquant.show()
                     self.IHM.ui.Defenseur.hide()
                     self.IHM.ui.tr_defenseur_text.hide() 
-
                     self.IHM.affiche_Jr_en_crs(self.Jr_en_crs) 
                     self.L_joueur[self.Jr_en_crs].nbe_unite_restantes += self.unite_disp_par_tour
                     self.IHM.maj_compteur_ressources()
+                    self.IHM.ui.lcdNumber_Metal.hide()
+                    self.IHM.ui.textBrowser_Metal.hide()
+                    self.IHM.ui.textBrowser_Energie.hide()
+                    self.IHM.ui.lcdNumber_Energie.hide()
                 self.IHM.activation_boutons()
             else : 
                 self.Jr_en_crs += 1

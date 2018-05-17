@@ -6,19 +6,11 @@ Created on Fri Apr 13 23:20:47 2018
 """
 
 import Map
-import Partie
 from Constantes import Constante
 from Batiments import Foreuse,QG,Panneau_solaire
-from numpy.random import randint
-from numpy.random import choice
-import time
-from Un_Tour_Hn import Un_Tour_Joueur_Hn
-from Un_Tour_IA import Un_Tour_Joueur_IA
 from Ressource import metal
 from Joueur import Joueur
 from unites_IA_facile import Scorpion0
-
-from Constantes import Constante
 from Unites_Hn_Defenseur import Robot_combat, Robot_Ouvrier
 from Unites_Hn_Attaquant import Scorpion
 
@@ -129,9 +121,8 @@ class Save():
                     Save.write("Fin unite \n")
                 Save.write("Fin joueur \n")
             Save.write("Fin sauvegarde")
-            #print("Sauvegarde effectuée!")
             self.IHM.ui.Sauvegarde.show()
-        
+    
     def Test_nom(self,name):
         """
         Contrôle le nom de la sauvegarde choisie par l'utilisateur. Si le nom correspond à une 
@@ -154,12 +145,10 @@ class Save():
         except FileNotFoundError:
             return(name)
 
-        #L = input("Sauvegarde déjà existante. L'effacer? (Y/N)")
         chx = self.IHM.ui.choix_sauvegarde()
         if chx == "Yes":
             return(name)
-        else:
-            self.IHM.ui.nom_sauvegarde.show()
+        elif chx == "No":            
             name = 1
             return(name)
     
@@ -232,7 +221,9 @@ class Load():
         except FileNotFoundError:
             chx = self.IHM.ui.choix_chargement()
             if chx == "Yes":
-                self.IHM.ui.nom_charger.show()
+                self.IHM.ui.groupBox_Charger.show()
+            elif chx == "No":
+                self.IHM.ui.groupBox_Accueil.show()
             name = 1
         return(name)
                 
@@ -378,7 +369,6 @@ class Load():
                     k = Pos.find(',')
                     X = int(Pos[0:k])
                     Y = int(Pos[k+1:])
-#                    print(Typ[0])
                     if Typ[0:2] == "RC":
                         Id = int(Typ[2:])
                         U = Robot_combat(Role,self.Lcarte,X,Y)
@@ -394,20 +384,12 @@ class Load():
                         self.Jr._liste_unite.append(U)
 
                     elif Typ[0] == "S":
-#                            print(Role[1])
                             if Role[1] == "I":
                                 Id = int(Typ[2:])
                                 U = Scorpion0(Role,self.Lcarte,X,Y, Num_joueur)
                                 U.sante = Sante
                                 U.id = Id
                                 self.Jr._liste_unite.append(U)
-                            
-#                            elif Typ[1] == "1":
-#                                Id = int(Typ[2:])
-#                                U = Scorpion1(Role,self.Lcarte,X,Y, Num_joueur)
-#                                U.sante = Sante
-#                                U.id = Id
-#                                self.Jr._liste_unite.append(U)
                             
                             elif Role[1] == "H":
                                 Id = int(Typ[1:])

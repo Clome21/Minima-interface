@@ -1,11 +1,6 @@
 from numpy.random import randint,choice
 from Constantes import Constante
-import numpy as np
 import math
-
-
-
-
 
 class Unite_IA():
     """
@@ -157,7 +152,7 @@ class Unite_IA():
     
     def collision_unite_IA (self,a,c):
             for b in self._unite_IA:
-                #d=self.distance(a,c,b.x,b.y)           
+                     
                 if (a==b.x and c==b.y):
                     print("collision",a,c)
                 else:
@@ -228,11 +223,6 @@ class Scorpion1(Unite_IA):
             else: 
                 self.coords = (self.x+randint(-1,2),self.y+randint(0,2))
          
-#        for b in self._unite_IA: 
-#            if self.id==b.id:
-#                continue
-#            elif ((self.x==b.x) and (self.y==b.y)):
-#                print("collision",self.x,self.y)
         
 
 class Scorpion2(Unite_IA):

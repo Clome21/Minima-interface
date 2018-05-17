@@ -434,12 +434,6 @@ class Unites_Humain_Attaquant():
             A2 = A[l//2:,:c//2]
             A3 = A[:l//2,c//2:]
             A4 = A[:l//2,:c//2]
-
-#            print(A1,A2,A3,A4)
-#            print(np.shape(A1))
-#            print(np.shape(A2))
-#            print(np.shape(A3))
-#            print(np.shape(A4))
             
             U1,ru1,B1,rb1 = self.chx_ennemi_rec(A1,x,y)
             U2,ru2,B2,rb2 = self.chx_ennemi_rec(A2,x,y)
