@@ -78,6 +78,7 @@ class MonAppli(QtWidgets.QMainWindow):
         self.ui.Button_Ready.clicked.connect( self.ui.Button_Ready.hide)
         self.ui.Button_Ready.clicked.connect( self.generer_bis)
         self.ui.Button_Ready.clicked.connect(self.simuler)
+        self.ui.Button_Ready.clicked.connect(self.ui.info_clic.show)
     
               
  #       self.ui.Bouton_Findetour.clicked.connect(self.tr_suivant)
@@ -110,7 +111,6 @@ class MonAppli(QtWidgets.QMainWindow):
         
         self.ui.Button_J_A_Fermer.clicked.connect(self.raz)
         
-        self.ui.Bouton_Generer.clicked.connect(self.gestion_deplacement)
         
         self.ui.Button_J_D_U_Fermer.clicked.connect(self.raz)
         
@@ -129,26 +129,40 @@ class MonAppli(QtWidgets.QMainWindow):
 
 
     def sauvegarde(self):
-        self.Save = sl.Save(self.nom_sauvegarde,self.partie.carte,self)
+        name = self.ui.nom_sauvegarde.text()
+        name = str(name)
+        name = name + ".txt"
+        self.ui.nom_sauvegarde.clear()
+        self.Save = sl.Save(name,self.partie.carte,self)
         
     def charger (self):
          name = self.ui.nom_charger.text()
-         name = name + ".txt"    
-         self.Load = sl.Load(name)
-         if self.Load.Nme == 'Q':
-             print("### Tour i ###")#(t))
-         else:                          
-            self.groupBox_Jeu.show
-            self.groupBox_Accueil.hide
-       #     self.Load.Lcarte.simuler()
+         name = str(name)
+         name = name + ".txt"
+         self.ui.nom_charger.clear()
+         self.Load = sl.Load(name,self)
+         if type(self.Load.Nme) != int : 
+            self.ui.groupBox_Accueil.hide()
+            self.ui.groupBox_Jeu.show()
+            self.carte = self.Load.Lcarte
+            #self.carte.simuler()
+            self.ui.Chargement.show()
+            self.mise_en_place()
+    
+    def mise_en_place(self):
+        self.maj_compteur_ressources()
+        self.affiche_Jr_en_crs(self.carte.TrHn.Jr_en_crs)
+        self.ui.Button_Ready.hide()
+        self.ui.info_clic.show()
+        self.jeu()
+        # Mettre ready; cacher bouton pour que soit pour le bon joueur; mettre bon texte; mette bon self.l
 
     def nom_sauvegarde (self):
         name = self.ui.nom_sauvegarde.text()
+        name = str(name)
         name = name + ".txt"
+        self.ui.nom_sauvegarde.clear()
         return name
-        
-
-
 
     def generer(self):
         if self.BA=="clic":
@@ -205,13 +219,15 @@ class MonAppli(QtWidgets.QMainWindow):
         if event.button() == QtCore.Qt.LeftButton :
             self.pos_souris_x=int((event.x()/36))
             self.pos_souris_y=int((event.y()/36))
-            self.info_obj()
+            self.ui.info_clic.clear()
+
             self.bouger_poss_u()
             self.plac_PS()
             self.plac_for()
             self.plac_RC()
             self.plac_RO()
             self.plac_Sc()
+            self.info_obj()
 
 #            print(self.pos_souris_x,self.pos_souris_y)
         if event.button() == QtCore.Qt.RightButton :
@@ -223,10 +239,10 @@ class MonAppli(QtWidgets.QMainWindow):
     def info_obj(self):
         if type(self.pos_souris_x) == int:
             Obj = self.carte.ss_carte[self.pos_souris_x][self.pos_souris_y]
-#            print(Obj)
+
             if Obj != ' ' and Obj != '/' :
-                Obj.affichage()
-        
+                Description = str(Obj)
+                self.ui.info_clic.insert(Description)
         
     def raz(self):
         self.l = 1
@@ -279,20 +295,20 @@ class MonAppli(QtWidgets.QMainWindow):
         
     
     def activation_boutons(self):
-        if (self.partie.L_joueur[0].metal_tot>=Constante.cout_M_P and self.partie.L_joueur[0].energie_tot>=Constante.cout_E_P):
+        if (self.carte.L_joueur[0].metal_tot>=Constante.cout_M_P and self.carte.L_joueur[0].energie_tot>=Constante.cout_E_P):
             self.ui.Button_Panneau_Solaire.setEnabled(True)
         else:
             self.ui.Button_Panneau_Solaire.setEnabled(False)
             
-        if (self.partie.L_joueur[0].metal_tot>=Constante.cout_M_F and self.partie.L_joueur[0].energie_tot>=Constante.cout_E_F):
+        if (self.carte.L_joueur[0].metal_tot>=Constante.cout_M_F and self.carte.L_joueur[0].energie_tot>=Constante.cout_E_F):
             self.ui.Button_Foreuse.setEnabled(True)
         else:
             self.ui.Button_Foreuse.setEnabled(False)
-        if (self.partie.L_joueur[0].metal_tot>=Constante.cout_M_RC and self.partie.L_joueur[0].energie_tot>=Constante.cout_E_RC):
+        if (self.carte.L_joueur[0].metal_tot>=Constante.cout_M_RC and self.carte.L_joueur[0].energie_tot>=Constante.cout_E_RC):
              self.ui.Button_Robot_Combat.setEnabled(True)
         else:
             self.ui.Button_Robot_Combat.setEnabled(False)
-        if (self.partie.L_joueur[0].metal_tot>=Constante.cout_M_RO and self.partie.L_joueur[0].energie_tot>=Constante.cout_E_RO):
+        if (self.carte.L_joueur[0].metal_tot>=Constante.cout_M_RO and self.carte.L_joueur[0].energie_tot>=Constante.cout_E_RO):
             self.ui.Button_Robot_Ouvrier.setEnabled(True)
         else:
             self.ui.Button_Robot_Ouvrier.setEnabled(False)
@@ -308,15 +324,15 @@ class MonAppli(QtWidgets.QMainWindow):
         
     def maj_compteur_ressources(self):
 
-        self.ui.lcdNumber_Metal.display(self.partie.L_joueur[0].metal_tot)
-        self.ui.lcdNumber_Energie.display(self.partie.L_joueur[0].energie_tot)
+        self.ui.lcdNumber_Metal.display(self.carte.L_joueur[0].metal_tot)
+        self.ui.lcdNumber_Energie.display(self.carte.L_joueur[0].energie_tot)
         self.ui.lcdNumber_Tours_restant.display(self.nbtour-self.carte.tr_actuel)
         self.ui.lcdNumber_Unitdispo.display(int(self.carte.L_joueur[self.carte.TrHn.Jr_en_crs].nbe_unite_restantes))
         
 
     def plac_RC(self):
         if self.l == "purc" and self.pos_souris_x != int:
-            self.partie.carte.TrHn.production_unite_defense_combat(self.pos_souris_x,self.pos_souris_y)
+            self.carte.TrHn.production_unite_defense_combat(self.pos_souris_x,self.pos_souris_y)
             self.activation_boutons()
             self.maj_compteur_ressources()
             self.paintEvent(2)
@@ -324,7 +340,7 @@ class MonAppli(QtWidgets.QMainWindow):
         
     def plac_RO(self):
         if self.l == "puro" and self.pos_souris_x != int:
-            self.partie.carte.TrHn.production_unite_defense_production(self.pos_souris_x,self.pos_souris_y)
+            self.carte.TrHn.production_unite_defense_production(self.pos_souris_x,self.pos_souris_y)
             self.activation_boutons()
             self.maj_compteur_ressources()
             self.paintEvent(2)
@@ -332,7 +348,7 @@ class MonAppli(QtWidgets.QMainWindow):
         
     def plac_for(self):
         if self.l == "pbf" and self.pos_souris_x != int:
-            self.partie.carte.TrHn.placer_une_foreuse(self.pos_souris_x,self.pos_souris_y) 
+            self.carte.TrHn.placer_une_foreuse(self.pos_souris_x,self.pos_souris_y) 
             self.activation_boutons()
             self.maj_compteur_ressources()
             self.paintEvent(2)
@@ -341,7 +357,7 @@ class MonAppli(QtWidgets.QMainWindow):
 
     def plac_PS(self):
         if self.l == "pbp" and self.pos_souris_x != int:
-            self.partie.carte.TrHn.placer_un_Panneau_solaire(self.pos_souris_x,self.pos_souris_y)
+            self.carte.TrHn.placer_un_Panneau_solaire(self.pos_souris_x,self.pos_souris_y)
             self.activation_boutons()
             self.maj_compteur_ressources()
             self.paintEvent(2)
@@ -349,7 +365,7 @@ class MonAppli(QtWidgets.QMainWindow):
         
     def plac_Sc(self):
         if self.l == "pus" and self.pos_souris_x != int:
-            self.partie.carte.TrHn.production_unite_attaque_Hn(self.pos_souris_x,self.pos_souris_y)
+            self.carte.TrHn.production_unite_attaque_Hn(self.pos_souris_x,self.pos_souris_y)
             self.activation_boutons()
             self.paintEvent(2)
             self.ui.conteneur.update()
@@ -423,10 +439,10 @@ class MonAppli(QtWidgets.QMainWindow):
         self.L_pos=self.Obj.mvt_poss()
         for i in self.L_pos:
             x,y = i
-            x_inf = max(0,int(-zone + x))
-            x_sup = min(self.Obj._carte.dims[0]-1, int(zone + x))
-            y_inf = max(0,int(-zone + y))
-            y_sup = min(self.Obj._carte.dims[1]-1, int(zone + y))
+            x_inf = max(0,int(-zone) + x)
+            x_sup = min(self.Obj._carte.dims[0]-1, int(zone) + x)
+            y_inf = max(0,int(-zone) + y)
+            y_sup = min(self.Obj._carte.dims[1]-1, int(zone) + y)
         
             A = self.Obj._carte.ss_carte[x_inf:x_sup+1,y_inf:y_sup+1]
             if self.Obj.T_car()[0] == 'D':
@@ -435,19 +451,20 @@ class MonAppli(QtWidgets.QMainWindow):
             else: 
                 U,r_min_u,B,r_min_b = self.Obj.chx_ennemi_rec(A,x,y)
                 if U != None or B != None:
-                    if r_min_u > r_min_b:
-                        Ennemi = B
-                    else:
+                    if r_min_b > r_min_u:
                         Ennemi = U
+                    else:
+                        Ennemi = B
             self.dessin_L_pos(qp,x,y)
             if Ennemi != None:  
                 X,Y = Ennemi.coords
                 self.dessin_interet(qp,X,Y)
+        Ennemi = None
         x,y = self.Obj.coords
-        x_inf = max(0,int(-zone + x))
-        x_sup = min(self.Obj._carte.dims[0]-1, int(zone + x))
-        y_inf = max(0,int(-zone + y))
-        y_sup = min(self.Obj._carte.dims[1]-1, int(zone + y))
+        x_inf = max(0,int(-zone) + x)
+        x_sup = min(self.Obj._carte.dims[0]-1, int(zone) + x)
+        y_inf = max(0,int(-zone) + y)
+        y_sup = min(self.Obj._carte.dims[1]-1, int(zone) + y)
         
         A = self.Obj._carte.ss_carte[x_inf:x_sup+1,y_inf:y_sup+1]
         if self.Obj.T_car()[0] == 'D':
@@ -456,14 +473,13 @@ class MonAppli(QtWidgets.QMainWindow):
         else: 
             U,r_min_u,B,r_min_b = self.Obj.chx_ennemi_rec(A,x,y)
             if U != None or B != None:
-                if r_min_u > r_min_b:
-                    Ennemi = B
-                else:
+                if r_min_b > r_min_u:
                     Ennemi = U
-
+                else:
+                    Ennemi = B
         if Ennemi != None:  
             X,Y = Ennemi.coords
-            self.dessin_interet(qp,X,Y)
+            self.dessin_interet_proche(qp,X,Y)
 
     def affiche_L_pos_bouger_ressource(self,qp,zone):
         Ress = None
@@ -479,7 +495,7 @@ class MonAppli(QtWidgets.QMainWindow):
         Ress = self.Obj.chx_ressources(x,y)
         if Ress != None:
             X,Y = Ress.coords
-            self.dessin_interet(qp,X,Y)
+            self.dessin_interet_proche(qp,X,Y)
             
             
 
@@ -487,12 +503,12 @@ class MonAppli(QtWidgets.QMainWindow):
 
         
     def affiche_L_pos_bat(self,qp):
-        self.L_pos = self.partie.carte.TrHn.placement_pos_bat(self.x_inf_b,self.x_sup_b,self.y_inf_b,self.y_sup_b,' ')
+        self.L_pos = self.carte.TrHn.placement_pos_bat(self.x_inf_b,self.x_sup_b,self.y_inf_b,self.y_sup_b,' ')
         for i in self.L_pos:
             self.dessin_L_pos(qp,i[0],i[1])
             
     def affiche_L_pos_u(self,qp):
-        L_pos = self.partie.carte.TrHn.placement_pos(self.x_inf,self.x_sup,self.y_inf,self.y_sup,' ')
+        L_pos = self.carte.TrHn.placement_pos(self.x_inf,self.x_sup,self.y_inf,self.y_sup,' ')
         for i in L_pos:
             self.dessin_L_pos(qp,i[0],i[1])
         
@@ -503,7 +519,7 @@ class MonAppli(QtWidgets.QMainWindow):
         for i in range(self.__xmax):
             for j in range(self.__ymax):  
                 
-                if self.partie.carte.ss_carte[i][j] == '/':
+                if self.carte.ss_carte[i][j] == '/':
                     self.dessin_mur(qp,i,j)
                 elif i == (self.__xmax - self.L )//2 or i == (self.__xmax + self.L )//2-1:
                     if j<= self.Epp or j >=self.__ymax - self.Epp-1 :
@@ -584,8 +600,14 @@ class MonAppli(QtWidgets.QMainWindow):
 
                 
     def affiche_Jr_en_crs(self,k):
-
+        
+        if k == 0:
+            self.ui.Attaquant.hide()
+            self.ui.Defenseur.show()
+            self.ui.tr_defenseur_text.show()
         if k==1:
+            self.ui.Attaquant.show()
+            self.ui.Defenseur.hide()
             self.ui.tr_defenseur_text.hide()
             self.ui.tr_attaquant_1_text.show()
 
@@ -674,17 +696,22 @@ class MonAppli(QtWidgets.QMainWindow):
         qp.setPen(QtGui.QColor(255,0,0))
         u=QtCore.QRectF(x*36, y*36, 36,36)
         qp.drawRect(u)
-        
+
+    def dessin_interet_proche(self,qp,x,y):
+        qp.setPen(QtGui.QColor(255,255,255))
+        u=QtCore.QRectF(x*36, y*36, 36,36)
+        qp.drawRect(u)        
     
     def simuler(self):
-        
+        self.ui.info_clic.clear()
         if self.tr_en_crs == 0:
-            self.partie.carte.simuler()
+            self.carte.simuler()
         elif self.tr_Hn_en_crs == 0: 
-            self.partie.carte.TrHn.deb_unTourHn()
+            self.carte.TrHn.deb_unTourHn()
         elif self.tr_Hn_en_crs == 1:
-            self.partie.carte.TrHn.fin_unTourHn()
+            self.carte.TrHn.fin_unTourHn()
         return(None)
+
 
         
 if __name__ == "__main__":

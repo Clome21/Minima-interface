@@ -72,12 +72,12 @@ class Constante:
 #------------------------------Scorpion0
 
     capmvt_S0 = 2
-    capcbt_S0 = 1
+    capcbt_S0 = 2
     
 #-----------------------------Scorpion
 
     capmvt_S = 2
-    capcbt_S = 1
+    capcbt_S = 2
     
     
 #-------------------------------------------- Valeurs chargées

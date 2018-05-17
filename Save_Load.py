@@ -58,7 +58,7 @@ class Save():
         self.IHM = IHM
         
         self.Nme = self.Test_nom(name)
-        if type(self.Nme) is not None :
+        if type(self.Nme) is not None and type(self.Nme) is not int :
             Save = open(self.Nme,"w+")
             
             Save.write("Carte \n")
@@ -153,21 +153,14 @@ class Save():
             f = open(name,"r")
         except FileNotFoundError:
             return(name)
-        except TypeError :
-            print(name)
-            print(type(name))
-            return(name)
 
         #L = input("Sauvegarde déjà existante. L'effacer? (Y/N)")
-        self.IHM.ui.choix_sauvegarde()
-        if self.IHM.ui.choix_sauvegarde == "Yes":
-            name = name+ ".txt"
+        chx = self.IHM.ui.choix_sauvegarde()
+        if chx == "Yes":
             return(name)
         else:
             self.IHM.ui.nom_sauvegarde.show()
-            name = self.IHM.nom_sauvegard()
-#            name = name + ".txt"
-            self.Test_nom(name)
+            name = 1
             return(name)
     
 class Load():
@@ -190,11 +183,12 @@ class Load():
         Rien.
         
         """
+        self.IHM = IHM
         self.Nme = self.Test_save(name)
-        if self.Nme != 'Q':
+        if type(self.Nme) != int:
             with open(self.Nme, 'r') as f:
                 self.Load = [line.strip() for line in f]
-            self.IHM = IHM
+            print(self.Load)
             self.process(self.Load)
             print("Chargement terminé! \n")
             
@@ -236,11 +230,10 @@ class Load():
         try:
             f = open(name,"r")
         except FileNotFoundError:
-            print("Sauvegarde introuvable \n")
-            name = input("Entrez un autre nom de sauvegarde; ou quittez (Q) \n")
-            if name != 'Q':
-                name = name + '.txt'
-                self.Test_save(name)
+            chx = self.IHM.ui.choix_chargement()
+            if chx == "Yes":
+                self.IHM.ui.nom_charger.show()
+            name = 1
         return(name)
                 
     def process(self,L):
@@ -293,11 +286,14 @@ class Load():
                 Constante.Lnbta = int(Nbta)
                 
                 Constante.Lnbt = int(Nbt)
-                U_disp = int(U_disp)
-                self.Lcarte = Map.Map([],1)
+                U_disp = float(U_disp)
+                
+                # rajouter tr actuel
+                self.Lcarte = Map.Map([],1,self.IHM)
                 self.Lcarte.TrIA.unite_disp_par_tour = U_disp
                 self.Lcarte.TrHn.unite_disp_par_tour = U_disp
                 self.Lcarte.TrHn.Jr_en_crs = int(Jr_en_crs)
+                print("Carte OK")
                 
             while L[0] == 'Ressource':
                 #Processus de chargement des ressources sauvegardées sur la carte.
@@ -313,13 +309,14 @@ class Load():
                 Val = int(Val)
                 
                 metal(X,Y,self.Lcarte,Val)
+                print("Ressource OK")
 
             while L[0] == 'Joueur':
                 # Processus de chargement des joueurs de la partie, et de leurs caractéristiques principales.
                 Role = L[1]
                 Metal_tot = int(L[2])
                 Energie_tot = int(L[3])
-                Ur = int(L[4])
+                Ur = float(L[4])
                 self.Jr = Joueur(Role)
                 self.Lcarte.L_joueur.append(self.Jr)
                 self.Jr.metal_tot = Metal_tot
@@ -327,6 +324,7 @@ class Load():
                 self.Jr.nbe_unite_restantes = Ur                
                 L = L[6:]
                 while L[0] == 'Bat':
+                    print("Entree Bat OK")
                 # Processus de chargement des batiments du joueur actuel.
                     Typ = L[1]
                     Sante = L[2]
@@ -380,22 +378,24 @@ class Load():
                     k = Pos.find(',')
                     X = int(Pos[0:k])
                     Y = int(Pos[k+1:])
+#                    print(Typ[0])
                     if Typ[0:2] == "RC":
-                        Id = int(Typ[2])
+                        Id = int(Typ[2:])
                         U = Robot_combat(Role,self.Lcarte,X,Y)
                         U.sante = Sante
                         U.capmvt = Capmvt
                         self.Jr._liste_unite.append(U)
                         
                     elif Typ[0:2] == "RO":
-                        Id = int(Typ[2])
+                        Id = int(Typ[2:])
                         U = Robot_Ouvrier(Role,self.Lcarte,X,Y)
                         U.sante = Sante
                         U.capmvt = Capmvt
                         self.Jr._liste_unite.append(U)
 
                     elif Typ[0] == "S":
-                            if Typ[1] == "0":
+#                            print(Role[1])
+                            if Role[1] == "I":
                                 Id = int(Typ[2:])
                                 U = Scorpion0(Role,self.Lcarte,X,Y, Num_joueur)
                                 U.sante = Sante
@@ -409,15 +409,17 @@ class Load():
 #                                U.id = Id
 #                                self.Jr._liste_unite.append(U)
                             
-                    elif Typ[1] == "S":
-                                Id = int(Typ[2:])
+                            elif Role[1] == "H":
+                                Id = int(Typ[1:])
                                 U = Scorpion(Role,self.Lcarte,X,Y, Num_joueur)
                                 U.sante = Sante
                                 U.id = Id
                                 U.capmvt = Capmvt
                                 self.Jr._liste_unite.append(U)
+                    
                 if L[0] == "Fin unite":
                     L = L[1:]
+            print("Joueur OK")
             if L[0] == "Fin sauvegarde":
                 L = []
             else: 
@@ -428,11 +430,11 @@ if __name__ == "__main__":
     f = open("Text1.txt","w+")
     L=  []
     V = []
-    Load = open('Test1.txt')
+    Load = open('OK.txt','r')
     for line in Load:
         print(line)
         u = line
         L.append(u)
-    with open('Test1.txt', 'r') as f:
+    with open('OK.txt', 'r') as f:
         myNames = [line.strip() for line in f]
     V = Load.readlines()

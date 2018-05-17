@@ -19,13 +19,18 @@ class Joueur(object):
     ----------
         role: str
             Le rôle du joueur dans la partie.
+            
+    Renvoie :
+    ----------
+    Rien.
+    
         """
         self._role = role
         self._liste_unite = []
         self._liste_bat = [[],[],[]]
         self.metal_tot = 0
         self.energie_tot = 0
-        self.nbe_unite_restantes = 0
+        self.nbe_unite_restantes = 1.5
         self.IdU = 0
 
     

@@ -228,9 +228,11 @@ class Ui_Minima_Accueil(object):
         self.nom_sauvegarde.setGeometry(QtCore.QRect(1000, 40, 113, 20))
         self.nom_sauvegarde.setObjectName("Nom de la Sauvegarde")
         self.nom_sauvegarde.hide()
-        
+
+
+
         self.nom_charger = QtWidgets.QLineEdit(self.groupBox_Accueil)
-        self.nom_charger.setGeometry(QtCore.QRect(1000, 40, 113, 20))
+        self.nom_charger.setGeometry(QtCore.QRect(600, 580, 113, 20))
         self.nom_charger.setObjectName("Nom de la partie à charger")
         self.nom_charger.hide()
         
@@ -242,8 +244,19 @@ class Ui_Minima_Accueil(object):
         self.Sauvegarde.buttonClicked.connect(self.Sauvegarde.close)
         self.Sauvegarde.hide()
         
+        self.Chargement = QtWidgets.QMessageBox(self.groupBox_Jeu)
+        self.Chargement.setIcon(QtWidgets.QMessageBox.Information)       
+        self.Chargement.setText("Chargement réussie")
+        self.Chargement.setWindowTitle("Chargement")
+        self.Chargement.setStandardButtons(QtWidgets.QMessageBox.Ok)
+        self.Chargement.buttonClicked.connect(self.Chargement.close)
+        self.Chargement.hide()
         
-        
+        self.info_clic = QtWidgets.QLineEdit(self.groupBox_Jeu)
+        self.info_clic.setGeometry(QtCore.QRect(1000, 200, 250, 30))
+        self.info_clic.setObjectName("Info clic")
+        self.info_clic.hide()
+   
         
         self.groupBox_Option = QtWidgets.QGroupBox(self.centralwidget)
         self.groupBox_Option.hide()
@@ -478,6 +491,14 @@ class Ui_Minima_Accueil(object):
              return ("Yes")
          else:
              return ("No")
+        
+    def choix_chargement(self):
+        result = QtWidgets.QMessageBox.question(self.groupBox_Accueil,'Erreur Chargement', "Sauvegarde introuvable. Voulez-vous entrez un autre nom? ", QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No)
+ 
+        if result == QtWidgets.QMessageBox.Yes:
+            return ("Yes")
+        else:
+            return ("No")        
              
 
     
