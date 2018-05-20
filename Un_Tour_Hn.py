@@ -299,7 +299,7 @@ class Un_Tour_Joueur_Hn():
             if len(L_pos) == 0 :
                 print("Aucune zone d'apparition d'unité disponible, étape suivante. \n")
         
-            else : 
+            elif (X,Y) in L_pos : 
                 Jr = self.L_joueur[self.Jr_en_crs]
                 self.U = Scorpion(Jr._role,self._carte,X,Y,self.Jr_en_crs)
                 Jr._liste_unite.append(self.U)
