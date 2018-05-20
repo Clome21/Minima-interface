@@ -561,6 +561,102 @@ class Unites_Humain_Defenseur():
             self._carte.L_joueur[0].metal_tot += Ress.valeur
             Ress.disparition()
 
+    def chx_ressources_rec(self,A,x,y):
+        """
+        Méthode sélectionnant l'objet ennemi le plus proche de l'unité, de façon
+        récursive.
+        Cette méthode se base sur la technique de "Diviser pour régner". Elle sélectionne
+        la sous-carte contenant les cases dans le rayon de combat de l'unité.
+        Elle coupe ensuite cette sous-carte en quatres carrés plus petits, jusqu'à
+        ce que ce carré soit de taille (1,1).
+        Elle détermine alors si l'unité sur cette case est un batiment, ou une unité,
+        et renvoie alors sa distance par rapport à l'unité combattante.
+        
+        Elle compare ensuite les distances des unités (et des batiments) par rapport
+        à l'unité combattante, et renvoie l'unité ennemie la plus proche, sa distance
+        par rapport à l'unité combattante, le batiment ennemi le plus proche, et sa
+        distance par rapport à l'unité combattante.
+        
+        Paramètres
+        ----------
+        A : array
+            Sous-carte contenant une partie (la totalité au départ) des cases 
+            dans le rayon de combat de l'unité combattante.
+            
+        x,y : int
+            Abscisse et ordonnée de l'unité combattante.
+        
+        Renvoie :
+        ----------
+        umin : Objet Unité 
+            L'unité ennemie la plus proche de l'unité combattante.
+            
+        r_min_u : float
+            La distance entre l'unité ennemie la plus proche de l'unité
+            combattante et l'unité combattante.
+        
+        """
+        if np.shape(A) == (1,1):
+            v = A[0,0]
+            if v == ' ' or v == '/':
+                return((None,self.zonecap+1))
+            elif v.T_car()[-1] == 'M':
+                i,j = v.coords
+                R = math.sqrt((x-i)**2+(y-j)**2)
+                return(v,R)
+            else:
+                return(None,self.zonecap+1)
+
+        elif np.shape(A) == (0,0) or A.tolist() == [] or A.tolist()[0] == []:
+            return(None,self.zonecap+1)
+
+        else : 
+            l,c = np.shape(A)
+            A1 = A[l//2:,c//2:]
+            A2 = A[l//2:,:c//2]
+            A3 = A[:l//2,c//2:]
+            A4 = A[:l//2,:c//2]
+
+            R1,rr1= self.chx_ressources_rec(A1,x,y)
+            R2,rr2 = self.chx_ressources_rec(A2,x,y)
+            R3,rr3 = self.chx_ressources_rec(A3,x,y)
+            R4,rr4 = self.chx_ressources_rec(A4,x,y)
+            
+            Lr = [rr1,rr2,rr3,rr4]
+            LR = [R1,R2,R3,R4]
+            
+            r_min_r = min(Lr)
+            rmin = LR[ Lr.index(r_min_r) ]
+            
+            return(rmin,r_min_r)
+
+    def capture_ressources_rec(self):
+        """
+        Permet la capture d'une ressource, si celle-ci se trouve à la portée du robot ouvrier.
+        
+        Paramètres : 
+        -------------
+        Aucun.
+        
+        Renvoie : 
+        ----------
+        Rien.
+        
+        """
+        x,y = self.coords
+        x_inf = max(0, int(-self.zonecap) + x)
+        x_sup = min(self._carte.dims[0]-1, int(self.zonecap) + x)
+        y_inf = max(0,int(-self.zonecap) + y)
+        y_sup = min(self._carte.dims[1]-1, int(self.zonecap) + y)
+        
+        A = self._carte.ss_carte[x_inf:x_sup+1,y_inf:y_sup+1]
+        
+        Ress,r_min_ress = self.chx_ressources_rec(A,x,y)
+
+        if Ress != None:
+            print("%s a trouvé du métal! Sa valeur est de %r."%(self.T_car(),Ress.valeur))
+            self._carte.L_joueur[0].metal_tot += Ress.valeur
+            Ress.disparition()
     
 class Robot_combat(Unites_Humain_Defenseur):
     """
@@ -731,5 +827,5 @@ class Robot_Ouvrier(Unites_Humain_Defenseur):
         Rien.
         
         """
-        self.capture_ressources()
+        self.capture_ressources_rec()
         return(None)

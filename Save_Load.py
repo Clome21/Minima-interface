@@ -24,6 +24,8 @@ class Save():
         sauvegardée sont stockées dans un fichier .txt, dont le nom est choisi par l'utilisateur. Le
         programme vérifie avant si le nom est déjà employé par une autre sauvegarde, puis écrit/modifie
         le fichier .txt avec les informations.
+
+        Ajout d'une condition permettant d'effectuer des tests sans d'utiliser IHM.
         
         Paramètres : 
         ------------
@@ -48,8 +50,10 @@ class Save():
         # Voir si une option est nécessaire pour quitter (si un objet partie va forcément rester en arrière plan ou non).
         
         self.IHM = IHM
-        
-        self.Nme = self.Test_nom(name)
+        if type(self.IHM) != str:
+            self.Nme = self.Test_nom(name)
+        else:
+            self.Nme = name
         if type(self.Nme) is not None and type(self.Nme) is not int :
             Save = open(self.Nme,"w+")
             
@@ -121,7 +125,8 @@ class Save():
                     Save.write("Fin unite \n")
                 Save.write("Fin joueur \n")
             Save.write("Fin sauvegarde")
-            self.IHM.ui.Sauvegarde.show()
+            if type(self.IHM) != str:
+                self.IHM.ui.Sauvegarde.show()
     
     def Test_nom(self,name):
         """
@@ -162,6 +167,8 @@ class Load():
         est correct; ensuite, il rassemble toutes les lignes de caractères de la sauvegarde dans une
         liste L. Il recrée ensuite la partie grâce à la méthode process(L).
         
+        Ajout d'une condition permettant d'effectuer des tests sans d'utiliser IHM.
+        
         Paramètres : 
         ------------
         name : str
@@ -173,7 +180,10 @@ class Load():
         
         """
         self.IHM = IHM
-        self.Nme = self.Test_save(name)
+        if type(self.IHM) != str:
+            self.Nme = self.Test_save(name)
+        else:
+            self.Nme = name
         if type(self.Nme) != int:
             with open(self.Nme, 'r') as f:
                 self.Load = [line.strip() for line in f]
@@ -244,8 +254,9 @@ class Load():
         
         """
         Tst = ['S','R']
-        self.IHM.tr_en_crs = 1
-        self.IHM.tr_Hn_en_crs = 1
+        if type(self.IHM) != str:
+            self.IHM.tr_en_crs = 1
+            self.IHM.tr_Hn_en_crs = 1
         while len(L) !=0:
             if L[0] == 'Carte':
                 # Processus de recréation de la carte sauvegardée.

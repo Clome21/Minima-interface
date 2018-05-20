@@ -11,6 +11,9 @@ from Partie import Partie
 from Constantes import Constante
 import Save_Load as sl
 
+# méthodes inutiles : generer, L_pos_[...], gestion_deplacement
+# variables inutiles : self.g, self.BA, self.coord
+
 class MonAppli(QtWidgets.QMainWindow):
     
     def __init__(self):
@@ -19,7 +22,6 @@ class MonAppli(QtWidgets.QMainWindow):
         self.setMouseTracking(True)
 
         # Configuration de l'interface utilisateur.
-
 
         self.ui = Ui_Minima_Accueil()
         self.ui.setupUi(self)
@@ -32,29 +34,11 @@ class MonAppli(QtWidgets.QMainWindow):
         self.L_pos = []
         self.tr_actuel = 0
 
-        self.BA=0
+        self.BA= "clic"
         self.g="i"
         self.l = "i"
         self.coord="O"
-        self.__xmax = Constante.xmax
-        self.__ymax = Constante.ymax  
-        self.Epp = Constante.Ep_app
-
-        self.H=Constante.H_Z_Constructible
-        self.L=Constante.L_Z_Constructible
-
-
-        self.x_inf_b = (self.__xmax - self.L )//2 +1
-        self.x_sup_b= (self.__xmax + self.L )//2 -1
-        self.y_inf_b =  (self.__ymax - self.H )//2 +1
-        self.y_sup_b = (self.__ymax + self.H)//2 -1
-        
-        self.x_inf = (self.__xmax )//2 -1
-        self.x_sup = (self.__xmax)//2 +2
-        self.y_inf =  (self.__ymax)//2 - 1
-        self.y_sup = (self.__ymax)//2 +2
-
-        
+         
         self.pos_souris_x=int
         self.pos_souris_y=int
         
@@ -74,26 +58,26 @@ class MonAppli(QtWidgets.QMainWindow):
         
 #-------------------place un batiment
         self.ui.Button_Foreuse.clicked.connect(self.active_for)
-        self.ui.Button_Foreuse.clicked.connect(self.plac_for)
+#        self.ui.Button_Foreuse.clicked.connect(self.plac_for)
         self.ui.Button_Foreuse.clicked.connect(self.L_pos_bat)
         
         self.ui.Button_Panneau_Solaire.clicked.connect(self.active_PS)
-        self.ui.Button_Panneau_Solaire.clicked.connect(self.plac_PS)
+#        self.ui.Button_Panneau_Solaire.clicked.connect(self.plac_PS)
         self.ui.Button_Panneau_Solaire.clicked.connect(self.L_pos_bat)
         
         self.ui.Button_J_D_B_Fermer.clicked.connect(self.raz)
         
 #-------------------production unité
         self.ui.Button_Robot_Combat.clicked.connect(self.active_RC)        
-        self.ui.Button_Robot_Combat.clicked.connect(self.plac_RC)
+ #       self.ui.Button_Robot_Combat.clicked.connect(self.plac_RC)
         self.ui.Button_Robot_Combat.clicked.connect(self.L_pos_u)
         
         self.ui.Button_Robot_Ouvrier.clicked.connect(self.active_RO)
-        self.ui.Button_Robot_Ouvrier.clicked.connect(self.plac_RO)
+ #       self.ui.Button_Robot_Ouvrier.clicked.connect(self.plac_RO)
         self.ui.Button_Robot_Ouvrier.clicked.connect(self.L_pos_u)
         
         self.ui.Button_Scorpion.clicked.connect(self.active_Sc)
-        self.ui.Button_Scorpion.clicked.connect(self.plac_Sc)
+#        self.ui.Button_Scorpion.clicked.connect(self.plac_Sc)
         self.ui.Button_Scorpion.clicked.connect(self.L_pos_u)
         
         self.ui.Button_J_A_Fermer.clicked.connect(self.raz)
@@ -104,10 +88,6 @@ class MonAppli(QtWidgets.QMainWindow):
         self.ui.Defaite.buttonClicked.connect(self.fin_du_jeu)
         self.ui.Victoire.buttonClicked.connect(self.fin_du_jeu)
 
-
-
-        
-        
         self.ui.nom_sauvegarde.returnPressed.connect(self.ui.groupBox_Sauvegarde.hide)
         self.ui.nom_sauvegarde.returnPressed.connect(self.sauvegarde)      
 
@@ -141,6 +121,24 @@ class MonAppli(QtWidgets.QMainWindow):
         self.affiche_Jr_en_crs(self.carte.TrHn.Jr_en_crs)
         self.ui.Button_Ready.hide()
         self.ui.info.show()
+        self.__xmax = Constante.xL
+        self.__ymax = Constante.yL
+        self.Epp = self.carte.Epp
+
+        self.H = self.carte.H
+        self.L= self.carte.L
+
+
+        self.x_inf_b = (self.__xmax - self.L )//2 +1
+        self.x_sup_b= (self.__xmax + self.L )//2 -1
+        self.y_inf_b =  (self.__ymax - self.H )//2 +1
+        self.y_sup_b = (self.__ymax + self.H)//2 -1
+        
+        self.x_inf = (self.__xmax )//2 -1
+        self.x_sup = (self.__xmax)//2 +2
+        self.y_inf =  (self.__ymax)//2 - 1
+        self.y_sup = (self.__ymax)//2 +2
+        
         self.jeu()
        
 
@@ -157,7 +155,24 @@ class MonAppli(QtWidgets.QMainWindow):
             self.carte=self.partie.carte
             self.ui.lcdNumber_Metal.display(self.partie.L_joueur[0].metal_tot)
             self.ui.lcdNumber_Energie.display(self.partie.L_joueur[0].energie_tot)
-            print('generer')
+            self.__xmax = Constante.xmax
+            self.__ymax = Constante.ymax
+            self.Epp = Constante.Ep_app
+    
+            self.H=Constante.H_Z_Constructible
+            self.L=Constante.L_Z_Constructible
+    
+    
+            self.x_inf_b = (self.__xmax - self.L )//2 +1
+            self.x_sup_b= (self.__xmax + self.L )//2 -1
+            self.y_inf_b =  (self.__ymax - self.H )//2 +1
+            self.y_sup_b = (self.__ymax + self.H)//2 -1
+            
+            self.x_inf = (self.__xmax )//2 -1
+            self.x_sup = (self.__xmax)//2 +2
+            self.y_inf =  (self.__ymax)//2 - 1
+            self.y_sup = (self.__ymax)//2 +2
+
     
     def generer_bis(self):
         self.BA="clic"
@@ -204,8 +219,6 @@ class MonAppli(QtWidgets.QMainWindow):
         if event.button() == QtCore.Qt.LeftButton :
             self.pos_souris_x=int((event.x()/36))
             self.pos_souris_y=int((event.y()/36))
-
-
             self.bouger_poss_u()
             self.plac_PS()
             self.plac_for()
@@ -318,18 +331,11 @@ class MonAppli(QtWidgets.QMainWindow):
                     self.paintEvent(2)
                     self.ui.conteneur.update()
                     
-
-            
-        
     
             
     def gestion_deplacement(self):
-        
         self.bouger_poss_u()
-        
         return(None)
-
-        
     
     def activation_boutons(self):
         if (self.carte.L_joueur[0].metal_tot>=Constante.cout_M_P and self.carte.L_joueur[0].energie_tot>=Constante.cout_E_P):
@@ -407,9 +413,6 @@ class MonAppli(QtWidgets.QMainWindow):
             self.paintEvent(2)
             self.ui.conteneur.update()
 
-    
-
-
     def jeu(self):
         self.paintEvent(2)
         self.ui.conteneur.update()
@@ -433,8 +436,6 @@ class MonAppli(QtWidgets.QMainWindow):
     def L_pos_bat(self):
         self.paintEvent(2)
         self.ui.conteneur.update()
-        
-        
 
     def paintEvent(self,e):
             qp = QtGui.QPainter()
@@ -453,10 +454,10 @@ class MonAppli(QtWidgets.QMainWindow):
             if self.l=="bg":
                 try : 
                     zone = self.Obj.zonecbt
-                    self.affiche_L_pos_bouger_cbt(qp,zone)
-                except Exception as e:
+                    self.affiche_bouger_cbt(qp,zone)
+                except Exception:
                     zone = self.Obj.capmvt
-                    self.affiche_L_pos_bouger_ressource(qp,zone)
+                    self.affiche_bouger_ressource(qp,zone)
             qp.end()
 
         
@@ -470,7 +471,7 @@ class MonAppli(QtWidgets.QMainWindow):
         for i in L_pos:
             self.dessin_L_pos(qp,i[0],i[1])
 
-    def affiche_L_pos_bouger_cbt(self,qp,zone):
+    def affiche_bouger_cbt(self,qp,zone):
         Ennemi = None
         self.L_pos=self.Obj.mvt_poss()
         for i in self.L_pos:
@@ -517,7 +518,7 @@ class MonAppli(QtWidgets.QMainWindow):
             X,Y = Ennemi.coords
             self.dessin_interet_proche(qp,X,Y)
 
-    def affiche_L_pos_bouger_ressource(self,qp,zone):
+    def affiche_bouger_ressource(self,qp,zone):
         Ress = None
         self.L_pos=self.Obj.mvt_poss()
         for i in self.L_pos:
@@ -532,10 +533,6 @@ class MonAppli(QtWidgets.QMainWindow):
         if Ress != None:
             X,Y = Ress.coords
             self.dessin_interet_proche(qp,X,Y)
-            
-            
-
-
 
         
     def affiche_L_pos_bat(self,qp):
@@ -547,10 +544,7 @@ class MonAppli(QtWidgets.QMainWindow):
         L_pos = self.carte.TrHn.placement_pos(self.x_inf,self.x_sup,self.y_inf,self.y_sup,' ')
         for i in L_pos:
             self.dessin_L_pos(qp,i[0],i[1])
-        
-        
-        
-        
+          
     def affiche_map(self,qp):
         for i in range(self.__xmax):
             for j in range(self.__ymax):  
@@ -581,7 +575,6 @@ class MonAppli(QtWidgets.QMainWindow):
                 else:
                     self.dessin_case(qp,i,j)
                 
-
   
     def affiche_jeu(self,qp):
 
@@ -605,8 +598,6 @@ class MonAppli(QtWidgets.QMainWindow):
                 elif Obj.T_car()[-2:-1] == "F":
                     self.dessin_Foreuse(qp,Obj)
                 
-            
-            
             else : 
                 if Obj.T_car()[0:2] == "AH":
                     if Obj.T_car()[2] == "0":
@@ -660,7 +651,6 @@ class MonAppli(QtWidgets.QMainWindow):
             self.ui.tr_attaquant_4_text.show()
 
             
-
     def dessin_case(self,QPainter,i,j):
         QPainter.setPen(QtGui.QColor(0,100,0))
         QPainter.drawRect(i*36,j*36, 36, 36)

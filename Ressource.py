@@ -1,4 +1,3 @@
-
 class Ressource(object):
     """
      Classe décrivant les comportement par défaut des ressources. Peut-être 

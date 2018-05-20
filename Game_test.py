@@ -7,8 +7,15 @@ Created on Sun Apr 22 13:30:19 2018
 
 
 import unittest
+from numpy.random import randint
+from numpy.random import choice
+import time
+from Un_Tour_Hn import Un_Tour_Joueur_Hn
+from Un_Tour_IA import Un_Tour_Joueur_IA
 from Ressource import metal
-from Batiments import Foreuse,Panneau_solaire
+from Batiments import Foreuse,QG,Panneau_solaire
+from unites_IA_facile import Scorpion0
+
 from Constantes import Constante
 import Save_Load as sl
 import numpy as np
@@ -23,7 +30,7 @@ class TestPartie(unittest.TestCase):
     def testInit_Hn(self):
         """
         Test vérifiant :
-            *Que tous les joueurs humains ont bien été crées. (3, d'après
+            *Que tous les joueurs humains ont bien été crées. (4, d'après
             le paramètre d'entrée de Game)
             *Que le premier joueur humain est bien un défenseur, avec le bon
             nombre de métal et d'énergie initial.
@@ -33,7 +40,7 @@ class TestPartie(unittest.TestCase):
         Game = Partie(0,3)
         self.assertEqual(Game.nb_hn,0)
 
-        self.assertEqual(len(Game.L_joueur),3)
+        self.assertEqual(len(Game.L_joueur),4)
         self.assertEqual(Game.L_joueur[0]._role,'DH')
         self.assertEqual(Game.L_joueur[0].metal_tot,Constante.metal_tot)
         self.assertEqual(Game.L_joueur[0].energie_tot, Constante.energie_tot)
@@ -160,17 +167,17 @@ class TestSave(unittest.TestCase):
         """
         Test vérifiant que, sur une partie avec 3 joueurs humains qui vient juste
         d'être initialisée : 
-            *Que le nom de la sauvegarde (appelée blob.txt ici) est bien correct.
-            *Que la sauvegarde possède le bon nombre de lignes (34 ici).
+            *Que le nom de la sauvegarde (appelée blob ici) est bien correct.
+            *Que la sauvegarde possède le bon nombre de lignes (56 ici).
             *Que la dernière ligne de la sauvegarde est correcte.
         """
         Game = Partie(0,3)
         Carte = Game.carte
-        Save = sl.Save("blob",Carte)
-        self.assertEqual(Save.Nme,"blob.txt")
+        Save = sl.Save("blob",Carte,"test")
+        self.assertEqual(Save.Nme,"blob")
         with open(Save.Nme, 'r') as f:
                 List_Save = [line.strip() for line in f]
-        self.assertEqual(len(List_Save),56)
+        self.assertEqual(len(List_Save),67)
         self.assertEqual(List_Save[-1],"Fin sauvegarde")
       
 
@@ -205,9 +212,9 @@ class TestLoad(unittest.TestCase):
             identiques à celles de la sauvegarde.
         """
         
-        Save = sl.Save("blob",Carte)
-        Load = sl.Load("blob.txt")
-        self.assertEqual(Load.Lcarte.Ltr_actuel,Constante.Lnbta)
+        Save = sl.Save("blob",Carte,"test")
+        Load = sl.Load("blob","test")
+        self.assertEqual(Load.Lcarte.tr_actuel,Constante.Lnbta)
 
 # Teste si le QG est identique
 
@@ -235,7 +242,7 @@ class TestLoad(unittest.TestCase):
 
 class TestUn_Tour(unittest.TestCase):
     """
-    Classe gérant les tests effectués sur la classe Un_Tour_Hn et Un_Tour_IA.
+    Classe gérant les tests effectués sur les classes Un_Tour_Joueur_Hn et Un_Tour_Joueur_IA.
     """
     def testInit_Tour(self):
         """
@@ -272,7 +279,7 @@ class TestUn_Tour(unittest.TestCase):
         self.assertEqual(Tr_jeu_0_Hn.L_joueur[0].metal_tot, 30)
         self.assertEqual(Tr_jeu_0_Hn.L_joueur[0].energie_tot, 30)
         for k in range(3):
-            Tr_jeu_0_Hn.placer_une_foreuse()
+            Tr_jeu_0_Hn.placer_une_foreuse(x_inf_b-k+1,y_inf_b-k+1)
             self.assertIn(Game.L_joueur[0]._liste_bat[2][-1],Terrain_const)
         
     def testPlacer_Unite_IA_0(self):
@@ -304,7 +311,7 @@ class TestUn_Tour(unittest.TestCase):
         
         L_pos = L_Ht + L_Bas + L_Gche + L_Dte 
         for k in range(3):    
-            TrPC.production_unite_attaque_IA_0(1)
+            TrPC.production_unite_attaque_0(1)
             self.assertIn(GamePC.L_joueur[1]._liste_unite[-1].coords,L_pos)
             self.assertEqual(TrPC.unite_disp_par_tour,1)
 
