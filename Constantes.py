@@ -9,8 +9,10 @@ class Constante:
     """ Classe contenant l'ensemble des constantes utilisées dans le jeu.
     """
 #----------------------------------------Constantes map    
-    xmax = 15
-    ymax = 15
+    # affiché si < 29
+    # injouable si < 13
+    xmax = 13
+    ymax = 13
     
     assert(xmax%2 !=0)
     assert(ymax%2 !=0)
@@ -26,12 +28,13 @@ class Constante:
         H_Z_Constructible= int(ymax/2)+1
     else:
         H_Z_Constructible= int(ymax/2)
+
         
     Ep_app = int(max(xmax,ymax)/20)
     
 #----------------------------------------Constantes ressources de départ    
-    metal_tot= 6
-    energie_tot= 6
+    metal_tot= 4
+    energie_tot= 4
     nbt= 15
     spawn_ress=1
 #----------------------------------------Constantes Batiments
@@ -49,7 +52,7 @@ class Constante:
     prod_E_QG = 1
     prod_M_QG = 1
     
-    nbe_unite_ajoute = 0.5 
+    nbe_unite_ajoute = 0.5 #0.5
     
 #----------------------------------------Constantes Unites
 #-------------------------------Robot combat
@@ -91,7 +94,7 @@ class Constante:
         LH_Z_Constructible= int(yL/2)+1
     else:
         LH_Z_Constructible= int(yL/2)
-            
+    
 
     LEp_app = int(max(xL,yL)/20)
     

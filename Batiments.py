@@ -1,5 +1,6 @@
+from Joueur import Joueur
 
-class Batiment(object):
+class Batiment(Joueur):
     """
     Classe décrivant les comportement par défaut des batiments. 
     """
@@ -11,7 +12,10 @@ class Batiment(object):
         ----------
         abscisse, ordonnée: int
             Les coordonnées auxquelles le batiment sera créé.
-            
+        
+        cart : Objet Map.
+            La carte représentant le plateau de jeu.
+        
         capacité: int
             niveau de santé maximal du batiment. Vaut 20 par défaut.
         """
@@ -42,7 +46,7 @@ class Batiment(object):
     
     def car(self):
         """
-        Renvoie l'identifiant de l'espèce de l'animal.
+        Renvoie l'identifiant global du batiment.
         
         Paramètres
         ----------
@@ -50,14 +54,23 @@ class Batiment(object):
         
         Renvoie
         -------
-        c: str
-            Le caractère représentant l'animal.
+        B : str
+            Le caractère représentant le batiment.
         """
         return 'B' 
     
     
     def affichage(self):
         """ Affiche le batiment, selon la méthode str.
+        
+        Paramètres : 
+        -------------
+        Aucun.
+        
+        Renvoie :
+        ----------
+        La méthode str choisie.
+        
         """
         print(str(self))
 
@@ -96,6 +109,11 @@ class Batiment(object):
         ----------
         nouv_coords : tuple représentant les nouvelles coordonnées du
         batiment.
+        
+        Renvoie :
+        ----------
+        Rien.
+        
         """
         x, y = nouv_coords
         x = min(x, self._carte.dims[0]-1)
@@ -119,6 +137,16 @@ class Batiment(object):
         Met à jour le niveau de santé du batiment. Garantit que la valeur arrive 
         dans l'intervalle [0, self._max]. Met à 0 les valeurs négatives, ne
         fait rien pour les valeurs trop grandes.
+        
+        Paramètres : 
+        ---------------
+        value : float
+            Le nouveau niveau de santé de l'objet.
+            
+        Renvoie :
+        ----------
+        Rien.
+        
         """
         if value <= self._max:
             self.__sante = value
@@ -131,14 +159,23 @@ class QG(Batiment):
     """
     Classe spécialisant Batiments pour représenter le QG.
     """
-    def __init__(self, x, y, cart):
-        super().__init__(x, y, cart)
+    def __init__(self, abscisse, ordonnee, cart):
+        super().__init__(abscisse, ordonnee, cart)
         self.sante = self._max
 
 
     def car(self):
         """Méthode permettant d'afficher le batiment sur la carte. Elle renvoie
         le symbole associé au batiment.
+        
+        Paramètres :
+        -------------
+        Aucun.
+        
+        Renvoie :
+        -----------
+        'Q ' : str
+            Le symbole associé
         """
         return 'Q '
     
@@ -148,12 +185,30 @@ class QG(Batiment):
             D : le rôle du joueur possédant l'objet. Ici, le défenseur.
             B : le type global de l'objet. Ici, batiment.
             QG : le role de l'objet. Ici, QG.
+            
+        Paramètres : 
+        -------------
+        Aucun.
+        
+        Renvoie : 
+        ----------
+        'D_B_QG' : str
+            La chaîne de caractère identifiant le batiment.
         """
         return("D_B_QG")
     
     def disparition(self):
         """ Méthode permettant de détruire le batiment. Elle supprime celui-ci
         de l'ensemble des listes/arrays où le batiment est stocké.
+        
+        Paramètres : 
+        -------------
+        Aucun.
+        
+        Renvoie :
+        ----------
+        Rien.
+        
         """
         print("%s est mort! \n"%(self.T_car()))
         x,y = self.coords
@@ -161,16 +216,13 @@ class QG(Batiment):
         self._carte.ss_carte[x][y] = ' '
         self._carte.L_joueur[0]._liste_bat[0].remove(self)
 
-
-
-class Panneau_solaire(Batiment):
-    
+class Panneau_solaire(Batiment):  
     Id=0
     """
     Classe spécialisant Batiments pour représenter le panneau solaire.
     """
-    def __init__(self, x, y, cart):
-        super().__init__(x, y, cart)
+    def __init__(self, abscisse, ordonnee, cart):
+        super().__init__(abscisse, ordonnee, cart)
         self.sante = self._max
         self.id = Panneau_solaire.Id
         Panneau_solaire.Id += 1
@@ -183,18 +235,46 @@ class Panneau_solaire(Batiment):
             P : le role de l'objet. Ici, Panneau Solaire.
             self.id : l'identifiant de l'objet, afin de le différencier des autres
             panneaux solaires.
+            
+        Paramètres : 
+        -------------
+        Aucun.
+        
+        Renvoie : 
+        ----------
+        'D_B_P' + 'Id' : str
+            La chaîne de caractère identifiant le batiment.
+            
         """
         return("D_B_P%i"%( self.id ))
         
     def car(self):
         """Méthode permettant d'afficher le batiment sur la carte. Elle renvoie
         le symbole associé au batiment.
+        
+        Paramètres :
+        -------------
+        Aucun.
+        
+        Renvoie :
+        -----------
+        'P ' : str
+            Le symbole associé
         """
         return 'P '
     
     def disparition(self):
         """ Méthode permettant de détruire le batiment. Elle supprime celui-ci
         de l'ensemble des listes/arrays où le batiment est stocké.
+        
+        Paramètres : 
+        -------------
+        Aucun.
+        
+        Renvoie :
+        ----------
+        Rien.
+        
         """
         print("%s est mort! \n"%(self.T_car()))
         x,y = self.coords
@@ -209,8 +289,8 @@ class Foreuse(Batiment):
     """
     Classe spécialisant Batiments pour représenter le panneau solaire.
     """
-    def __init__(self, x, y, cart):
-        super().__init__(x, y, cart)
+    def __init__(self, abscisse, ordonnee, cart):
+        super().__init__(abscisse, ordonnee, cart)
         self.sante = self._max
         self.id = Foreuse.Id
         Foreuse.Id += 1
@@ -218,6 +298,15 @@ class Foreuse(Batiment):
     def car(self):
         """Méthode permettant d'afficher le batiment sur la carte. Elle renvoie
         le symbole associé au batiment.
+        
+        Paramètres :
+        -------------
+        Aucun.
+        
+        Renvoie :
+        -----------
+        'F ' : str
+            Le symbole associé
         """
         return 'F '
     
@@ -229,22 +318,34 @@ class Foreuse(Batiment):
             F : le role de l'objet. Ici, Foreuse.
             self.id : l'identifiant de l'objet, afin de le différencier des autres
             foreuses.
+            
+        Paramètres : 
+        -------------
+        Aucun.
+        
+        Renvoie : 
+        ----------
+        'D_B_F' + 'Id' : str
+            La chaîne de caractère identifiant le batiment.
+            
         """
         return("D_B_F%i"%( self.id ))
     
     def disparition(self):
         """ Méthode permettant de détruire le batiment. Elle supprime celui-ci
         de l'ensemble des listes/arrays où le batiment est stocké.
+        
+        Paramètres : 
+        -------------
+        Aucun.
+        
+        Renvoie :
+        ----------
+        Rien.
+        
         """
         print("%s est mort! \n"%(self.T_car()))
         x,y = self.coords
         self._carte.remove(self)
         self._carte.ss_carte[x][y] = ' '
         self._carte.L_joueur[0]._liste_bat[2].remove(self)
-        
-
-            
-            
-            
-            
-            
