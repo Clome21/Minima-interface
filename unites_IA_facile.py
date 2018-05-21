@@ -2,12 +2,9 @@ from numpy.random import randint,choice
 from Constantes import Constante
 import numpy as np
 import math
+from Joueur import Joueur
 
-
-
-
-
-class Unite_IA_Facile():
+class Unite_IA_Facile(Joueur):
     """
     Classe décrivant les comportement par défaut de l'IA niv facile. Peut-être 
     utilisée en l'état ou sous classée pour définir des comportements de
@@ -132,92 +129,18 @@ class Unite_IA_Facile():
             value = 0   # ce qui gèrera les décès plus tard
 
     def affichage(self):
-        print(str(self))
-              
-    def combat(self):
-        """
-        Méthode permettant à l'unité de combattre, si un objet ennemi se trouve 
-        dans sa zone d'attaque.
-        L'unité recherche les ennemis dans sa zone de combat et sélectionne 
-        l'objet le plus proche grâce à la méthode chx_ennemi.
-        Si il n'y a pas d'objet à attaquer, la méthode le signale.
-        Si il y a bien un objet, la méthode signale quel est l'objet blessé par l'unité.
-        Cet objet perd alors de la vie, et est supprimé si sa santé devient nulle 
-        ou négative.
-        Si cet objet détruit est le QG, la variable V_atta, désignant la victoire ou non
-        des attaquants, passe à 1. Les attaquants gagnent alors.
+        """ Affiche l'unité, selon la méthode str.
         
         Paramètres : 
-        ------------
+        -------------
         Aucun.
         
         Renvoie :
         ----------
-        Rien.
+        La méthode str choisie.
         
         """
-
-        Ennemi = self.chx_ennemi()
-        if Ennemi != None:
-            print( "%s a blessé %s"%(self.T_car(), Ennemi.T_car() ) )
-            Ennemi.sante = Ennemi.sante - self.capcbt
-            if Ennemi.sante <= 0:
-                role = Ennemi.T_car()
-                Ennemi.disparition()
-                if role[-2] + role[-1] == 'QG':
-                    self._carte.V_atta = 1
-                    self._carte.fin_de_partie()
-
-        else :
-            print("%s n'a blessé personne"%(self.T_car()) )
- 
-    
-    def chx_ennemi(self):
-        """
-        Méthode sélectionnant l'objet ennemi le plus proche de l'unité.
-        Elle parcourt les cases dans le rayon d'attaque de l'unité, et sélectionne
-        les objets ennemis dans ce rayon.
-        Elle sélectionne en priorité les BATIMENTS ennemis les plus proches; mais si
-        une UNITE ennemie est plus proche de l'unité que les autres BATIMENTS ennemis, 
-        l'unité en train de combattre attaquera alors l'unité.
-        
-        Paramètres
-        ----------
-        Aucun
-        
-        Renvoie :
-        ----------
-        Ennemi : Objet (Unité ou Batiment)
-            L'ennemi le plus proche de l'unité en train de combattre.
-        
-        """
-
-        x,y = self.coords
-        x_inf = max(0,int(-self.zonecbt) + x)
-        x_sup = min(self._carte.dims[0]-1, int(self.zonecbt) + x)
-        y_inf = max(0,int(-self.zonecbt) + y)
-        y_sup = min(self._carte.dims[1]-1, int(self.zonecbt) + y)
-        
-        
-        Ennemi = None
-        R_plus_petit_unit = self.zonecbt +1
-        R_plus_petit_bat = self.zonecbt + 1
-        # Attaquer en priorité batiments, pas unité
-        
-        for i in range(x_inf,x_sup+1):
-            for j in range(y_inf,y_sup+1):
-                Obj = self._carte.ss_carte[i][j]
-                if Obj != ' ' and Obj !='/' and Obj.T_car()[0] == 'D':
-                    R_Obj = math.sqrt((x-i)**2 + (y-j)**2)
-                    
-                    if Obj.T_car()[2] == 'B' and R_Obj < R_plus_petit_bat:
-                        R_plus_petit_bat = R_Obj
-                        Ennemi = Obj
-                        
-                    if Obj.T_car()[2] == 'U' and R_Obj < min(R_plus_petit_bat,R_plus_petit_unit):
-                        R_plus_petit_unit = R_Obj
-                        Ennemi = Obj
-        return(Ennemi)
+        print(str(self))
     
     def chx_ennemi_rec(self,A,x,y):
         """
@@ -227,12 +150,12 @@ class Unite_IA_Facile():
         la sous-carte contenant les cases dans le rayon de combat de l'unité.
         Elle coupe ensuite cette sous-carte en quatres carrés plus petits, jusqu'à
         ce que ce carré soit de taille (1,1).
-        Elle détermine alors si l'unité sur cette case est un batiment, ou une unité,
+        Elle détermine alors si l'objet sur cette case est un bâtiment, ou une unité,
         et renvoie alors sa distance par rapport à l'unité combattante.
         
-        Elle compare ensuite les distances des unités (et des batiments) par rapport
+        Elle compare ensuite les distances des unités (et des bâtiments) par rapport
         à l'unité combattante, et renvoie l'unité ennemie la plus proche, sa distance
-        par rapport à l'unité combattante, le batiment ennemi le plus proche, et sa
+        par rapport à l'unité combattante, le bâtiment ennemi le plus proche, et sa
         distance par rapport à l'unité combattante.
 
         
@@ -247,7 +170,7 @@ class Unite_IA_Facile():
         
         Renvoie :
         ----------
-        umin : Objet Unité 
+        umin : Objet Unite
             L'unité ennemie la plus proche de l'unité combattante.
             
         r_min_u : float
@@ -255,10 +178,10 @@ class Unite_IA_Facile():
             combattante et l'unité combattante.
         
         bmin : Objet Batiment
-            Le batiment ennemi le plus proche de l'unité combattante.
+            Le bâtiment ennemi le plus proche de l'unité combattante.
         
         r_min_b : float
-            La distance entre le batiment ennemi le plus proche de l'unité
+            La distance entre le bâtiment ennemi le plus proche de l'unité
             combattante et l'unité combattante.
         
         """
@@ -311,17 +234,15 @@ class Unite_IA_Facile():
         dans sa zone d'attaque.
         Elle sélectionne les cases de la sous-carte correspondant à la zone d'attaque
         de l'unité combattante, et applique la méthode chx_ennemi_rec pour trouver
-        le batiment et l'unité ennemie les plus proches. Cette dernière méthode est
+        le bâtiment et l'unité ennemie les plus proches. Cette dernière méthode est
         récursive.
         Si il n'y a pas d'objet à attaquer, la méthode le signale.
         Si il y a bien un objet, la méthode sélectionne lequel des deux est le plus
         proche de l'unité combattante. Cet objet est alors blessé : il perd de la vie, 
         et est supprimé si sa santé devient nulle ou négative.
-        Si cet objet détruit est le QG, la variable V_atta, désignant la victoire ou non
-        des attaquants, passe à 1. Les attaquants gagnent alors.
+        Si cet objet détruit est le QG, les attaquants gagnent : la méthode fin_de_partie
+        est alors appelée.
         La méthode signale également quel est l'objet blessé par l'unité.
-        
-        PRIORITE AUX BATIMENTS
         
         Paramètres :
         ------------
@@ -341,7 +262,7 @@ class Unite_IA_Facile():
         A = self._carte.ss_carte[x_inf:x_sup+1,y_inf:y_sup+1]
         
         U,r_min_u,B,r_min_b = self.chx_ennemi_rec(A,x,y)
-        
+
         if U == None and B == None:
             print("%s n'a blessé personne"%(self.T_car()) )
         else:
@@ -402,8 +323,6 @@ class Unite_IA_Facile():
         for i in range(x_inf,x_sup+1):
             for j in range(y_inf,y_sup +1):
                 if self._carte.ss_carte[i,j] == ' ':
-                    
-# SINON : FAIRE IF MUR SUR LIGNE OU COL.
                     self.L_vide.append((i,j))
                 else:
                     L_obj.append((i,j))
@@ -532,7 +451,7 @@ Classe spécialisant la classe Unite_IA_Facile pour représenter un scorpion de 
        'Role_joueur' + '_U_S' + 'Id' : str
             La chaîne de caractère identifiant l'unité.
             """
-        return "%s_U_S0%i"%(self._role, self.id )
+        return "%s_U_S0_%i"%(self._role, self.id )
     
     def car(self):
         """Méthode permettant d'afficher le scorpion sur la carte. Elle renvoie
@@ -577,10 +496,7 @@ Classe spécialisant la classe Unite_IA_Facile pour représenter un scorpion de 
     def action(self):
         """ Méthode définissant l'action de l'unité, après s'être déplacée.
         Pour un scorpion, cette action est une action de combat.
-        
-        A noter : il existe deux méthodes pour cette action de combat : une 
-        méthode itérative, et une méthode récursive.
-        
+
         Paramètres : 
         -------------
         Aucun.
@@ -593,12 +509,4 @@ Classe spécialisant la classe Unite_IA_Facile pour représenter un scorpion de 
         self.combat_rec()
         return(None)
         
-        
-
-
-
-
- 
-
-
-            
+  

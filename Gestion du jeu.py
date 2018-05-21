@@ -209,7 +209,11 @@ class MonAppli(QtWidgets.QMainWindow):
         Return
          ------
         """
-        self.partie = Partie(self.ui.nb_IA_facile_choisi(),self.ui.nb_Hn_choisi(),self)
+        nb_moy = self.ui.nb_IA_moyenne_choisi()
+        nb_fac = self.ui.nb_IA_facile_choisi()
+        nb_hn = self.ui.nb_Hn_choisi()
+        print(nb_hn,nb_fac,nb_moy)
+        self.partie = Partie(nb_fac,nb_moy,nb_hn,self)
         self.carte=self.partie.carte
         self.ui.lcdNumber_Metal.display(self.partie.L_joueur[0].metal_tot)
         self.ui.lcdNumber_Energie.display(self.partie.L_joueur[0].energie_tot)
@@ -364,36 +368,36 @@ class MonAppli(QtWidgets.QMainWindow):
                         if Obj.T_car()[2] == 'U':
                             statut = "Unité"
                             if str(Obj.T_car()[4:6]) == 'RC':
-                                nom = ("Robot de combat " + str(Obj.T_car()[6::]))
+                                nom = ("Robot de combat n°" + str(Obj.T_car()[6:]))
                             if str(Obj.T_car()[4:6]) == 'RO':
-                                nom = ("Robot ouvrier " + str(Obj.T_car()[6::]))
+                                nom = ("Robot ouvrier n°" + str(Obj.T_car()[6:]))
                         if Obj.T_car()[2] == 'B':
                             statut = "Batiment"
                             if str(Obj.T_car()[4:6]) == 'QG':
                                 nom = "QG"
                             if str(Obj.T_car()[4:5]) == 'P':
-                                nom = "Panneau solaire"
+                                nom = "Panneau solaire n°" + str(Obj.T_car()[5:])
                             if str(Obj.T_car()[4:5]) == 'F':
-                                nom = "Foreuse"
+                                nom = "Foreuse n°" + str(Obj.T_car()[5:])
                         
                     
                     elif Obj.T_car()[0:4] == "AI_0":
                         sante = str(Obj.sante)
-                        nom = ("Scorpion 0" + str(Obj.T_car()[10::]))
+                        nom = ("Scorpion 0 n°" + str(Obj.T_car()[12:]))
                         appartenance = ("AI 0 n°" + str(Obj.T_car()[5]))
                         statut = "Unité"
     
                     elif Obj.T_car()[0:4] == "AI_1":
                         sante = str(Obj.sante)
-                        nom = ("Scorpion 1" + str(Obj.T_car()[10::]))
+                        nom = ("Scorpion 1 n°" + str(Obj.T_car()[12:]))
                         appartenance = ("AI 1 n°" + str(Obj.T_car()[5]))
                         statut = "Unité"
     
                     
                     elif Obj.T_car()[0:2] == "AH":
                         sante = str(Obj.sante)
-                        nom = ("Scorpion "+ str(Obj.T_car()[7::]))
-                        appartenance = ("Attaquant Humain " + str(Obj.T_car()[2]))
+                        nom = ("Scorpion n°"+ str(Obj.T_car()[7:]))
+                        appartenance = ("Attaquant Humain n°" + str(Obj.T_car()[2]))
                         statut = "Unité"
 
                 position = str(Obj.coords)
@@ -662,6 +666,7 @@ class MonAppli(QtWidgets.QMainWindow):
                 zone = self.Obj.capmvt
                 self.affiche_bouger_ressource(qp,zone)
         qp.end()
+        self.ui.conteneur.update()
 
         
     def affiche_L_pos_a(self,qp):

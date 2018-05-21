@@ -39,7 +39,7 @@ class Un_Tour_Joueur_Hn():
 
         
          
-    def placer_une_foreuse(self,X,Y)   :
+    def placer_une_foreuse(self,X,Y):
         """
         Permet au joueur, s'il en a le droit, de construire le batiment Foreuse
         sur la case dont il a indiqué les coordonnées en entrée.
@@ -379,8 +379,9 @@ class Un_Tour_Joueur_Hn():
                 
     def fin_unTourHn(self):
         """
-        Termine le tour de jeu d'un joueur humain. Pour cela, il remet à zéro
-        les capacités de mouvement des unités, puis passe au tour du joueur
+        Termine le tour de jeu d'un joueur humain. Pour cela, il effectue les
+        actions de toutes les unités possédées par le joueur, puis remet à zéro
+        les capacités de mouvement des unités. Il passe au tour du joueur
         suivant.
         
         Paramètres : 

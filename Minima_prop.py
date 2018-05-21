@@ -439,7 +439,7 @@ class Ui_Minima_Accueil(object):
         self.groupBox_Niveau.hide()
         
         self.textBrowser_Niveau = QtWidgets.QTextBrowser(self.groupBox_Niveau)
-        self.textBrowser_Niveau.setText("Choisir le niveau des IA")
+        self.textBrowser_Niveau.setText("Choix du nombre d'IA moyenne")
         self.textBrowser_Niveau.setEnabled(True)
         self.textBrowser_Niveau.setGeometry(QtCore.QRect(0, 30, 200, 30))
         self.textBrowser_Niveau.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
@@ -856,15 +856,15 @@ class Ui_Minima_Accueil(object):
             return ("No")        
              
     def nb_IA_moyenne_choisi(self):
-        if self.checkBox_IA_0.isChecked():
+        if self.checkBox_IA_moyenne_0.isChecked():
             return 0
-        if self.checkBox_IA_1.isChecked():
+        if self.checkBox_IA_moyenne_1.isChecked():
             return 1
-        if self.checkBox_IA_2.isChecked():
+        if self.checkBox_IA_moyenne_2.isChecked():
             return 2
-        if self.checkBox_IA_3.isChecked():
+        if self.checkBox_IA_moyenne_3.isChecked():
             return 3
-        if self.checkBox_IA_4.isChecked():
+        if self.checkBox_IA_moyenne_4.isChecked():
             return 4
     
     

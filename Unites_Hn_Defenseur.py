@@ -8,8 +8,9 @@ Created on Wed Mar 21 10:38:35 2018
 import math 
 import numpy as np
 from Constantes import Constante
+from Joueur import Joueur
 
-class Unites_Humain_Defenseur():
+class Unites_Humain_Defenseur(Joueur):
     """
     Classe décrivant les comportements des unités humaines, lorsque celui-ci est
     un attaquant.
@@ -206,8 +207,6 @@ class Unites_Humain_Defenseur():
                 E_pos = set(self.L_vide)
                 Occ = E_pos&E_pos_imp
                 self.L_vide =list( E_pos - Occ)
-            
-           # print(self.L_vide)
         
         return(self.L_vide)        
 
@@ -279,94 +278,7 @@ class Unites_Humain_Defenseur():
             self.__sante = value
         if value <= 0:  
             value = 0
-    
 
-    def combat(self):
-        """
-        Méthode permettant à l'unité de combattre, si un objet ennemi se trouve 
-        dans sa zone d'attaque.
-        L'unité recherche les ennemis dans sa zone de combat et sélectionne 
-        l'objet le plus proche grâce à la méthode chx_ennemi.
-        Si il n'y a pas d'objet à attaquer, la méthode le signale.
-        Si il y a bien un objet, la méthode signale quel est l'objet blessé par l'unité.
-        Cet objet perd alors de la vie, et est supprimé si sa santé devient nulle 
-        ou négative.
-        Si cet objet détruit est le QG, la variable V_atta, désignant la victoire ou non
-        des attaquants, passe à 1. Les attaquants gagnent alors.
-        
-        Paramètres : 
-        ------------
-        Aucun.
-        
-        Renvoie :
-        ----------
-        Rien.
-        
-        """
-
-        Ennemi = self.chx_ennemi()
-        if Ennemi != None:
-            print( "%s a blessé %s"%(self.T_car(), Ennemi.T_car() ) )
-            Ennemi.sante = Ennemi.sante - self.capcbt
-            if Ennemi.sante <= 0:
-                role = Ennemi.T_car()
-                Ennemi.disparition()
-                if role[-2] + role[-1] == 'QG':
-                    self._carte.V_atta = 1
-
-        else :
-            print("%s n'a blessé personne"%(self.T_car()) )
- 
-    
-    def chx_ennemi(self):
-        """
-        Méthode sélectionnant l'objet ennemi le plus proche de l'unité.
-        Elle parcourt les cases dans le rayon d'attaque de l'unité, et sélectionne
-        les objets ennemis dans ce rayon.
-        Elle sélectionne en priorité les unités ennemis les plus proches; mais si
-        un batiment ennemi est plus proche de l'unité que les autres unités ennemis, 
-        l'unité en train de combattre attaquera alors le batiment.
-        
-        Paramètres
-        ----------
-        Aucun
-        
-        Renvoie :
-        ----------
-        Ennemi : Objet (Unité ou Batiment)
-            L'ennemi le plus proche de l'unité en train de combattre.
-        
-        """
-
-        x,y = self.coords
-        x_inf = max(0,int(-self.zonecbt) + x)
-        x_sup = min(self._carte.dims[0]-1, int(self.zonecbt) + x)
-        y_inf = max(0,int(-self.zonecbt) + y)
-        y_sup = min(self._carte.dims[1]-1, int(self.zonecbt) + y)
-        
-
-        
-        Ennemi = None
-        R_plus_petit_unit = self.zonecbt +1
-        R_plus_petit_bat = self.zonecbt + 1
-        
-        
-        for i in range(x_inf,x_sup+1):
-            for j in range(y_inf,y_sup+1):
-                Obj = self._carte.ss_carte[i][j]
-                if Obj != ' ' and Obj !='/' and Obj.T_car()[0] == 'D':
-                    R_Obj = math.sqrt((x-i)**2 + (y-j)**2)
-                    
-                    if Obj.T_car()[2] == 'U' and R_Obj < R_plus_petit_unit:
-                        R_plus_petit_unit = R_Obj
-                        Ennemi = Obj
-                        
-                    if Obj.T_car()[2] == 'B' and R_Obj < min(R_plus_petit_bat,R_plus_petit_unit):
-                        R_plus_petit_bat = R_Obj
-                        Ennemi = Obj
-        
-        return(Ennemi)
-    
     def chx_ennemi_rec(self,A,x,y):
         """
         Méthode sélectionnant l'objet ennemi le plus proche de l'unité, de façon
@@ -375,13 +287,12 @@ class Unites_Humain_Defenseur():
         la sous-carte contenant les cases dans le rayon de combat de l'unité.
         Elle coupe ensuite cette sous-carte en quatres carrés plus petits, jusqu'à
         ce que ce carré soit de taille (1,1).
-        Elle détermine alors si l'unité sur cette case est un batiment, ou une unité,
-        et renvoie alors sa distance par rapport à l'unité combattante.
+        Elle détermine alors si l'objet sur cette case est une unité, et renvoie
+        alors sa distance par rapport à l'unité combattante.
         
-        Elle compare ensuite les distances des unités (et des batiments) par rapport
-        à l'unité combattante, et renvoie l'unité ennemie la plus proche, sa distance
-        par rapport à l'unité combattante, le batiment ennemi le plus proche, et sa
-        distance par rapport à l'unité combattante.
+        Elle compare ensuite les distances des unités par rapport
+        à l'unité combattante, et renvoie l'unité ennemie la plus proche et sa distance
+        par rapport à l'unité combattante.
         
         Paramètres
         ----------
@@ -423,12 +334,6 @@ class Unites_Humain_Defenseur():
             A3 = A[:l//2,c//2:]
             A4 = A[:l//2,:c//2]
 
-#            print(A1,A2,A3,A4)
-#            print(np.shape(A1))
-#            print(np.shape(A2))
-#            print(np.shape(A3))
-#            print(np.shape(A4))
-            
             U1,ru1= self.chx_ennemi_rec(A1,x,y)
             U2,ru2 = self.chx_ennemi_rec(A2,x,y)
             U3,ru3 = self.chx_ennemi_rec(A3,x,y)
@@ -449,14 +354,10 @@ class Unites_Humain_Defenseur():
         dans sa zone d'attaque.
         Elle sélectionne les cases de la sous-carte correspondant à la zone d'attaque
         de l'unité combattante, et applique la méthode chx_ennemi_rec pour trouver
-        le batiment et l'unité ennemie les plus proches. Cette dernière méthode est
-        récursive.
+        l'unité ennemie la plus proche. Cette dernière méthode est récursive.
         Si il n'y a pas d'objet à attaquer, la méthode le signale.
-        Si il y a bien un objet, la méthode sélectionne lequel des deux est le plus
-        proche de l'unité combattante. Cet objet est alors blessé : il perd de la vie, 
+        Si il y a bien un objet, ceklui-ci est alors blessé : il perd de la vie, 
         et est supprimé si sa santé devient nulle ou négative.
-        Si cet objet détruit est le QG, la variable V_atta, désignant la victoire ou non
-        des attaquants, passe à 1. Les attaquants gagnent alors.
         La méthode signale également quel est l'objet blessé par l'unité.
         
         Paramètres :
@@ -507,75 +408,22 @@ class Unites_Humain_Defenseur():
         self._carte.remove(self)
         self._carte.ss_carte[x][y] = ' '
         self._carte.L_joueur[0]._liste_unite.remove(self)
-    
-    def chx_ressources(self,x,y):
-        """
-        Sélectionne la ressource la plus proche dans la zone de capture du robot ouvrier.
-        
-        Paramètres : 
-        -------------
-        Aucun.
-        
-        Renvoie :
-        ----------
-        Ress : Objet Ressource (ou None).
-            La ressource la plus proche de l'unité.
-        
-        """
-        x_inf = max(0, int(-self.zonecap) + x)
-        x_sup = min(self._carte.dims[0]-1, int(self.zonecap) + x)
-        y_inf = max(0,int(-self.zonecap) + y)
-        y_sup = min(self._carte.dims[1]-1, int(self.zonecap) + y)
-        
-        Ress = None
-        R_plus_petit = self.zonecap +1
-        
-        for i in range(x_inf,x_sup+1):
-            for j in range(y_inf,y_sup+1):
-                Obj = self._carte.ss_carte[i][j]
-                if Obj != ' ' and Obj !='/' and Obj.T_car()[-1] == 'M':
-                    R_Obj = math.sqrt((x-i)**2 + (y-j)**2)
-                    if  R_Obj < R_plus_petit:
-                        R_plus_petit = R_Obj
-                        Ress = Obj
-                    
-        return(Ress)
-    
-    def capture_ressources(self):
-        """
-        Permet la capture d'une ressource, si celle-ci se trouve à la portée du robot ouvrier.
-        
-        Paramètres : 
-        -------------
-        Aucun.
-        
-        Renvoie : 
-        ----------
-        Rien.
-        
-        """
-        x,y = self.coords
-        Ress = self.chx_ressources(x,y)
-        if Ress != None:
-            print("%s a trouvé du métal! Sa valeur est de %r."%(self.T_car(),Ress.valeur))
-            self._carte.L_joueur[0].metal_tot += Ress.valeur
-            Ress.disparition()
+
 
     def chx_ressources_rec(self,A,x,y):
         """
-        Méthode sélectionnant l'objet ennemi le plus proche de l'unité, de façon
+        Méthode sélectionnant la ressource la plus proche de l'unité, de façon
         récursive.
         Cette méthode se base sur la technique de "Diviser pour régner". Elle sélectionne
-        la sous-carte contenant les cases dans le rayon de combat de l'unité.
+        la sous-carte contenant les cases dans le rayon de capture de l'unité.
         Elle coupe ensuite cette sous-carte en quatres carrés plus petits, jusqu'à
         ce que ce carré soit de taille (1,1).
-        Elle détermine alors si l'unité sur cette case est un batiment, ou une unité,
+        Elle détermine alors si l'objet sur cette case est une ressource,
         et renvoie alors sa distance par rapport à l'unité combattante.
         
-        Elle compare ensuite les distances des unités (et des batiments) par rapport
-        à l'unité combattante, et renvoie l'unité ennemie la plus proche, sa distance
-        par rapport à l'unité combattante, le batiment ennemi le plus proche, et sa
-        distance par rapport à l'unité combattante.
+        Elle compare ensuite les distances des ressources par rapport
+        à l'unité ouvrière, et renvoie la ressource la plus proche et sa distance
+        par rapport à l'unité ouvrière.
         
         Paramètres
         ----------
@@ -632,7 +480,9 @@ class Unites_Humain_Defenseur():
 
     def capture_ressources_rec(self):
         """
-        Permet la capture d'une ressource, si celle-ci se trouve à la portée du robot ouvrier.
+        Permet la capture d'une ressource, si celle-ci se trouve à la portée du
+        robot ouvrier. La méthode sélectionne la ressource la plus proche de
+        l'unité, grâce à la méthode chx_ressources_rec.
         
         Paramètres : 
         -------------

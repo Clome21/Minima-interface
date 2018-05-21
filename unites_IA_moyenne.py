@@ -1,50 +1,40 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Wed Mar 21 10:56:00 2018
 
-@author: landaier
-"""
-import math
-import numpy as np
 from Constantes import Constante
+import numpy as np
+import math
 from Joueur import Joueur
 
-class Unites_Humain_Attaquant(Joueur):
+class Unite_IA_Moyenne(Joueur):
     """
-    Classe décrivant les comportements des unités humaines, lorsque celui-ci est
-    un attaquant.
+    Classe décrivant les comportement par défaut de l'IA niv facile. Peut-être 
+    utilisée en l'état ou sous classée pour définir des comportements de
+    déplacement différents.
     """
-    def __init__(self, abscisse, ordonnee, carte, role, sante):
+    def __init__(self, abscisse, ordonnee, carte,capacite=10):
         """
-        Crée une unité aux coordonnées désirées.
+        Crée une Unite_IA aux coordonnées désirées.
         
         Paramètres
         ----------
         abscisse, ordonnée: int
-            Les coordonnées auxquelles l'unité sera créé.
+            Les coordonnées auxquelles l'Unite_IA sera créé.
             
-        carte : classe Map
-            La carte sur laquelle évolue l'unité.
-        
-        role : str
-            Le rôle du joueur possédant l'unité : attaquant ou défenseur.
-        
-        sante : int
-            La santé de l'unité sélectionnée.
+        capacité: int
+            niveau de santé maximal de l'Unite_IA. Vaut 10 par défaut.
         """
-
-        self._role = role
-        self.__sante = sante
+        self._max = capacite
+        self.__sante = 10
         self._carte = carte
-        self._max = sante
+        self.coords = abscisse, ordonnee  
         self._carte.ss_carte[abscisse][ordonnee] = self
+
+
         self._carte.append(self)
-        self.coords = abscisse, ordonnee
 
 
     def __str__(self):
         """
-        Affiche l'état courant de l'unité.
+        Affiche l'état courant de l'Unite_IA générée.
         
         Paramètres
         ----------
@@ -53,17 +43,15 @@ class Unites_Humain_Attaquant(Joueur):
         Renvoie
         -------
         s: str
-            La chaîne de caractères qui sera affichée via ''print''; elle comprend 
-            les caractéristiques les plus importantes de l'unité sélectionnée.
+            La chaîne de caractères qui sera affichée via ''print''
         """
-        return "%r : position (%i, %i) etat %i/%i"%(
+        return "%s : position (%i, %i) etat %i/%i "%(
             self.T_car(), self.x, self.y,
-            self.sante, self._max
-            )
+            self.sante, self._max )
     
     def car(self):
         """
-        Renvoie l'identifiant de l'unité en question.
+        Renvoie l'identifiant de l'Unite_IA.
         
         Paramètres
         ----------
@@ -71,11 +59,75 @@ class Unites_Humain_Attaquant(Joueur):
         
         Renvoie
         -------
-        'U' : str
-            Le caractère représentant l'unité.
+        c: str
+            Le caractère représentant l'Unite_IA.
         """
         return 'U'    
+
+    @property
+    def coords(self):
+        """
+        coords: tuple
+            Les coordonnées de l'Unite_IA sur le plateau de jeu
+        """
+        return self.__coords
+
+    @property
+    def x(self):
+        """
+        x: nombre entier
+            Abscisse de l'Unite_IA
+        """
+        return self.coords[0]
+
+    @property
+    def y(self):
+        """
+        y: nombre entier
+            Abscisse de l'Unite_IA
+        """
+        return self.coords[1]
+
+    @coords.setter
+    def coords(self, nouv_coords):
+        """
+        Met à jour les coordonnées de l'Unite_IA.
+        Garantit qu'elles arrivent dans la zone définie par
+        la zone de jeu self._cart.
     
+        Paramètres
+        ----------
+        nouv_coords : tuple représentant les coordonnées auquelles 
+                      l'Unite_IA essaie de se rendre.
+        """
+        x, y = nouv_coords
+        x = min(x, self._carte.dims[0]-1)
+        x = max(x, 0)
+        y = min(y, self._carte.dims[1]-1)
+        y = max(y, 0)
+        self.__coords = (x, y)
+
+    @property
+    def sante(self):
+        """
+        sante: float
+            Le niveau de santé de lUnite_IA. Si ce niveau arrive à 0 l'animal
+            est marqué comme mort et sera retiré du plateau de jeu
+        """
+        return self.__sante
+    
+    @sante.setter
+    def sante(self, value):
+        """
+        Met à jour le niveau de santé de lUnite_IA. Garantit que la valeur arrive 
+        dans l'intervalle [0, self._max]. Met à 0 les valeurs négatives, ne
+        fait rien pour les valeurs trop grandes.
+        """
+        if value <= self._max:
+            self.__sante = value
+        if value <= 0:  # <= car certaines cases enlèvent plus de 1 en santé
+            value = 0   # ce qui gèrera les décès plus tard
+
     def affichage(self):
         """ Affiche l'unité, selon la méthode str.
         
@@ -89,196 +141,6 @@ class Unites_Humain_Attaquant(Joueur):
         
         """
         print(str(self))
-    
-    def bouger(self,X,Y):
-        """
-        Mouvement de l'unité, choisie par l'utilisateur. Elle a lieu dans un rayon correspondant 
-        à la capacité de mouvement autour de la position courante. Utilise l'accesseur coords.
-        La capacité de mouvement restante de l'unité est alors mise à jour, selon le nombre de
-        cases parcourues par l'unité. Si cette capacité est supérieure à 1, le joueur humain a encore
-        la possibilité de déplacer l'unité avant la fin de son tour.        
-       
-        Paramètres :
-        ------------
-        Aucun.
-        
-        Renvoie : 
-        -----------
-        Le résultat de la méthode coords.
-        
-        """
-
-        if self.capmvt >= 1 :
-
-            L_vide = self.mvt_poss()
-
-            xi, yi = self.coords
-            if (X,Y) in L_vide :
-                self.capmvt -= int(math.sqrt( (X-xi)**2 + (Y-yi)**2))
-                self.coords = (X, Y)
-                self._carte.ss_carte[xi][yi], self._carte.ss_carte[X][Y] = self._carte.ss_carte[X][Y], self._carte.ss_carte[xi][yi]
-                return(self.coords)  
-    
-    def mvt_poss(self):
-        """ Méthode permettant de sélectionner les cases sur lesquelles 
-        l'unité peut se déplacer. Ces cases doivent être vides.
-        Dans un premier temps, la méthode sélectionne les cases vides et non vides
-        dans la zone de déplacement de l'unité.
-        Cependant, une case non vide bloque également les cases autour de celles-ci
-        (pour des questions de champ de vision, ou d'impossibilité de déplacement au
-        delà de l'obstacle). 
-        Donc dans un second temps, la méthode retire de la liste les cases qui 
-        sont bloqués par les obstacles au déplacement de l'unité.
-        Les cases retirées dépendent de la position de l'unité par rapport aux obstacles.
-        
-        A noter : actuellement, la façon dont les cases bloquées sont choisies a été
-        prévu pour des unitées dont les déplacements sont inférieurs ou égaux à 2. 
-        Une MAJ pourra être faite pour corriger ce problème.
-        
-        Paramètres
-        ----------
-        Aucun
-        
-        Renvoie
-        -------
-        L_vide : list
-            La liste contenant toutes les cases où l'unité peut se déplacer.
-        
-        """
-        x,y = self.coords
-        
-        self.L_vide = []
-
-        L_obj = []
-        x_inf = max(0,int(-self.capmvt) + x)
-        x_sup = min(self._carte.dims[0]-1, int(self.capmvt + x))
-        y_inf = max(0,int(-self.capmvt) + y)
-        y_sup = min(self._carte.dims[1]-1, int(self.capmvt + y))
-        
-        i = x_inf
-        j = y_inf
-        
-        for i in range(x_inf,x_sup+1):
-            for j in range(y_inf,y_sup +1):
-                if self._carte.ss_carte[i,j] == ' ':
-                    self.L_vide.append((i,j))
-                else:
-                    L_obj.append((i,j))
-                    
-        for k in range(len(L_obj)):
-            ox,oy = L_obj[k]
-            L = []
-            if ox - x <0 and oy - y <0:
-                
-                #Diag H/G
-                
-                L = [(ox-1,oy-1),(ox-1,oy),(ox,oy-1)]
-                
-            elif ox - x <0 and oy - y >0:
-                
-                #Diag H/D
-                
-                L = [(ox-1,oy+1),(ox-1,oy),(ox,oy+1)]
-                
-            elif ox - x >0 and oy - y <0:
-                
-                #Diag B/G
-                
-                L = [(ox,oy-1),(ox+1,oy-1),(ox+1,oy)]
-                
-            elif ox - x >0 and oy - y >0:
-                
-                #Diag B/D
-                
-                L = [(ox+1,oy),(ox+1,oy+1),(ox,oy+1)]
-                
-            elif ox == x:
-                if oy < y:
-                    L = [(ox,oy-1),(ox-1,oy-1),(ox+1,oy-1)]
-                elif oy > y :
-                    L = [(ox,oy+1),(ox-1,oy+1),(ox+1,oy+1)]
-            
-            elif oy == y: 
-                if ox < x:
-                    L = [(ox-1,oy),(ox-1,oy-1),(ox-1,oy+1)]
-                elif ox > x:
-                    L = [(ox+1,oy),(ox+1,oy-1),(ox+1,oy+1)]
-            if len(L) != 0:
-                
-                E_pos_imp = set(L)
-                E_pos = set(self.L_vide)
-                Occ = E_pos&E_pos_imp
-                self.L_vide =list( E_pos - Occ)
-            
-        return(self.L_vide)        
-
-
-    @property
-    def coords(self):
-        """
-       coords: tuple
-           Les coordonnées de l'unité sur le plateau de jeu
-           """
-
-        return self.__coords
-
-
-    @property
-    def x(self):
-        """
-        x: nombre entier
-            Abscisse de l'unité
-        """
-        return self.coords[0]
-
-    @property
-    def y(self):
-        """
-        y: nombre entier
-            Ordonnée de l'unité
-        """
-        return self.coords[1]
-    
-    @coords.setter
-    def coords(self, nouv_coords):
-        """
-        Met à jour les coordonnées de l'unité.
-        Garantit qu'elles arrivent dans la zone définie par
-        la carte.
-    
-        Paramètres
-        ----------
-        nouv_coords : tuple représentant les coordonnées auquelles 
-                      l'unité essaie de se rendre.
-        """
-        x, y = nouv_coords
-        XM,YM = self._carte.dims
-        x = min(x, XM-1)
-        x = max(x,0)
-        y = min(y, YM-1)
-        y = max(y,0)
-
-        self.__coords = (x, y)
-
-    @property
-    def sante(self):
-        """
-        sante: float
-            Le niveau de santé de l'unité. Si ce niveau arrive à 0 l'unité
-            est marqué comme mort et sera retiré du plateau de jeu
-        """
-        return self.__sante
-    
-    @sante.setter
-    def sante(self, value):
-        """
-        Met à jour le niveau de santé de l'Unité. Garantit que la valeur arrive 
-        dans l'intervalle [0, self._max]. Met à 0 les valeurs négatives.
-        """
-        if value <= self._max:
-            self.__sante = value
-        if value <= 0:  
-            value = 0
     
     def chx_ennemi_rec(self,A,x,y):
         """
@@ -416,7 +278,104 @@ class Unites_Humain_Attaquant(Joueur):
                 Ennemi.disparition()
                 if role[-2] + role[-1] == 'QG':
                     self._carte.fin_de_partie()
+    
+        
+    def mvt_poss(self):
+        """ Méthode permettant de sélectionner les cases sur lesquelles 
+        l'unité peut se déplacer. Ces cases doivent être vides.
+        Dans un premier temps, la méthode sélectionne les cases vides et non vides
+        dans la zone de déplacement de l'unité.
+        Cependant, une case non vide bloque également les cases autour de celles-ci
+        (pour des questions de champ de vision, ou d'impossibilité de déplacement au
+        delà de l'obstacle). 
+        Donc dans un second temps, la méthode retire de la liste les cases qui 
+        sont bloqués par les obstacles au déplacement de l'unité.
+        Les cases retirées dépendent de la position de l'unité par rapport aux obstacles.
+        
+        A noter : actuellement, la façon dont les cases bloquées sont choisies a été
+        prévu pour des unitées dont les déplacements sont inférieurs ou égaux à 2. 
+        Une MAJ pourra être faite plus tard pour corriger ce problème.
+        
+        Paramètres
+        ----------
+        Aucun
+        
+        Renvoie
+        -------
+        L_vide : list
+            La liste contenant toutes les cases où l'unité peut se déplacer.
+        
+        """
+        x,y = self.coords
+        
+        self.L_vide = []
 
+        L_obj = []
+        x_inf = max(0,int(-self.capmvt) + x)
+        x_sup = min(self._carte.dims[0]-1, int(self.capmvt + x))
+        y_inf = max(0,int(-self.capmvt) + y)
+        y_sup = min(self._carte.dims[1]-1, int(self.capmvt + y))
+        
+        i = x_inf
+        j = y_inf
+        
+        for i in range(x_inf,x_sup+1):
+            for j in range(y_inf,y_sup +1):
+                if self._carte.ss_carte[i,j] == ' ':
+                    self.L_vide.append((i,j))
+                else:
+                    L_obj.append((i,j))
+                    
+        for k in range(len(L_obj)):
+            ox,oy = L_obj[k]
+            L = []
+            
+            if ox - x <0 and oy - y <0:
+                #Diag H/G
+                
+                L = [(ox-1,oy-1),(ox-1,oy),(ox,oy-1)]
+                
+            elif ox - x <0 and oy - y >0:
+                
+                #Diag H/D
+                
+                L = [(ox-1,oy+1),(ox-1,oy),(ox,oy+1)]
+                
+            elif ox - x >0 and oy - y <0:
+                
+                #Diag B/G
+                
+                L = [(ox,oy-1),(ox+1,oy-1),(ox+1,oy)]
+                
+            elif ox - x >0 and oy - y >0:
+                
+                #Diag B/D
+                
+                L = [(ox+1,oy),(ox+1,oy+1),(ox,oy+1)]
+                
+            elif ox == x:
+                if oy < y:
+                    L = [(ox,oy-1),(ox-1,oy-1),(ox+1,oy-1)]
+                elif oy > y :
+                    L = [(ox,oy+1),(ox-1,oy+1),(ox+1,oy+1)]
+            
+            elif oy == y: 
+                if ox < x:
+                    L = [(ox-1,oy),(ox-1,oy-1),(ox-1,oy+1)]
+                elif ox > x:
+                    L = [(ox+1,oy),(ox+1,oy-1),(ox+1,oy+1)]
+            if len(L) != 0:
+                
+                E_pos_imp = set(L)
+                E_pos = set(self.L_vide)
+                
+                Occ = E_pos&E_pos_imp
+
+                self.L_vide =list( E_pos - Occ)
+
+        
+        return(self.L_vide)        
+    
     def disparition(self):
         """ Méthode permettant de détruire l'unité. Elle supprime celui-ci
         de l'ensemble des listes/arrays où l'unité est stockée.
@@ -431,18 +390,18 @@ class Unites_Humain_Attaquant(Joueur):
         
         """
         print("%s est mort! \n"%(self.T_car()))
-        x,y = self.coords
+        (x,y) = self.coords
         self._carte.remove(self)
         self._carte.ss_carte[x][y] = ' '
         k = self.num_joueur
         self._carte.L_joueur[k]._liste_unite.remove(self)
-
-class Scorpion(Unites_Humain_Attaquant):
+        
+class Scorpion1(Unite_IA_Moyenne):
     """
-    Classe spécialisant Unites_Humain_Attaquant pour représenter un Scorpion.
+Classe spécialisant la classe Unite_IA_Facile pour représenter un scorpion de niveau 0.
     """
-    Id = 0
-    def __init__(self,role,carte,x,y,k):
+    
+    def __init__(self, role, cart, x, y, k):
         """Permet d'initialiser l'unité.
             
     Paramètres
@@ -453,23 +412,44 @@ class Scorpion(Unites_Humain_Attaquant):
             
     carte : classe Map
     La carte sur laquelle évolue l'unité.
-
+    
     x, y : int
     Les coordonnées de l'unité en abscisse et en ordonnée
     
     k : int
     La position du joueur possédant l'unité, dans la liste L_joueur.
-
         """
-        self.__sante = 10
-        super().__init__(x, y, carte, role, self.__sante)
+        super().__init__(x, y, cart)
 
+        self.id =  self._carte.L_joueur[k].IdU 
+        self._role = role
         self.num_joueur = k
-        self.id = self._carte.L_joueur[k].IdU
         self._carte.L_joueur[k].IdU += 1
-        self.capmvt = Constante.capmvt_S
-        self.capcbt = Constante.capcbt_S
+        self.capmvt = Constante.capmvt_S1
+        
+        self.capcbt = Constante.capcbt_S1
         self.zonecbt = math.sqrt(2)
+
+    def T_car(self):
+        """ Renvoie l'ensemble des caractéristiques de l'objet étudié
+            Dans l'ordre : 
+            self._role : le rôle du joueur possédant l'objet. Ici, l'attaquant (avec un
+            identifiant pour le reconnaître).
+            U : le type global de l'objet. Ici, Unité.
+            S1 : le role de l'objet. Ici, Scorpion d'une IA de niveau 1.
+            self.id : l'identifiant de l'objet, afin de le différencier des autres
+            scorpions.
+            
+        Paramètres : 
+        -------------
+        Aucun.
+        
+        Renvoie : 
+        ----------
+       'Role_joueur' + '_U_S1' + 'Id' : str
+            La chaîne de caractère identifiant l'unité.
+            """
+        return "%s_U_S1_%i"%(self._role, self.id )
     
     def car(self):
         """Méthode permettant d'afficher le scorpion sur la carte. Elle renvoie
@@ -481,39 +461,59 @@ class Scorpion(Unites_Humain_Attaquant):
         
         Renvoie : 
         ----------
-        'S ' : str
+        's ' : str
             Le symbole associé.
         
         """
-        return 'S '
+        return 's '
+       
     
-    def T_car(self):
-        """Méthode contenant l'ensemble des informations permettant d'identifier l'unité.
-        Dans l'ordre : 
-            self._role : le rôle du joueur possédant l'objet. Ici, l'attaquant (avec un
-            identifiant pour le reconnaître).
-            U : le type global de l'objet. Ici, Unité.
-            S : le role de l'objet. Ici, Scorpion
-            self.id : l'identifiant de l'objet, afin de le différencier des autres
-            scorpions.
-            
-        Paramètres : 
-        -------------
+    def bouger(self):
+        """
+        Permet de déplacer l'unité sur la case la plus proche du QG, parmi les
+        cases possibles. Utilise la méthode mvt_poss() pour déterminer ces cases.
+        
+        Paramètres :
+        ------------
         Aucun.
         
-        Renvoie : 
+        Renvoie :
         ----------
-       'Role_joueur' + '_U_S' + 'Id' : str
-            La chaîne de caractère identifiant l'unité.
-            
-        """  
-                    
-        return "%s_U_S%i"%(self._role, self.id )
+        Rien.
+        
+        """
+        xi,yi = self.coords
+        xmax,ymax = self._carte.dims
+        xmil,ymil = xmax//2, ymax//2
+        
+        R = math.sqrt( (xi-xmil)**2 + (yi-ymil)**2)
+        if R >= math.sqrt(2):
+            L_dep_poss  = self.mvt_poss()
+            R_pos_min = math.inf
+            X = math.inf
+            Y = math.inf
     
+            print("Poss possibles : ", L_dep_poss)
+            for pos in L_dep_poss:
+                x,y = pos
+                R_pos = math.sqrt((x-xmil)**2 + (y-ymil)**2)
+                if R_pos < R_pos_min:
+                    X = x
+                    Y = y
+                    R_pos_min = R_pos
+            print("La meilleure est : ", (X,Y) )
+            if X != math.inf:
+                self.coords = (X,Y)
+                self._carte.ss_carte[xi][yi], self._carte.ss_carte[X][Y] = self._carte.ss_carte[X][Y], self._carte.ss_carte[xi][yi]
+                return(self.coords)
+        
     def action(self):
         """ Méthode définissant l'action de l'unité, après s'être déplacée.
         Pour un scorpion, cette action est une action de combat.
-
+        
+        A noter : il existe deux méthodes pour cette action de combat : une 
+        méthode itérative, et une méthode récursive.
+        
         Paramètres : 
         -------------
         Aucun.
@@ -525,4 +525,6 @@ class Scorpion(Unites_Humain_Attaquant):
         """
         self.combat_rec()
         return(None)
-    
+        
+        
+

@@ -11,6 +11,7 @@ from Batiments import Foreuse,QG,Panneau_solaire
 from Ressource import metal
 from Joueur import Joueur
 from unites_IA_facile import Scorpion0
+from unites_IA_moyenne import Scorpion1
 from Unites_Hn_Defenseur import Robot_combat, Robot_Ouvrier
 from Unites_Hn_Attaquant import Scorpion
 
@@ -25,7 +26,7 @@ class Save():
         programme vérifie avant si le nom est déjà employé par une autre sauvegarde, puis écrit/modifie
         le fichier .txt avec les informations.
 
-        Ajout d'une condition permettant d'effectuer des tests sans d'utiliser IHM.
+        Ajout d'une condition permettant d'effectuer des tests sans utiliser d'IHM.
         
         Paramètres : 
         ------------
@@ -41,13 +42,6 @@ class Save():
         Rien.
         
         """
-        
-        
-        # Sauvegarder également le joueur en cours, la variable tour_en_crs, et la variable tour_jr_en_cours.
-        # (pas forcément les deux dernières : si la sauvegarde a pu avoir lieu, ça devait forcément être pendant un tour
-        # de jeu d'un joueur humain; donc les deux seraient égales à 1.
-        # Sauvegarder aussi les capacités de mouvement des unités pour le joueur humain en cours (uniquement).
-        # Voir si une option est nécessaire pour quitter (si un objet partie va forcément rester en arrière plan ou non).
         
         self.IHM = IHM
         if type(self.IHM) != str:
@@ -167,7 +161,7 @@ class Load():
         est correct; ensuite, il rassemble toutes les lignes de caractères de la sauvegarde dans une
         liste L. Il recrée ensuite la partie grâce à la méthode process(L).
         
-        Ajout d'une condition permettant d'effectuer des tests sans d'utiliser IHM.
+        Ajout d'une condition permettant d'effectuer des tests sans utiliser d'IHM.
         
         Paramètres : 
         ------------
@@ -190,24 +184,7 @@ class Load():
             print(self.Load)
             self.process(self.Load)
             print("Chargement terminé! \n")
-            
-            """
-            Il faut que : 
-                *une fenêtre pop, dans laquelle on puisse écrire du texte
-                *une fois ce texte validé, le contenu de la fenêtre est mis en format
-                str et sauvegardé.
-                *on l'utilise pour la méthode save/load
-            OU : 
-                *lorsqu'on appuie sur le bouton save/load, une fenêtre indique qu'il faut
-                revenir à la console pour écrire le nom de la sauvegarde (en indiquant
-                que le jeu restera bloqué en attendant).
-                *on utilise pour la méthode save/load classique.
-            
-            Une fois ce texte écrit, une fenêtre indique que la partie a été sauvegardée
-            ou chargée, et renvoie à l'écran de la carte de jeu.
-                
-                
-            """
+
 
         
     def Test_save(self,name):
@@ -289,8 +266,7 @@ class Load():
                 
                 Constante.Lnbt = int(Nbt)
                 U_disp = float(U_disp)
-                
-                # rajouter tr actuel
+
                 self.Lcarte = Map.Map([],1,self.IHM)
                 self.Lcarte.TrIA.unite_disp_par_tour = U_disp
                 self.Lcarte.TrHn.unite_disp_par_tour = U_disp
@@ -326,7 +302,7 @@ class Load():
                 self.Jr.nbe_unite_restantes = Ur                
                 L = L[6:]
                 while L[0] == 'Bat':
-                    print("Entree Bat OK")
+
                 # Processus de chargement des batiments du joueur actuel.
                     Typ = L[1]
                     Sante = L[2]
@@ -355,6 +331,7 @@ class Load():
                         B.id = Id
                         self.Jr._liste_bat[2].append(B)
                 if L[0] == "Fin bat":
+                    print("Fin bat")
                     L = L[2:]
                 
                 while L[0] == "Unite":
@@ -395,9 +372,16 @@ class Load():
                         self.Jr._liste_unite.append(U)
 
                     elif Typ[0] == "S":
-                            if Role[1] == "I":
-                                Id = int(Typ[2:])
+                            if len(Role) > 3 and Role[3] == "0":
+                                Id = int(Typ[3:])
                                 U = Scorpion0(Role,self.Lcarte,X,Y, Num_joueur)
+                                U.sante = Sante
+                                U.id = Id
+                                self.Jr._liste_unite.append(U)
+                            
+                            elif len(Role) > 3 and Role[3] == "1":
+                                Id = int(Typ[3:])
+                                U = Scorpion1(Role,self.Lcarte,X,Y, Num_joueur)
                                 U.sante = Sante
                                 U.id = Id
                                 self.Jr._liste_unite.append(U)
@@ -411,8 +395,9 @@ class Load():
                                 self.Jr._liste_unite.append(U)
                     
                 if L[0] == "Fin unite":
+                    print("Fin unite")
                     L = L[1:]
-            print("Joueur OK")
+
             if L[0] == "Fin sauvegarde":
                 L = []
             else: 

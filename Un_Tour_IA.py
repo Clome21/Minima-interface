@@ -10,9 +10,8 @@ from Constantes import Constante
 
 from numpy.random import randint
 from unites_IA_facile import Scorpion0
-
+from unites_IA_moyenne import Scorpion1
 import numpy as np
-
 
 class Un_Tour_Joueur_IA():
     """
@@ -35,7 +34,8 @@ class Un_Tour_Joueur_IA():
         self._carte = carte
         self.L_joueur = self._carte.L_joueur
         self.unite_disp_par_tour = 0
-        
+                
+        self.tr_actuel = self._carte.tr_actuel
         self.__xmax = Constante.xmax
         self.__ymax = Constante.ymax  
         self.Epp = Constante.Ep_app
@@ -105,8 +105,7 @@ class Un_Tour_Joueur_IA():
             self.production_unite_attaque_0(k)
         elif role[3] == '1':
             self.production_unite_attaque_1(k)
-        else:
-            self.production_unite_attaque_2(k)
+
  
 
     def production_unite_attaque_0(self,k):
@@ -126,9 +125,9 @@ class Un_Tour_Joueur_IA():
         """
         
         Jr = self.L_joueur[k]
-        unite_disp = self.unite_disp_par_tour + Jr.nbe_unite_restantes
+
         
-        if unite_disp < 1:
+        if Jr.nbe_unite_restantes < 1:
             print("Aucune unité à placer pour ce tour. \n")
         
         else:
@@ -151,16 +150,16 @@ class Un_Tour_Joueur_IA():
         
             else : 
 
-                while len(L_pos) != 0 and unite_disp >= 1 :
+                while len(L_pos) != 0 and Jr.nbe_unite_restantes >= 1 :
                 
                     c = randint(len(L_pos))
                     X,Y = L_pos[c]
                     L_pos.remove((X,Y))
                     U = Scorpion0(Jr._role,self._carte,X,Y,k)
                     Jr._liste_unite.append(U)
-                    unite_disp-=1
+                    Jr.nbe_unite_restantes -=1
                 
-                    if unite_disp <1:
+                    if Jr.nbe_unite_restantes <1:
                         print("Plus d'unité disponible, étape suivante \n")
                         break
                 
@@ -168,7 +167,82 @@ class Un_Tour_Joueur_IA():
                         print("Aucune zone d'apparition d'unité disponible, étape suivante. \n")
                         break
 
+    def production_unite_attaque_1(self,k):
+        """ 
+        Produit des unités de combat pour l'attaquant IA de niveau 1.
+        Celui-ci placera un certain nombre de ses unités au hasard parmi les 
+        positions possibles. Ce nombre est défini par le tour de jeu actuel : 
+        si le tour est pair, il placera la moitié de ses unités disponibles. 
+        Si le tour est divisible par 3 (ou si il a déjà le maximum d'unités à 
+        placer), il placera toutes ses unités.
+        Sinon, il placera 1/4 de ses unités disponibles.
         
+        Paramètres :
+        ------------
+        k : int
+            La position du joueur exécutant la méthode dans la liste L_joueur.
+        
+        Renvoie :
+        ----------
+        Rien.
+        
+        """
+        
+        Jr = self.L_joueur[k]
+
+        if Jr.nbe_unite_restantes < 1:
+            print("Aucune unité à placer pour ce tour. \n")
+        
+        else:
+            print("tr actuel :", self.tr_actuel)
+            print("unite_disp :", Jr.nbe_unite_restantes)
+            if self.tr_actuel%3 == 0 or Jr.nbe_unite_restantes >= min(self.L,self.H):
+                unite_disp_j = Jr.nbe_unite_restantes
+
+            elif self.tr_actuel%2 == 0:
+                unite_disp_j = Jr.nbe_unite_restantes//2
+
+            else:
+                unite_disp_j = Jr.nbe_unite_restantes//4
+      
+            Jr.nbe_unite_restantes -= unite_disp_j
+            print("Nbe_unite_placées : ", unite_disp_j)
+            print("Nbe_unite_restantes : ", Jr.nbe_unite_restantes)            
+            L_Ht = self.placement_pos(0,self.Epp + 1,(self.__ymax -self.H)//2,(self.__ymax + self.H )//2,' ')
+            
+            L_Bas = self.placement_pos(self.__xmax-1-self.Epp,self.__xmax,(self.__ymax -self.H)//2,(self.__ymax + self.H )//2,' ')
+        
+            L_Gche = self.placement_pos((self.__xmax - self.L )//2 , (self.__xmax + self.L )//2,0,self.Epp+1,' ')
+        
+            L_Dte = self.placement_pos((self.__xmax - self.L )//2, (self.__xmax + self.L )//2,self.__ymax -1-self.Epp,self.__ymax,' ')
+        
+            #Sélectionne les 4 zones d'apparitions
+        
+            L_pos = L_Ht + L_Bas + L_Gche + L_Dte 
+        
+        #Sélectionne les emplacements disponibles
+            if len(L_pos) == 0:
+                print("Aucune zone d'apparition d'unité disponible, étape suivante. \n")
+        
+            else : 
+
+                while len(L_pos) != 0 and unite_disp_j >= 1 :
+                
+                    c = randint(len(L_pos))
+                    X,Y = L_pos[c]
+                    L_pos.remove((X,Y))
+                    U = Scorpion1(Jr._role,self._carte,X,Y,k)
+                    Jr._liste_unite.append(U)
+                    unite_disp_j-=1
+                
+                    if unite_disp_j <1:
+                        print("Plus d'unité disponible, étape suivante \n")
+                        break
+                
+                    if len(L_pos) == 0:
+                        print("Aucune zone d'apparition d'unité disponible, étape suivante. \n")
+                        Jr.nbe_unite_restantes += unite_disp_j
+                        break        
     def unTourIA(self):
 
         """
@@ -185,8 +259,6 @@ class Un_Tour_Joueur_IA():
 
         n = len(self.L_joueur)
         for k in range(1,n):
-            if self._carte.V_atta == 1:
-                break
             role = self.L_joueur[k]._role
             if role[1] == 'I':
                 print("\\\ Tour du joueur %r ///"%(role))
@@ -196,21 +268,22 @@ class Un_Tour_Joueur_IA():
                 self.IHM.ui.textBrowser_Metal.hide()
                 self.IHM.ui.textBrowser_Energie.hide()
                 self.IHM.ui.lcdNumber_Energie.hide()
+                self.L_joueur[k].nbe_unite_restantes += self.unite_disp_par_tour
                 self.production_unite_attaque_IA(role,k)
     
                 L_unite = self.L_joueur[k]._liste_unite
                 for c in L_unite:
-                    if self._carte.V_atta == 1:
-                        break
     
                     print("Tour de %r \n"%(c.T_car()))
                     c.bouger()
                     c.action()
         
         self.unite_disp_par_tour += Constante.nbe_unite_ajoute
+        print("unite_disp_par_tr : ",self.unite_disp_par_tour)
         if self.unite_disp_par_tour > min(self.L,self.H):
             self.unite_disp_par_tour = min(self.L,self.H)
         self._carte.tr_actuel += 1
+        self.tr_actuel = self._carte.tr_actuel
         self.IHM.maj_compteur_ressources()
         self.IHM.tr_en_crs = 0
         self.IHM.simuler()

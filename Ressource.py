@@ -119,10 +119,39 @@ class metal(Ressource):
         self.name = "metal"
     
     def car(self):
+        """
+        Renvoie le symbole identifiant le métal.
+        
+        Paramètres
+        ----------
+        Aucun
+        
+        Renvoie
+        -------
+        c: str
+            Le caractère représentant le métal.
+        """
         return 'M '
     
     def T_car(self):
-        return('N_O_M')
+        """Méthode contenant l'ensemble des informations permettant d'identifier le batiment.
+        Dans l'ordre : 
+            N : le rôle du joueur possédant l'objet. Ici, le joueur neutre.
+            R : le type global de l'objet. Ici, ressource.
+            M : le role de l'objet. Ici, Métal.
+
+            
+        Paramètres : 
+        -------------
+        Aucun.
+        
+        Renvoie : 
+        ----------
+        'N_R_M': str
+            La chaîne de caractère identifiant la ressource.
+            
+        """
+        return('N_R_M')
 
 
 

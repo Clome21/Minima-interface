@@ -11,8 +11,8 @@ class Constante:
 #----------------------------------------Constantes map    
     # affiché si < 29
     # injouable si < 13
-    xmax = 13
-    ymax = 13
+    xmax = 19
+    ymax = 19
     
     assert(xmax%2 !=0)
     assert(ymax%2 !=0)
@@ -35,7 +35,7 @@ class Constante:
 #----------------------------------------Constantes ressources de départ    
     metal_tot= 4
     energie_tot= 4
-    nbt= 15
+    nbt= 25
     spawn_ress=1
 #----------------------------------------Constantes Batiments
 #----------------------------------Foreuse    
@@ -73,6 +73,11 @@ class Constante:
 
     capmvt_S0 = 2
     capcbt_S0 = 2
+    
+#------------------------------Scorpion1
+
+    capmvt_S1 = 2
+    capcbt_S1 = 2
     
 #-----------------------------Scorpion
 

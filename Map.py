@@ -94,9 +94,6 @@ class Map(list):
         self.TrHn = Un_Tour_Joueur_Hn(self,IHM)
         self.TrIA = Un_Tour_Joueur_IA(self,IHM)
 
-        self.V_atta = 0
-
-
         # Trace les murs dans la sous-map
         for i in ( (self.__xmax - self.L )//2, (self.__xmax + self.L )//2-1 ):  # -1 ; -1
             #Trace les murs du haut et du bas, avec un trou au milieu de ces deux lignes.
@@ -278,15 +275,12 @@ class Map(list):
     def simuler (self):
         """
         Contrôle l'évolution du jeu; c'est-à-dire : 
-            *A chaque nouvelle série de tours, demande si le (ou les) joueurs humains
-            veulent sauvegarder ou charger une partie.
+
             *Place de nouvelles ressources si le nombre de tours est correct.
-            *Déroule un tour pour les joueurs humains, puis pour les joueurs IA.
-            *Affiche toutes les objets en jeu dans la console.
-            *Affiche le terrain de jeu, avec les objets dessus.
+            *Débute un nouveau tour pour le joueur humain suivant.
         
-        Lorsque tous les tours de jeu ont défilé (ou lorsque le QG défenseur a
-        été détruit), la méthode dresse le bilan de la partie via la méthode fin_de_partie().
+        Lorsque tous les tours de jeu ont défilé, la méthode dresse le bilan
+        de la partie via la méthode fin_de_partie().
         
         Paramètres
         ----------

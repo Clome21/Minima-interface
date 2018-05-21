@@ -7,6 +7,10 @@ Created on Wed Mar 21 10:34:28 2018
 
 
 class Joueur(object):
+    """
+    Classe gérant l'ensemble des objets (variables par exemple) possédés
+    par le joueur.
+    """
     def __init__(self, role):
         """ 
         Crée la liste des bâtiments et des unités pour chaque joueur.
