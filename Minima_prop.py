@@ -660,18 +660,44 @@ class Ui_Minima_Accueil(object):
         if self.checkBox_Option_IA_NON.isChecked() == True :
             self.checkBox_Option_IA_OUI.hide()
             self.checkBox_Option_Hum_NON.hide()
-        elif self.checkBox_Option_Hum_NON.isChecked() == True :
+            self.checkBox_Option_IA_NON.show()
+            self.checkBox_Option_Humain_OUI.show()            
+        if self.checkBox_Option_Hum_NON.isChecked() == True :
             self.checkBox_Option_IA_NON.hide()
             self.checkBox_Option_Humain_OUI.hide()
-        elif self.checkBox_Option_IA_OUI.isChecked() == True :
-            self.checkBox_Option_IA_NON.hide()
-        elif self.checkBox_Option_Humain_OUI.isChecked() == True :
-            self.checkBox_Option_Hum_NON.hide()
-        else:
             self.checkBox_Option_IA_OUI.show()
+            self.checkBox_Option_Hum_NON.show()
+        if self.checkBox_Option_IA_OUI.isChecked() == True :
+            self.checkBox_Option_IA_NON.hide()
+            self.checkBox_Option_IA_OUI.show()
+            self.checkBox_Option_Humain_OUI.show()
+            self.checkBox_Option_Hum_NON.show()
+        if self.checkBox_Option_Humain_OUI.isChecked() == True :
+            self.checkBox_Option_Hum_NON.hide()
+            self.checkBox_Option_IA_OUI.show()
+            self.checkBox_Option_Humain_OUI.show()
+            self.checkBox_Option_IA_NON.show()            
+        if (self.checkBox_Option_IA_NON.isChecked() == True and self.checkBox_Option_Humain_OUI.isChecked() == True ):
+            self.checkBox_Option_Hum_NON.hide()
+            self.checkBox_Option_IA_OUI.hide()
+            self.checkBox_Option_Humain_OUI.show()
+            self.checkBox_Option_IA_NON.show()
+        if (self.checkBox_Option_IA_OUI.isChecked() == True and self.checkBox_Option_Hum_NON.isChecked() == True ):
+            self.checkBox_Option_IA_NON.hide()
+            self.checkBox_Option_Humain_OUI.hide()
+            self.checkBox_Option_Hum_NON.show()
+            self.checkBox_Option_IA_OUI.show()
+        if (self.checkBox_Option_IA_OUI.isChecked() == True and self.checkBox_Option_Humain_OUI.isChecked() == True ):
+            self.checkBox_Option_IA_NON.hide()
+            self.checkBox_Option_Humain_OUI.show()
+            self.checkBox_Option_Hum_NON.hide()
+            self.checkBox_Option_IA_OUI.show()
+        if (self.checkBox_Option_IA_OUI.isChecked() == False and self.checkBox_Option_Humain_OUI.isChecked() == False and self.checkBox_Option_Hum_NON.isChecked() == False and self.checkBox_Option_IA_NON.isChecked() == False ):
             self.checkBox_Option_IA_NON.show()
             self.checkBox_Option_Humain_OUI.show()
             self.checkBox_Option_Hum_NON.show()
+            self.checkBox_Option_IA_OUI.show()
+
             
     
     def affichage (self):
