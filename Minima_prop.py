@@ -11,6 +11,7 @@ class Ui_Minima_Accueil(object):
         
 
         x,y = Constante.xmax, Constante.ymax
+        self.nombre = 0
         
         Minima_Accueil.setObjectName("Minima_Accueil")
         Minima_Accueil.resize(1240, 813)
@@ -219,16 +220,7 @@ class Ui_Minima_Accueil(object):
         self.tr_attaquant_4_text.setText("Tour de l'attaquant n°3")
         self.tr_attaquant_4_text.setGeometry(QtCore.QRect(1000, 200, 200, 30))
         self.tr_attaquant_4_text.hide()
-        
-        
-        
-
-
-
-
-        
-
-        
+                
         self.Sauvegarde = QtWidgets.QMessageBox(self.centralwidget)
         self.Sauvegarde.setIcon(QtWidgets.QMessageBox.Information)       
         self.Sauvegarde.setText("Sauvegarde réussie")
@@ -382,10 +374,10 @@ class Ui_Minima_Accueil(object):
         self.checkBox_IA_0.setObjectName("checkBox_IA_0")
         
         self.Button_Retour = QtWidgets.QPushButton(self.groupBox_Option)
-        self.Button_Retour.setGeometry(QtCore.QRect(10, 430, 210, 90))
+        self.Button_Retour.setGeometry(QtCore.QRect(10, 540, 210, 90))
         self.Button_Retour.setObjectName("Button_Retour")
         self.Button_Jouer = QtWidgets.QPushButton(self.groupBox_Option)
-        self.Button_Jouer.setGeometry(QtCore.QRect(620, 430, 190, 90))
+        self.Button_Jouer.setGeometry(QtCore.QRect(620, 540, 190, 90))
         self.Button_Jouer.setObjectName("Button_Jouer")
         self.Button_Jouer.hide()
         
@@ -436,6 +428,49 @@ class Ui_Minima_Accueil(object):
         self.checkBox_IA_9.setGeometry(QtCore.QRect(240, 40, 280, 25))
         self.checkBox_IA_9.setObjectName("checkBox_IA_9")
         
+        self.groupBox_Niveau = QtWidgets.QGroupBox(self.groupBox_Option)
+        self.groupBox_Niveau.setEnabled(True)
+        self.groupBox_Niveau.setGeometry(QtCore.QRect(0, 350, 350, 170))
+        self.groupBox_Niveau.setAcceptDrops(False)
+        self.groupBox_Niveau.setInputMethodHints(QtCore.Qt.ImhHiddenText)
+        self.groupBox_Niveau.setTitle("")
+        self.groupBox_Niveau.setAlignment(QtCore.Qt.AlignLeading|QtCore.Qt.AlignLeft|QtCore.Qt.AlignVCenter)
+        self.groupBox_Niveau.setObjectName("groupBox_Niveau")
+        self.groupBox_Niveau.hide()
+        
+        self.textBrowser_Niveau = QtWidgets.QTextBrowser(self.groupBox_Niveau)
+        self.textBrowser_Niveau.setText("Choisir le niveau des IA")
+        self.textBrowser_Niveau.setEnabled(True)
+        self.textBrowser_Niveau.setGeometry(QtCore.QRect(0, 30, 200, 30))
+        self.textBrowser_Niveau.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
+        self.textBrowser_Niveau.setObjectName("textBrowser_Niveau")
+        
+        self.checkBox_IA_moyenne_1 = QtWidgets.QCheckBox(self.groupBox_Niveau)
+        self.checkBox_IA_moyenne_1.setGeometry(QtCore.QRect(240, 60, 280, 25))
+        self.checkBox_IA_moyenne_1.setObjectName("checkBox_IA_moyenne_1")
+        self.checkBox_IA_moyenne_1.setText("1")
+        self.checkBox_IA_moyenne_2 = QtWidgets.QCheckBox(self.groupBox_Niveau)
+        self.checkBox_IA_moyenne_2.setGeometry(QtCore.QRect(240, 80, 280, 25))
+        self.checkBox_IA_moyenne_2.setObjectName("checkBox_IA_moyenne_2")
+        self.checkBox_IA_moyenne_2.setText("2")
+        self.checkBox_IA_moyenne_3 = QtWidgets.QCheckBox(self.groupBox_Niveau)
+        self.checkBox_IA_moyenne_3.setGeometry(QtCore.QRect(240, 100, 280, 25))
+        self.checkBox_IA_moyenne_3.setObjectName("checkBox_IA_moyenne_3")
+        self.checkBox_IA_moyenne_3.setText("3")
+        self.checkBox_IA_moyenne_4 = QtWidgets.QCheckBox(self.groupBox_Niveau)
+        self.checkBox_IA_moyenne_4.setGeometry(QtCore.QRect(240, 120, 280, 25))
+        self.checkBox_IA_moyenne_4.setObjectName("checkBox_IA_moyenne_4")
+        self.checkBox_IA_moyenne_4.setText("4")
+        self.checkBox_IA_moyenne_0 = QtWidgets.QCheckBox(self.groupBox_Niveau)
+        self.checkBox_IA_moyenne_0.setGeometry(QtCore.QRect(240, 40, 280, 25))
+        self.checkBox_IA_moyenne_0.setObjectName("checkBox_IA_moyenne_0")
+        self.checkBox_IA_moyenne_0.setText("0")
+        
+        
+        
+        
+        
+        
         self.textBrowser_2.raise_()
         self.textBrowser_IA_2.raise_()
         self.checkBox_Option_IA_OUI.raise_()
@@ -458,20 +493,24 @@ class Ui_Minima_Accueil(object):
         self.retranslateUi(Minima_Accueil)
         
 
-        
-        
-        self.checkBox_IA_2.toggled['bool'].connect(self.Button_Jouer.setVisible)        
-        self.checkBox_IA_3.toggled['bool'].connect(self.Button_Jouer.setVisible)        
-        self.checkBox_IA_4.toggled['bool'].connect(self.Button_Jouer.setVisible)
-        self.checkBox_IA_1.toggled['bool'].connect(self.Button_Jouer.setVisible)
-        self.checkBox_IA_6.toggled['bool'].connect(self.Button_Jouer.setVisible)
-        self.checkBox_IA_7.toggled['bool'].connect(self.Button_Jouer.setVisible)
-        self.checkBox_IA_8.toggled['bool'].connect(self.Button_Jouer.setVisible)
-        self.checkBox_IA_5.toggled['bool'].connect(self.Button_Jouer.setVisible)
 
+
+        self.checkBox_IA_moyenne_0.toggled.connect(lambda:self.checked(self.checkBox_IA_moyenne_0,0))
+        self.checkBox_IA_moyenne_1.toggled.connect(lambda:self.checked(self.checkBox_IA_moyenne_1,1))
+        self.checkBox_IA_moyenne_2.toggled.connect(lambda:self.checked(self.checkBox_IA_moyenne_2,2))
+        self.checkBox_IA_moyenne_3.toggled.connect(lambda:self.checked(self.checkBox_IA_moyenne_3,3))
+        self.checkBox_IA_moyenne_4.toggled.connect(lambda:self.checked(self.checkBox_IA_moyenne_4,4))
+        
+        self.checkBox_Option_IA_OUI.toggled['bool'].connect(self.groupBox_Niveau.setVisible)
         
         
-        
+        self.checkBox_IA_4.toggled['bool'].connect(self.checkBox_IA_9.toggle)
+        self.checkBox_IA_4.toggled['bool'].connect(self.checkBox_IA_moyenne_0.toggle)
+        self.checkBox_IA_8.toggled['bool'].connect(self.checkBox_IA_0.toggle)
+        self.checkBox_IA_8.toggled['bool'].connect(self.checkBox_IA_moyenne_0.toggle)
+        self.checkBox_IA_moyenne_4.toggled['bool'].connect(self.checkBox_IA_0.toggle)
+        self.checkBox_IA_moyenne_4.toggled['bool'].connect(self.checkBox_IA_9.toggle)
+                       
         self.Button_Ac_Quitter.clicked.connect(Minima_Accueil.close)
         self.Button_Ac_Jouer.clicked.connect(self.groupBox_Accueil.hide)
         self.Button_Ac_Jouer.clicked.connect(self.groupBox_Option.show)
@@ -481,19 +520,13 @@ class Ui_Minima_Accueil(object):
         self.Button_Jouer.clicked.connect(self.groupBox_Jeu.show)
         self.Button_Jouer.clicked.connect(self.groupBox_Option.hide)
         self.Bouton_Jeu_Quitter.clicked.connect(Minima_Accueil.close)
-        self.checkBox_IA_1.toggled['bool'].connect(self.checkBox_IA_2.setHidden)
-        self.checkBox_IA_1.toggled['bool'].connect(self.checkBox_IA_3.setHidden)
-        self.checkBox_IA_1.toggled['bool'].connect(self.checkBox_IA_4.setHidden)
-        self.checkBox_IA_2.toggled['bool'].connect(self.checkBox_IA_1.setHidden)
-        self.checkBox_IA_2.toggled['bool'].connect(self.checkBox_IA_3.setHidden)
-        self.checkBox_IA_2.toggled['bool'].connect(self.checkBox_IA_4.setHidden)
-        self.checkBox_IA_3.toggled['bool'].connect(self.checkBox_IA_1.setHidden)
-        self.groupBox_Option.toggled['bool'].connect(self.checkBox_IA_2.setHidden)
-        self.checkBox_IA_3.toggled['bool'].connect(self.checkBox_IA_4.setHidden)
-        self.checkBox_IA_3.toggled['bool'].connect(self.checkBox_IA_2.setHidden)
-        self.checkBox_IA_4.toggled['bool'].connect(self.checkBox_IA_1.setHidden)
-        self.checkBox_IA_4.toggled['bool'].connect(self.checkBox_IA_2.setHidden)
-        self.checkBox_IA_4.toggled['bool'].connect(self.checkBox_IA_3.setHidden)
+        
+        self.checkBox_IA_0.toggled.connect(lambda:self.checked(self.checkBox_IA_0,0))
+        self.checkBox_IA_1.toggled.connect(lambda:self.checked(self.checkBox_IA_1,1))
+        self.checkBox_IA_2.toggled.connect(lambda:self.checked(self.checkBox_IA_2,2))
+        self.checkBox_IA_3.toggled.connect(lambda:self.checked(self.checkBox_IA_3,3))
+        self.checkBox_IA_4.toggled.connect(lambda:self.checked(self.checkBox_IA_4,4))
+        
         self.Button_J_A_Fermer.clicked.connect(self.scrollArea_3.hide)
         self.Jeu_A_Unitees.clicked.connect(self.scrollArea_3.show)
         self.Button_J_D_U_Fermer.clicked.connect(self.scrollArea_2.hide)
@@ -501,77 +534,308 @@ class Ui_Minima_Accueil(object):
         self.Button_J_D_B_Fermer.clicked.connect(self.scrollArea.hide)
         self.pushButton.clicked.connect(self.scrollArea.show)
         self.checkBox_Option_IA_OUI.toggled['bool'].connect(self.groupBox_Accueil_nb_IA.setVisible)
-        self.checkBox_IA_1.toggled['bool'].connect(self.checkBox_IA_0.setHidden)
-        self.checkBox_IA_2.toggled['bool'].connect(self.checkBox_IA_0.setHidden)
-        self.checkBox_IA_3.toggled['bool'].connect(self.checkBox_IA_0.setHidden)
-        self.checkBox_IA_4.toggled['bool'].connect(self.checkBox_IA_0.setHidden)
-        self.checkBox_IA_0.toggled['bool'].connect(self.checkBox_IA_1.setHidden)
-        self.checkBox_IA_0.toggled['bool'].connect(self.checkBox_IA_2.setHidden)
-        self.checkBox_IA_0.toggled['bool'].connect(self.checkBox_IA_3.setHidden)
-        self.checkBox_IA_0.toggled['bool'].connect(self.checkBox_IA_4.setHidden)
         self.checkBox_Option_Humain_OUI.toggled['bool'].connect(self.groupBox_Accueil_nb_humain.setVisible)
-        self.checkBox_IA_9.toggled['bool'].connect(self.checkBox_IA_5.setHidden)
-        self.checkBox_IA_9.toggled['bool'].connect(self.checkBox_IA_6.setHidden)
-        self.checkBox_IA_9.toggled['bool'].connect(self.checkBox_IA_7.setHidden)
-        self.checkBox_IA_9.toggled['bool'].connect(self.checkBox_IA_8.setHidden)
-        self.checkBox_IA_5.toggled['bool'].connect(self.checkBox_IA_9.setHidden)
-        self.checkBox_IA_5.toggled['bool'].connect(self.checkBox_IA_6.setHidden)
-        self.checkBox_IA_5.toggled['bool'].connect(self.checkBox_IA_8.setHidden)
-        self.checkBox_IA_5.toggled['bool'].connect(self.checkBox_IA_8.setHidden)
-        self.checkBox_IA_6.toggled['bool'].connect(self.checkBox_IA_9.setHidden)
-        self.checkBox_IA_6.toggled['bool'].connect(self.checkBox_IA_5.setHidden)
-        self.checkBox_IA_6.toggled['bool'].connect(self.checkBox_IA_7.setHidden)
-        self.checkBox_IA_5.toggled['bool'].connect(self.checkBox_IA_8.setHidden)
-        self.checkBox_IA_6.toggled['bool'].connect(self.checkBox_IA_8.setHidden)
-        self.checkBox_IA_7.toggled['bool'].connect(self.checkBox_IA_9.setHidden)
-        self.checkBox_IA_7.toggled['bool'].connect(self.checkBox_IA_5.setHidden)
-        self.checkBox_IA_7.toggled['bool'].connect(self.checkBox_IA_6.setHidden)
-        self.checkBox_IA_7.toggled['bool'].connect(self.checkBox_IA_8.setHidden)
-        self.checkBox_IA_8.toggled['bool'].connect(self.checkBox_IA_9.setHidden)
-        self.checkBox_IA_8.toggled['bool'].connect(self.checkBox_IA_5.setHidden)
-        self.checkBox_IA_8.toggled['bool'].connect(self.checkBox_IA_6.setHidden)
-        self.checkBox_IA_8.toggled['bool'].connect(self.checkBox_IA_7.setHidden)
-        self.checkBox_IA_5.toggled['bool'].connect(self.checkBox_IA_7.setHidden)
-        self.checkBox_IA_0.toggled['bool'].connect(self.checkBox_IA_9.setHidden)
-        self.checkBox_IA_1.toggled['bool'].connect(self.checkBox_IA_8.setHidden)
-        self.checkBox_IA_2.toggled['bool'].connect(self.checkBox_IA_7.setHidden)
-        self.checkBox_IA_3.toggled['bool'].connect(self.checkBox_IA_6.setHidden)
-        self.checkBox_IA_4.toggled['bool'].connect(self.checkBox_IA_5.setHidden)
-        self.checkBox_IA_2.toggled['bool'].connect(self.checkBox_IA_8.setHidden)
-        self.checkBox_IA_3.toggled['bool'].connect(self.checkBox_IA_8.setHidden)
-        self.checkBox_IA_3.toggled['bool'].connect(self.checkBox_IA_7.setHidden)
-        self.checkBox_IA_4.toggled['bool'].connect(self.checkBox_IA_8.setHidden)
-        self.checkBox_IA_4.toggled['bool'].connect(self.checkBox_IA_7.setHidden)
-        self.checkBox_IA_4.toggled['bool'].connect(self.checkBox_IA_6.setHidden)
+        
+        
+        self.checkBox_IA_9.toggled.connect(lambda:self.checked(self.checkBox_IA_9,0))
+        self.checkBox_IA_5.toggled.connect(lambda:self.checked(self.checkBox_IA_5,1))
+        self.checkBox_IA_6.toggled.connect(lambda:self.checked(self.checkBox_IA_6,2))      
+        self.checkBox_IA_7.toggled.connect(lambda:self.checked(self.checkBox_IA_7,3))
+        self.checkBox_IA_8.toggled.connect(lambda:self.checked(self.checkBox_IA_8,4))
+        
+        
         self.checkBox_Option_IA_NON.toggled['bool'].connect(self.checkBox_IA_0.toggle)
+        self.checkBox_Option_IA_NON.toggled['bool'].connect(self.checkBox_IA_moyenne_0.toggle)
         self.checkBox_Option_Hum_NON.toggled['bool'].connect(self.checkBox_IA_9.toggle)
-        self.checkBox_IA_9.toggled['bool'].connect(self.checkBox_IA_0.setHidden)
-        self.checkBox_IA_5.toggled['bool'].connect(self.checkBox_IA_4.setHidden)
-        self.checkBox_IA_6.toggled['bool'].connect(self.checkBox_IA_4.setHidden)
-        self.checkBox_IA_6.toggled['bool'].connect(self.checkBox_IA_3.setHidden)
-        self.checkBox_IA_7.toggled['bool'].connect(self.checkBox_IA_4.setHidden)
-        self.checkBox_IA_7.toggled['bool'].connect(self.checkBox_IA_3.setHidden)
-        self.checkBox_IA_7.toggled['bool'].connect(self.checkBox_IA_2.setHidden)
-        self.checkBox_IA_8.toggled['bool'].connect(self.checkBox_IA_4.setHidden)
-        self.checkBox_IA_8.toggled['bool'].connect(self.checkBox_IA_3.setHidden)
-        self.checkBox_IA_8.toggled['bool'].connect(self.checkBox_IA_2.setHidden)
-        self.checkBox_IA_8.toggled['bool'].connect(self.checkBox_IA_1.setHidden)
-        self.checkBox_Option_IA_NON.toggled['bool'].connect(self.checkBox_Option_IA_OUI.setHidden)
-        self.checkBox_Option_IA_OUI.toggled['bool'].connect(self.checkBox_Option_IA_NON.setHidden)
-        self.checkBox_Option_Humain_OUI.toggled['bool'].connect(self.checkBox_Option_Hum_NON.setHidden)
-        self.checkBox_Option_Hum_NON.toggled['bool'].connect(self.checkBox_Option_Humain_OUI.setHidden)
-        self.checkBox_Option_IA_NON.toggled['bool'].connect(self.checkBox_Option_Hum_NON.setHidden)
-        self.checkBox_Option_Hum_NON.toggled['bool'].connect(self.checkBox_Option_IA_NON.setHidden)
+        self.checkBox_Option_IA_NON.toggled.connect(self.affichage_NON_OUI)
+        self.checkBox_Option_Hum_NON.toggled.connect(self.affichage_NON_OUI)
+        self.checkBox_Option_IA_OUI.toggled.connect(self.affichage_NON_OUI)
+        self.checkBox_Option_Humain_OUI.toggled.connect(self.affichage_NON_OUI)
+
         QtCore.QMetaObject.connectSlotsByName(Minima_Accueil)
         
         
-    
-    
-
+    def cache_0 (self):
+         if (self.checkBox_IA_0.isChecked() == True and self.checkBox_IA_9.isChecked() ):
+             self.checkBox_IA_moyenne_0.hide()
+         elif (self.checkBox_IA_moyenne_0.isChecked() == True and self.checkBox_IA_9.isChecked() ):
+             self.checkBox_IA_0.hide()
+         elif (self.checkBox_IA_moyenne_0.isChecked() == True and self.checkBox_IA_0.isChecked() ):
+             self.checkBox_IA_9.hide()
+             
+             
+             
+    def cache (self):
+        if self.checkBox_IA_5.isChecked() == True :
+            self.checkBox_IA_6.hide()
+            self.checkBox_IA_7.hide()
+            self.checkBox_IA_8.hide()
+            self.checkBox_IA_9.hide()
+        elif self.checkBox_IA_6.isChecked() == True :
+            self.checkBox_IA_5.hide()
+            self.checkBox_IA_7.hide()
+            self.checkBox_IA_8.hide()
+            self.checkBox_IA_9.hide()        
+        elif self.checkBox_IA_7.isChecked() == True :
+            self.checkBox_IA_5.hide()
+            self.checkBox_IA_6.hide()
+            self.checkBox_IA_8.hide()
+            self.checkBox_IA_9.hide()        
+        elif self.checkBox_IA_8.isChecked() == True :
+            self.checkBox_IA_5.hide()
+            self.checkBox_IA_6.hide()
+            self.checkBox_IA_7.hide()
+            self.checkBox_IA_9.hide()        
+        elif self.checkBox_IA_9.isChecked() == True :
+            self.checkBox_IA_5.hide()
+            self.checkBox_IA_6.hide()
+            self.checkBox_IA_7.hide()
+            self.checkBox_IA_8.hide()  
+            
+        if self.checkBox_IA_0.isChecked() == True :
+            self.checkBox_IA_1.hide()
+            self.checkBox_IA_2.hide()
+            self.checkBox_IA_3.hide()
+            self.checkBox_IA_4.hide()
+        elif self.checkBox_IA_1.isChecked() == True :
+            self.checkBox_IA_0.hide()
+            self.checkBox_IA_2.hide()
+            self.checkBox_IA_3.hide()
+            self.checkBox_IA_4.hide()        
+        elif self.checkBox_IA_2.isChecked() == True :
+            self.checkBox_IA_0.hide()
+            self.checkBox_IA_1.hide()
+            self.checkBox_IA_3.hide()
+            self.checkBox_IA_4.hide()        
+        elif self.checkBox_IA_3.isChecked() == True :
+            self.checkBox_IA_0.hide()
+            self.checkBox_IA_1.hide()
+            self.checkBox_IA_2.hide()
+            self.checkBox_IA_4.hide()        
+        elif self.checkBox_IA_4.isChecked() == True :
+            self.checkBox_IA_3.hide()
+            self.checkBox_IA_1.hide()
+            self.checkBox_IA_2.hide()
+            self.checkBox_IA_0.hide()  
         
+        if self.checkBox_IA_moyenne_0.isChecked() == True :
+            self.checkBox_IA_moyenne_1.hide()
+            self.checkBox_IA_moyenne_2.hide()
+            self.checkBox_IA_moyenne_3.hide()
+            self.checkBox_IA_moyenne_4.hide()
+        elif self.checkBox_IA_moyenne_1.isChecked() == True :
+            self.checkBox_IA_moyenne_0.hide()
+            self.checkBox_IA_moyenne_2.hide()
+            self.checkBox_IA_moyenne_3.hide()
+            self.checkBox_IA_moyenne_4.hide()        
+        elif self.checkBox_IA_moyenne_2.isChecked() == True :
+            self.checkBox_IA_moyenne_0.hide()
+            self.checkBox_IA_moyenne_1.hide()
+            self.checkBox_IA_moyenne_3.hide()
+            self.checkBox_IA_moyenne_4.hide()        
+        elif self.checkBox_IA_moyenne_3.isChecked() == True :
+            self.checkBox_IA_moyenne_0.hide()
+            self.checkBox_IA_moyenne_1.hide()
+            self.checkBox_IA_moyenne_2.hide()
+            self.checkBox_IA_moyenne_4.hide()         
+        elif self.checkBox_IA_moyenne_4.isChecked() == True :
+            self.checkBox_IA_moyenne_3.hide()
+            self.checkBox_IA_moyenne_1.hide()
+            self.checkBox_IA_moyenne_2.hide()
+            self.checkBox_IA_moyenne_0.hide()  
+            
+    def affiche_Jouer(self):
+        if ((self.checkBox_IA_0.isChecked() == True or self.checkBox_IA_1.isChecked() == True or self.checkBox_IA_2.isChecked() == True
+            or self.checkBox_IA_3.isChecked() == True or self.checkBox_IA_4.isChecked() == True) and 
+            (self.checkBox_IA_5.isChecked() == True or self.checkBox_IA_6.isChecked() == True or self.checkBox_IA_7.isChecked() == True
+            or self.checkBox_IA_8.isChecked() == True or self.checkBox_IA_9.isChecked() == True) and
+            (self.checkBox_IA_moyenne_0.isChecked() == True or self.checkBox_IA_moyenne_1.isChecked() == True or self.checkBox_IA_moyenne_2.isChecked() == True
+            or self.checkBox_IA_moyenne_3.isChecked() == True or self.checkBox_IA_moyenne_4.isChecked() == True)):
+        
+            self.Button_Jouer.show()
+        else:
+            self.Button_Jouer.hide()
+        
+    def affichage_NON_OUI (self):
+        if self.checkBox_Option_IA_NON.isChecked() == True :
+            self.checkBox_Option_IA_OUI.hide()
+            self.checkBox_Option_Hum_NON.hide()
+        elif self.checkBox_Option_Hum_NON.isChecked() == True :
+            self.checkBox_Option_IA_NON.hide()
+            self.checkBox_Option_Humain_OUI.hide()
+        elif self.checkBox_Option_IA_OUI.isChecked() == True :
+            self.checkBox_Option_IA_NON.hide()
+        elif self.checkBox_Option_Humain_OUI.isChecked() == True :
+            self.checkBox_Option_Hum_NON.hide()
+        else:
+            self.checkBox_Option_IA_OUI.show()
+            self.checkBox_Option_IA_NON.show()
+            self.checkBox_Option_Humain_OUI.show()
+            self.checkBox_Option_Hum_NON.show()
+            
+    
+    def affichage (self):
+        
+        if self.nombre ==0:
+            
+            self.checkBox_IA_8.show()
+            self.checkBox_IA_4.show()
+            self.checkBox_IA_moyenne_4.show()            
+            self.checkBox_IA_7.show()
+            self.checkBox_IA_6.show()
+            self.checkBox_IA_5.show()        
+            self.checkBox_IA_3.show()
+            self.checkBox_IA_2.show()  
+            self.checkBox_IA_1.show()  
+            self.checkBox_IA_0.show()
+            self.checkBox_IA_9.show()
+            self.checkBox_IA_moyenne_0.show()
+            self.checkBox_IA_moyenne_3.show()
+            self.checkBox_IA_moyenne_2.show()
+            self.checkBox_IA_moyenne_1.show()
+            
+            self.montre()
+            self.cache()
+            self.cache_0()
+            self.affiche_Jouer()
+            
+        elif self.nombre ==1:
+            
+            self.checkBox_IA_8.hide()
+            self.checkBox_IA_4.hide()
+            self.checkBox_IA_moyenne_4.hide()
+            
+            self.checkBox_IA_0.show()
+            self.checkBox_IA_9.show()
+            self.checkBox_IA_moyenne_0.show()
+            self.checkBox_IA_7.show()
+            self.checkBox_IA_6.show()
+            self.checkBox_IA_5.show()        
+            self.checkBox_IA_3.show()
+            self.checkBox_IA_2.show()  
+            self.checkBox_IA_1.show()  
+            self.checkBox_IA_moyenne_3.show()
+            self.checkBox_IA_moyenne_2.show()
+            self.checkBox_IA_moyenne_1.show()
+            
+            self.montre()
+            self.cache()
+            self.cache_0()
+            self.affiche_Jouer()
+        elif self.nombre ==2:
+
+            self.checkBox_IA_8.hide()
+            self.checkBox_IA_7.hide()
+            self.checkBox_IA_4.hide()
+            self.checkBox_IA_3.hide()
+            self.checkBox_IA_moyenne_4.hide()
+            self.checkBox_IA_moyenne_3.hide()
+            
+            self.checkBox_IA_0.show()
+            self.checkBox_IA_9.show()
+            self.checkBox_IA_moyenne_0.show()
+            self.checkBox_IA_6.show()
+            self.checkBox_IA_5.show()        
+            self.checkBox_IA_2.show()  
+            self.checkBox_IA_1.show()  
+            self.checkBox_IA_moyenne_2.show()
+            self.checkBox_IA_moyenne_1.show()
+            
+            self.montre()
+            self.cache()
+            self.cache_0()
+            self.affiche_Jouer()
+        elif self.nombre ==3:
+
+            self.checkBox_IA_8.hide()
+            self.checkBox_IA_7.hide()
+            self.checkBox_IA_6.hide()
+            self.checkBox_IA_4.hide()
+            self.checkBox_IA_3.hide()
+            self.checkBox_IA_2.hide()         
+            self.checkBox_IA_moyenne_4.hide()
+            self.checkBox_IA_moyenne_3.hide()
+            self.checkBox_IA_moyenne_2.hide()
+            
+            self.checkBox_IA_0.show()
+            self.checkBox_IA_9.show()
+            self.checkBox_IA_moyenne_0.show()
+            self.checkBox_IA_5.show()          
+            self.checkBox_IA_1.show()  
+            self.checkBox_IA_moyenne_1.show()
+            
+            self.montre()
+            self.cache()
+            self.cache_0()
+            self.affiche_Jouer()
+        elif self.nombre ==4:
+
+            
+            self.checkBox_IA_8.hide()
+            self.checkBox_IA_7.hide()
+            self.checkBox_IA_6.hide()
+            self.checkBox_IA_5.hide()        
+            self.checkBox_IA_4.hide()
+            self.checkBox_IA_3.hide()
+            self.checkBox_IA_2.hide()  
+            self.checkBox_IA_1.hide()  
+            self.checkBox_IA_moyenne_4.hide()
+            self.checkBox_IA_moyenne_3.hide()
+            self.checkBox_IA_moyenne_2.hide()
+            self.checkBox_IA_moyenne_1.hide()
+            
+            self.checkBox_IA_0.show()
+            self.checkBox_IA_9.show()
+            self.checkBox_IA_moyenne_0.show()
+            
+            self.montre()
+            self.cache()
+            self.cache_0()
+            self.affiche_Jouer()
+            
+    def montre (self):
+        if self.checkBox_IA_0.isChecked() == True :
+            self.checkBox_IA_0.show()
+        if self.checkBox_IA_1.isChecked() == True :
+            self.checkBox_IA_1.show()
+        if self.checkBox_IA_2.isChecked() == True :
+            self.checkBox_IA_2.show()
+        if self.checkBox_IA_3.isChecked() == True :
+            self.checkBox_IA_3.show()
+        if self.checkBox_IA_4.isChecked() == True :
+            self.checkBox_IA_4.show()
+            
+        if self.checkBox_IA_5.isChecked() == True :
+            self.checkBox_IA_5.show()
+        if self.checkBox_IA_6.isChecked() == True :
+            self.checkBox_IA_6.show()
+        if self.checkBox_IA_7.isChecked() == True :
+            self.checkBox_IA_7.show()
+        if self.checkBox_IA_8.isChecked() == True :
+            self.checkBox_IA_8.show()
+        if self.checkBox_IA_9.isChecked() == True :
+            self.checkBox_IA_9.show()
+        
+        if self.checkBox_IA_moyenne_0.isChecked() == True :
+            self.checkBox_IA_moyenne_0.show()
+        if self.checkBox_IA_moyenne_1.isChecked() == True :
+            self.checkBox_IA_moyenne_1.show()
+        if self.checkBox_IA_moyenne_2.isChecked() == True :
+            self.checkBox_IA_moyenne_2.show()
+        if self.checkBox_IA_moyenne_3.isChecked() == True :
+            self.checkBox_IA_moyenne_3.show()
+        if self.checkBox_IA_moyenne_4.isChecked() == True :
+            self.checkBox_IA_moyenne_4.show()
         
 
-    
+    def checked (self,b,n):
+        if b.isChecked() == True :
+            return self.addition(n)
+        else :
+            return self.addition(-n)
+            
+            
+            
     
     
     
@@ -591,10 +855,20 @@ class Ui_Minima_Accueil(object):
         else:
             return ("No")        
              
-
+    def nb_IA_moyenne_choisi(self):
+        if self.checkBox_IA_0.isChecked():
+            return 0
+        if self.checkBox_IA_1.isChecked():
+            return 1
+        if self.checkBox_IA_2.isChecked():
+            return 2
+        if self.checkBox_IA_3.isChecked():
+            return 3
+        if self.checkBox_IA_4.isChecked():
+            return 4
     
     
-    def nb_IA_choisi(self):
+    def nb_IA_facile_choisi(self):
         if self.checkBox_IA_0.isChecked():
             return 0
         if self.checkBox_IA_1.isChecked():
@@ -618,6 +892,11 @@ class Ui_Minima_Accueil(object):
         if self.checkBox_IA_8.isChecked():
             return 4
     
+    def addition(self, n):
+        self.nombre += n
+        self.affichage()
+        print(self.nombre)
+
     
     
     
@@ -716,7 +995,7 @@ class Ui_Minima_Accueil(object):
 "<table style=\"-qt-table-type: root; margin-top:4px; margin-bottom:4px; margin-left:4px; margin-right:4px;\">\n"
 "<tr>\n"
 "<td style=\"border: none;\">\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'Cantarell\'; font-size:11pt;\">Choix du nombre d\'IA</span></p></td></tr></table></body></html>"))
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'Cantarell\'; font-size:11pt;\">Choix du nombre d\'IA facile</span></p></td></tr></table></body></html>"))
         self.checkBox_IA_1.setText(_translate("Minima_Accueil", "1"))
         self.checkBox_IA_2.setText(_translate("Minima_Accueil", "2"))
         self.checkBox_IA_3.setText(_translate("Minima_Accueil", "3"))
@@ -742,7 +1021,7 @@ class Ui_Minima_Accueil(object):
 "<table border=\"0\" style=\"-qt-table-type: root; margin-top:4px; margin-bottom:4px; margin-left:4px; margin-right:4px;\">\n"
 "<tr>\n"
 "<td style=\"border: none;\">\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'Cantarell\'; font-size:11pt;\">Choix du nombre d\'IA</span></p></td></tr></table></body></html>"))
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:\'Cantarell\'; font-size:11pt;\">Choix du nombre d\'Humain</span></p></td></tr></table></body></html>"))
         self.checkBox_IA_5.setText(_translate("Minima_Accueil", "1"))
         self.checkBox_IA_6.setText(_translate("Minima_Accueil", "2"))
         self.checkBox_IA_7.setText(_translate("Minima_Accueil", "3"))
