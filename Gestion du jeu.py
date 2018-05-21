@@ -773,13 +773,24 @@ class MonAppli(QtWidgets.QMainWindow):
         self.L_pos=self.Obj.mvt_poss()
         for i in self.L_pos:
             x,y = i
-            Ress = self.Obj.chx_ressources(x,y)
+            x_inf = max(0,int(-zone) + x)
+            x_sup = min(self.Obj._carte.dims[0]-1, int(zone) + x)
+            y_inf = max(0,int(-zone) + y)
+            y_sup = min(self.Obj._carte.dims[1]-1, int(zone) + y)
+        
+            A = self.Obj._carte.ss_carte[x_inf:x_sup+1,y_inf:y_sup+1]
+            Ress,rmin = self.Obj.chx_ressources_rec(A,x,y)
             self.dessin_L_pos(qp,x,y)
             if Ress != None:
                 X,Y = Ress.coords
                 self.dessin_interet(qp,X,Y)
         x,y = self.Obj.coords
-        Ress = self.Obj.chx_ressources(x,y)
+        x_inf = max(0,int(-zone) + x)
+        x_sup = min(self.Obj._carte.dims[0]-1, int(zone) + x)
+        y_inf = max(0,int(-zone) + y)
+        y_sup = min(self.Obj._carte.dims[1]-1, int(zone) + y)
+        A = self.Obj._carte.ss_carte[x_inf:x_sup+1,y_inf:y_sup+1]
+        Ress, rmin = self.Obj.chx_ressources_rec(A,x,y)
         if Ress != None:
             X,Y = Ress.coords
             self.dessin_interet_proche(qp,X,Y)
@@ -946,7 +957,10 @@ class MonAppli(QtWidgets.QMainWindow):
             self.ui.Attaquant.hide()
             self.ui.Defenseur.show()
             self.ui.tr_defenseur_text.show()
-            
+            self.ui.lcdNumber_Metal.show()
+            self.ui.textBrowser_Metal.show()
+            self.ui.textBrowser_Energie.show()
+            self.ui.lcdNumber_Energie.show()
         if k==1:
             self.ui.Attaquant.show()
             self.ui.Defenseur.hide()
